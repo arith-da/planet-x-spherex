@@ -8,6 +8,7 @@
 <title>Buscador del Planeta X con SPHEREx — Cielo real de IRSA y SkyView</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.css">
 <style>
 :root{--bg:#f4f2ec;--surface:#ffffff;--surface2:#ece9e0;--ink:#14181d;--muted:#5b6570;--line:#d8d2c4;--accent:#b45309;--accent-ink:#fff;--teal:#0f766e;--teal-bg:#e6f2f0;--amber-bg:#fef3c7;--red:#b91c1c;--code-bg:#111827;--code-ink:#e5e7eb;--radius:14px}
 @media(prefers-color-scheme:dark){:root{--bg:#0b0f14;--surface:#151b23;--surface2:#1c242f;--ink:#e8ecf1;--muted:#9aa7b4;--line:#2a3542;--accent:#f59e0b;--accent-ink:#111827;--teal:#2dd4bf;--teal-bg:#12302c;--amber-bg:#3a2f14;--red:#f87171;--code-bg:#0d131a;--code-ink:#dbeafe}}
@@ -83,6 +84,16 @@ summary{cursor:pointer;font-weight:700;min-height:36px;display:flex;align-items:
 .linklist{display:grid;gap:10px;margin-top:12px}
 .linkrow{background:var(--surface2);border-radius:10px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
 .linkrow .u{font-family:"IBM Plex Mono",monospace;font-size:.78rem;word-break:break-all;color:var(--muted);flex:1 1 260px}
+.loading-overlay{position:absolute;inset:0;background:rgba(5,8,13,.88);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#e2e8f0;text-align:center;padding:24px;z-index:5}
+.loading-overlay.show{display:flex}
+.spinner{width:54px;height:54px;border-radius:50%;border:5px solid rgba(255,255,255,.18);border-top-color:#f59e0b;animation:spin 0.9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spinner{animation-duration:2.4s}}
+.epoch-now{font-size:1.15rem;font-weight:800;background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal);border-radius:10px;padding:10px 14px;text-align:center;margin:12px 0}
+.epochbar .btn{flex:1 1 150px;justify-content:center;font-size:1rem;padding:14px 10px}
+#aladin-lite-div{width:100%;height:480px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#05080d}
+.explain{background:var(--teal-bg);border:1px solid var(--teal);border-radius:12px;padding:14px 16px;margin:12px 0}
+.explain p{margin:.35em 0}
 </style>
 </head>
 <body>
@@ -126,17 +137,30 @@ summary{cursor:pointer;font-weight:700;min-height:36px;display:flex;align-items:
 <div class="tool">
 <h3 id="viewerTitle">Región actual: Cetus — la zona de búsqueda</h3>
 <p class="small" id="viewerCoords">RA 37.5° · Dec −15° · Campo: 2° × 2° para las imágenes de SkyView (el campo amplio de 20° se consulta en IRSA con el buscador avanzado).</p>
+<p class="small" style="margin-bottom:4px"><strong>Cómo usarlo (3 pasos):</strong> 1) Toca una época para verla. 2) Pulsa «Parpadear» para alternarla con la más antigua. 3) O mueve «Mezcla» para fundir una con otra. Nada más.</p>
 <div class="epochbar" role="group" aria-label="Épocas disponibles">
-<button class="btn" data-epoch="dss" aria-pressed="true">DSS2 Red · placas ~1950s–1990s</button>
-<button class="btn" data-epoch="2mass" aria-pressed="false">2MASS-J · 1997–2001 · 1.25 µm</button>
-<button class="btn" data-epoch="wise" aria-pressed="false">WISE · 2010 · 3.4 µm</button>
-<button class="btn" data-epoch="spherex" aria-pressed="false">SPHEREx DR1 · 2026 · en IRSA</button>
+<button class="btn" data-epoch="dss" aria-pressed="true">1 · DSS2 · años 50–90</button>
+<button class="btn" data-epoch="2mass" aria-pressed="false">2 · 2MASS · 1997–2001</button>
+<button class="btn" data-epoch="wise" aria-pressed="false">3 · WISE · 2010</button>
+<button class="btn" data-epoch="spherex" aria-pressed="false">4 · SPHEREx 2026 · en IRSA</button>
 </div>
+<div class="epoch-now" id="epochNow">Estás viendo: DSS2 Red — placas fotográficas ~1950s–1990s</div>
 <div class="viewer" id="viewer">
 <div class="placeholder" id="viewerPlaceholder">
-<p style="font-size:1.05rem;margin:0"><strong>Toca «Cargar imágenes reales»</strong></p>
-<p style="margin:0;max-width:52ch">La página pedirá a NASA SkyView las imágenes reales de esta región en las épocas DSS2, 2MASS y WISE. Pueden tardar unos segundos: son imágenes generadas al momento desde el archivo, no archivos guardados aquí.</p>
+<p style="font-size:1.05rem;margin:0"><strong>Cargando imágenes reales…</strong></p>
+<p style="margin:0;max-width:52ch">La página pide a NASA SkyView las imágenes reales de esta región en DSS2, 2MASS y WISE. Se cargan solas al elegir una región.</p>
 <button class="btn primary" id="loadImagesBtn">Cargar imágenes reales</button>
+</div>
+<div class="loading-overlay" id="loadingOverlay" role="status" aria-live="polite">
+<div class="spinner" aria-hidden="true"></div>
+<p style="font-size:1.1rem;margin:0"><strong>Cargando imágenes reales de NASA SkyView…</strong></p>
+<p style="margin:0" id="loadingProgress">0 de 3 épocas listas</p>
+<p style="margin:0;max-width:46ch" class="small">SkyView genera cada imagen al momento desde su archivo: puede tardar varios segundos. No cierres la página.</p>
+</div>
+<div class="loading-overlay" id="errorOverlay" role="alert">
+<p style="font-size:1.1rem;margin:0"><strong>SkyView no respondió</strong></p>
+<p style="margin:0;max-width:46ch">Las imágenes siguen siendo reales, solo falló esta conexión. Inténtalo de nuevo o mira la misma región en el visor Aladin Lite incrustado más abajo.</p>
+<button class="btn primary" id="retryBtn">Reintentar</button>
 </div>
 <img id="imgA" alt="" style="display:none">
 <img id="imgB" alt="" style="display:none;opacity:0">
@@ -150,25 +174,25 @@ summary{cursor:pointer;font-weight:700;min-height:36px;display:flex;align-items:
 </div>
 </div>
 <div class="controls">
-<button class="btn primary" id="blinkBtn">▶ Parpadear entre épocas</button>
-<label style="margin:0;flex:1 1 220px">Mezcla manual entre las dos épocas elegidas <input type="range" id="mixRange" min="0" max="100" value="0"></label>
+<button class="btn primary" id="blinkBtn" style="font-size:1.05rem;padding:14px 22px">▶ Parpadear</button>
+<label style="margin:0;flex:1 1 220px">Mezcla: desliza para fundir la época antigua (DSS2) con la época que elegiste <input type="range" id="mixRange" min="0" max="100" value="0" aria-label="Mezcla entre épocas"></label>
 </div>
-<label for="epochPair">Par de épocas para parpadear / mezclar</label>
-<select id="epochPair">
-<option value="dss,2mass">DSS2 Red (~1950s–1990s) ↔ 2MASS-J (1997–2001)</option>
-<option value="2mass,wise">2MASS-J (1997–2001) ↔ WISE 3.4 µm (2010)</option>
-<option value="dss,wise" selected>DSS2 Red (~1950s–1990s) ↔ WISE 3.4 µm (2010)</option>
-</select>
-<p class="output" id="viewerStatus">Sin cargar todavía. Elige una región arriba o pulsa «Cargar imágenes reales».</p>
+<p class="output" id="viewerStatus">Cargando… Elige una región arriba y las imágenes llegan solas.</p>
 <p class="small">Créditos de imagen: NASA SkyView (GSFC) sirve imágenes de los estudios DSS/DSS2 (placas fotográficas digitalizadas), 2MASS (UMass/IPAC-Caltech, financiado por NASA y NSF) y WISE (NASA/JPL-Caltech). Cada imagen se etiqueta con su estudio, longitud de onda y época: un parpadeo entre ellas es un parpadeo entre <strong>imágenes reales de años distintos</strong>. Para comparar épocas de la propia WISE entre sí, prueba también <a href="http://byw.tools/wiseview" target="_blank" rel="noopener">WiseView</a>.</p>
 </div>
 
 <div class="tool">
-<span class="tag">EL VISOR DE TODO EL CIELO</span>
-<h3>Mueve el cielo con el dedo: Aladin Lite</h3>
-<p class="small">El visor interactivo de Aladin Lite (CDS, Estrasburgo) muestra los mismos estudios reales (DSS2 en color, 2MASS, AllWISE) y te deja arrastrar, acercar y saltar a cualquier coordenada. Ojo: Aladin Lite <strong>no</strong> incluye SPHEREx; para SPHEREx usa los enlaces a IRSA de esta página.</p>
+<span class="tag">EL VISOR DE TODO EL CIELO — DENTRO DE ESTA PÁGINA</span>
+<h3>Mueve el cielo con el dedo: Aladin Lite, aquí mismo</h3>
+<div class="explain">
+<p><strong>¿Qué es Aladin Lite?</strong> Es un visor de todo el cielo que funciona dentro del navegador: arrastras, acercas y cambias de estudio sin salir de esta página. Ya está incrustado aquí abajo, centrado en la región que elegiste, y se mueve solo cuando cambias de región.</p>
+<p><strong>¿Es de la NASA? No.</strong> Lo crea y lo mantiene el <strong>CDS</strong> (Centre de Données astronomiques de Strasbourg, Observatorio de Estrasburgo, Francia — CNRS / Université de Strasbourg). <strong>¿Trabaja con datos de la NASA? Sí, en parte:</strong> muestra estudios reales servidos desde los servidores del CDS, entre ellos datos que vienen de la NASA y sus socios (DSS, 2MASS y WISE/AllWISE). Es una herramienta independiente que la comunidad astronómica mundial usa a diario; no es un producto de la NASA ni incluye SPHEREx — para SPHEREx están los enlaces a IRSA de esta página.</p>
+<p><strong>Si el visor no carga</strong> (por ejemplo, sin conexión con el CDS), usa el botón de abajo para abrir la misma región en la página oficial de Aladin Lite.</p>
+</div>
+<div id="aladin-lite-div"></div>
+<p class="small" id="aladinFallback" style="display:none">El visor incrustado no pudo cargar desde el CDS. <a href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noopener">Abre Aladin Lite en su página oficial</a> con el botón de abajo.</p>
 <div class="controls">
-<a class="btn teal" id="aladinLink" href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noopener">Abrir esta región en Aladin Lite</a>
+<a class="btn teal" id="aladinLink" href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noopener">Abrir esta región en Aladin Lite (página oficial)</a>
 </div>
 </div>
 </section>
@@ -205,6 +229,12 @@ summary{cursor:pointer;font-weight:700;min-height:36px;display:flex;align-items:
 <div class="linkrow"><div><strong>1 · Datos reales de SPHEREx (SIA2, tabla en el navegador)</strong><div class="u" id="siaHtmlUrl"></div></div><a class="btn teal" id="siaHtmlBtn" href="#" target="_blank" rel="noopener">Abrir consulta</a></div>
 <div class="linkrow"><div><strong>2 · La misma consulta en formato VOTable</strong> (para TOPCAT, Python/astroquery…)<div class="u" id="siaVotUrl"></div></div><a class="btn" id="siaVotBtn" href="#" target="_blank" rel="noopener">Abrir VOTable</a></div>
 <div class="linkrow"><div><strong>3 · Recortes FITS de SPHEREx</strong> — la herramienta oficial de recortes de IRSA; sobre cada archivo FITS de la consulta puedes pedir un recorte añadiendo <code>?center=RA,Dec&amp;size=…</code> a su dirección<div class="u" id="cutoutUrl"></div></div><a class="btn" href="https://irsa.ipac.caltech.edu/data/SPHEREx/docs/cutout_tool.html" target="_blank" rel="noopener">Abrir Cutout Tool</a></div>
+<div class="explain">
+<p><strong>¿Qué son los recortes FITS? En palabras simples:</strong></p>
+<p><strong>FITS</strong> (<em>Flexible Image Transport System</em>) es el formato de archivo que usan los astrónomos profesionales. Un archivo FITS no es una foto normal: guarda la imagen <strong>junto con sus medidas exactas</strong> — cuánto brilla cada punto y en qué coordenada exacta del cielo está. Por eso un navegador no puede mostrarlo como una foto común: hace falta un programa científico (o los visores de IRSA) para abrirlo.</p>
+<p>Las imágenes completas de SPHEREx son enormes (cientos de megabytes). Un <strong>recorte</strong> (<em>cutout</em>) es un pedacito pequeño cortado de esa imagen gigante, justo alrededor de tus coordenadas: en vez de descargar el cielo entero, descargas solo el pedazo que te interesa. El servicio de recortes de IRSA hace el corte en su servidor y te entrega ese pedacito en formato FITS, listo para medir.</p>
+</div>
+<p class="small"><strong>⏳ Paciencia con IRSA:</strong> los botones «Abrir consulta» ya traen tu consulta lista desde que abre la página (se actualiza sola cuando cambias las coordenadas). Aun así, el servidor de IRSA a veces tarda mucho en responder —puede parecer que no pasa nada. Espera a que cargue o inténtalo de nuevo; si sigue sin responder, usa el enlace 5 (Explorador / documentación de acceso) como puerta alternativa a los mismos datos.</p>
 <div class="linkrow"><div><strong>4 · Este mismo lugar en el comparador</strong> — carga las imágenes reales DSS2 / 2MASS / WISE de estas coordenadas aquí arriba<div class="u">NASA SkyView · épocas reales</div></div><button class="btn primary" id="sendToViewerBtn">Ver en el comparador</button></div>
 <div class="linkrow"><div><strong>5 · Explorador oficial de datos SPHEREx</strong> — la interfaz web de IRSA para buscar, visualizar y descargar datos de la misión (enlace desde la documentación oficial de acceso a datos)<div class="u">https://caltech-ipac.github.io/spherex-archive-documentation/spherex-data-access/</div></div><a class="btn" href="https://caltech-ipac.github.io/spherex-archive-documentation/spherex-data-access/" target="_blank" rel="noopener">Abrir documentación de acceso</a></div>
 </div>
@@ -307,7 +337,7 @@ summary{cursor:pointer;font-weight:700;min-height:36px;display:flex;align-items:
 </ul></div>
 <div class="card"><span class="tag">IMÁGENES REALES POR ÉPOCA</span><h3>Los archivos del comparador</h3><ul class="clean">
 <li><a href="https://skyview.gsfc.nasa.gov/" target="_blank" rel="noopener">NASA SkyView (GSFC)</a> — genera las imágenes DSS/DSS2, 2MASS y WISE que ves en el comparador, al momento y desde el archivo.</li>
-<li><a href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noopener">Aladin Lite v3 (CDS, Estrasburgo)</a> — visor interactivo de todo el cielo con estudios HiPS reales (DSS2 color, 2MASS, AllWISE).</li>
+<li><a href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noopener">Aladin Lite v3 (CDS, Estrasburgo)</a> — visor interactivo de todo el cielo, creado por el CDS (CNRS / Université de Strasbourg, Francia), no por la NASA; muestra estudios HiPS reales (DSS2 color, 2MASS, AllWISE), incluidos datos de origen NASA servidos desde el CDS. Está incrustado en esta página.</li>
 <li><a href="http://byw.tools/wiseview" target="_blank" rel="noopener">WiseView</a> — comparación por épocas dentro de las imágenes de WISE.</li>
 <li><a href="https://archive.stsci.edu/missions-and-data/gaia" target="_blank" rel="noopener">Archivo de Gaia (STScI)</a> — el catálogo para descartar estrellas conocidas al verificar un candidato.</li>
 </ul></div>
@@ -332,12 +362,12 @@ summary{cursor:pointer;font-weight:700;min-height:36px;display:flex;align-items:
 <p class="lead">Equipo registrado en NASA Space Apps Challenge 2026 como <strong>THE SCARERS</strong>, con el proyecto <strong>Planet X and SPHEREx</strong>.</p>
 <div class="tablewrap"><table>
 <tr><th>Integrante</th><th>Rol en el equipo</th></tr>
-<tr><td><strong>Erick Arith Dominguez Acosta</strong></td><td>Dueño del equipo</td></tr>
-<tr><td><strong>Aaron Zaid Grajeda Diaz</strong></td><td>Sin tarea asignada</td></tr>
-<tr><td><strong>Andrea Martinez Pineda</strong></td><td>Sin tarea asignada</td></tr>
-<tr><td><strong>Gerardo Cruz Ramos</strong></td><td>Sin tarea asignada</td></tr>
-<tr><td><strong>Emir Cruz Ramos</strong></td><td>Sin tarea asignada · GitHub: <code>emirCR-zip</code></td></tr>
-<tr><td><strong>Fernando Martinez Gonzales</strong></td><td>Sin tarea asignada</td></tr>
+<tr><td><strong>Erick Arith Dominguez Acosta</strong></td><td>Dueño del equipo · Coordinador general y presentador · Creador del repositorio (GitHub: <code>arith-da</code>)</td></tr>
+<tr><td><strong>Emir Cruz Ramos</strong></td><td>GitHub y publicación</td></tr>
+<tr><td><strong>Gerardo Cruz Ramos</strong></td><td>Datos y verificación</td></tr>
+<tr><td><strong>Andrea Martinez Pineda</strong></td><td>Experiencia de usuario y pruebas</td></tr>
+<tr><td><strong>Aaron Zaid Grajeda Diaz</strong></td><td>Documentación</td></tr>
+<tr><td><strong>Fernando Martinez Gonzales</strong></td><td>Video de demostración y presentación</td></tr>
 </table></div>
 </section>
 
@@ -362,7 +392,7 @@ var EPOCHS={
  '2mass':{label:'2MASS-J — 1997–2001 · 1.25 µm',survey:'2MASS-J'},
  wise:{label:'WISE — 2010 · 3.4 µm',survey:'WISE 3.4'}
 };
-var loaded={},activeEpoch='dss',blinking=false,blinkTimer=null,pair=['dss','wise'];
+var loaded={},activeEpoch='dss',blinking=false,blinkTimer=null,aladinObj=null,aladinReady=false;
 
 function skyviewUrl(ep){
  var e=EPOCHS[ep];
@@ -379,80 +409,84 @@ function updateRegionLinks(){
  document.getElementById('viewerCoords').textContent='RA '+current.ra+'° · Dec '+(current.dec>0?'+':'')+current.dec+'° · Campo: '+current.size+'° × '+current.size+'° para las imágenes de SkyView.';
  document.getElementById('spherexSiaLink').href=siaUrl('spherex_dr1','HTML');
  document.getElementById('aladinLink').href=aladinUrl();
+ syncAladin();
+}
+function syncAladin(){
+ if(aladinReady&&aladinObj){try{aladinObj.gotoRaDec(current.ra,current.dec);}catch(e){}}
 }
 
 function setViewerStatus(msg){document.getElementById('viewerStatus').innerHTML=msg;}
 
+function setEpochNow(ep){
+ var el=document.getElementById('epochNow');
+ if(ep==='spherex'){el.textContent='SPHEREx DR1 (2026) se consulta en IRSA — mira el panel de abajo del visor';return;}
+ el.textContent='Estás viendo: '+EPOCHS[ep].label;
+}
 function showEpoch(ep){
  activeEpoch=ep;
  document.querySelectorAll('[data-epoch]').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-epoch')===ep?'true':'false');});
  var panel=document.getElementById('spherexPanel');
- var imgA=document.getElementById('imgA');
- if(ep==='spherex'){panel.style.display='block';imgA.style.display='none';document.getElementById('imgB').style.display='none';document.getElementById('viewerPlaceholder').style.display='none';setViewerStatus('Época <b>SPHEREx DR1 (2026)</b>: se consulta en IRSA con el botón de arriba — sus archivos son FITS científicos.');return;}
+ if(ep==='spherex'){panel.style.display='block';setEpochNow(ep);setViewerStatus('Época <b>SPHEREx DR1 (2026)</b>: sus archivos son FITS científicos y se consultan en IRSA con el botón del panel. Las demás épocas siguen visibles al tocar sus botones.');return;}
  panel.style.display='none';
  stopBlink();
- if(ep==='dss')pair=['dss','wise'];
- else if(ep==='2mass')pair=['2mass','wise'];
- else pair=['dss','wise'];
- document.getElementById('epochPair').value=pair.join(',');
- applyPair(false);
- if(loaded[pair[0]])setViewerStatus('Época destacada: <b>'+EPOCHS[ep].label+'</b> · Usa el control de mezcla o «Parpadear» para compararla con la otra época del par.');
+ setEpochNow(ep);
+ renderViewer();
+ if(!loaded[ep]&&!loaded['dss']){loadImages();}
 }
-
-function applyPair(keepBlink){
- var a=pair[0],b=pair[1];
+function renderViewer(){
  var imgA=document.getElementById('imgA'),imgB=document.getElementById('imgB');
  var ph=document.getElementById('viewerPlaceholder');
- if(!loaded[a]||!loaded[b]){ph.style.display='flex';imgA.style.display='none';imgB.style.display='none';setViewerStatus('Pulsa «Cargar imágenes reales» para pedir a NASA SkyView las épocas <b>'+EPOCHS[a].label+'</b> y <b>'+EPOCHS[b].label+'</b> de esta región.');return;}
+ if(!loaded['dss']){ph.style.display='flex';imgA.style.display='none';imgB.style.display='none';return;}
  ph.style.display='none';
- imgA.src=loaded[a];imgA.alt='Imagen real de SkyView: '+EPOCHS[a].label+' en RA '+current.ra+', Dec '+current.dec;imgA.style.display='block';
- imgB.src=loaded[b];imgB.alt='Imagen real de SkyView: '+EPOCHS[b].label+' en RA '+current.ra+', Dec '+current.dec;imgB.style.display='block';
- imgB.style.opacity=document.getElementById('mixRange').value/100;
- setViewerStatus('Comparando <b>'+EPOCHS[a].label+'</b> ↔ <b>'+EPOCHS[b].label+'</b> · Región: <b>'+current.name+'</b> · Imágenes reales de NASA SkyView.');
- if(!keepBlink)stopBlink();
+ imgA.src=loaded['dss'];imgA.alt='Imagen real de SkyView: '+EPOCHS.dss.label+' en RA '+current.ra+', Dec '+current.dec;imgA.style.display='block';
+ if(activeEpoch==='dss'||!loaded[activeEpoch]){imgB.style.display='none';document.getElementById('mixRange').value=0;}
+ else{imgB.src=loaded[activeEpoch];imgB.alt='Imagen real de SkyView: '+EPOCHS[activeEpoch].label+' en RA '+current.ra+', Dec '+current.dec;imgB.style.display='block';if(+document.getElementById('mixRange').value===0){document.getElementById('mixRange').value=100;}imgB.style.opacity=document.getElementById('mixRange').value/100;}
+ setViewerStatus('Región: <b>'+current.name+'</b> · Imagen real de NASA SkyView. Toca otra época, pulsa «Parpadear» o mueve «Mezcla» para comparar con DSS2 (la más antigua).');
 }
-
 function loadImages(){
- var btn=document.getElementById('loadImagesBtn');
- setViewerStatus('Pidiendo imágenes reales a NASA SkyView para <b>'+current.name+'</b>… pueden tardar unos segundos.');
+ var overlay=document.getElementById('loadingOverlay'),err=document.getElementById('errorOverlay'),prog=document.getElementById('loadingProgress');
+ document.getElementById('viewerPlaceholder').style.display='none';
+ err.classList.remove('show');overlay.classList.add('show');
+ setViewerStatus('Cargando imágenes reales de NASA SkyView para <b>'+current.name+'</b>…');
  var keys=['dss','2mass','wise'];var done=0,failed=0;
+ prog.textContent='0 de 3 épocas listas';
  keys.forEach(function(k){
-  var im=new Image();im.crossOrigin='anonymous';
-  im.onload=function(){loaded[k]=skyviewUrl(k);done++;if(done+failed===3)finishLoad(failed);};
-  im.onerror=function(){failed++;if(done+failed===3)finishLoad(failed);};
+  var im=new Image();
+  im.onload=function(){loaded[k]=skyviewUrl(k);done++;prog.textContent=(done+failed)+' de 3 épocas listas';if(done+failed===3)finishLoad(failed);};
+  im.onerror=function(){failed++;prog.textContent=(done+failed)+' de 3 épocas listas';if(done+failed===3)finishLoad(failed);};
   im.src=skyviewUrl(k);
  });
  function finishLoad(f){
-  if(f===3){setViewerStatus('SkyView no respondió desde esta conexión. Abre la región en <a href="'+aladinUrl()+'" target="_blank" rel="noopener">Aladin Lite</a> o consulta SPHEREx en IRSA: las imágenes siguen siendo reales, solo cambia la puerta.');return;}
-  document.getElementById('viewerPlaceholder').style.display='none';
-  applyPair(false);
-  if(f>0)setViewerStatus('SkyView entregó '+ (3-f) +' de 3 épocas; la que falta no cargó. Aun así puedes parpadear entre las disponibles cambiando el par de épocas.');
+  overlay.classList.remove('show');
+  if(f===3){err.classList.add('show');setViewerStatus('SkyView no respondió desde esta conexión. Pulsa «Reintentar» en el visor o mira la misma región en el visor Aladin Lite incrustado más abajo.');return;}
+  renderViewer();
+  if(f>0)setViewerStatus('SkyView entregó '+(3-f)+' de 3 épocas; la que falta no cargó. Puedes comparar entre las que sí llegaron.');
  }
 }
 
-function stopBlink(){blinking=false;if(blinkTimer)clearInterval(blinkTimer);blinkTimer=null;document.getElementById('blinkBtn').textContent='▶ Parpadear entre épocas';}
+function stopBlink(){blinking=false;if(blinkTimer)clearInterval(blinkTimer);blinkTimer=null;document.getElementById('blinkBtn').textContent='▶ Parpadear';}
 document.getElementById('blinkBtn').addEventListener('click',function(){
- if(blinking){stopBlink();return;}
- if(!loaded[pair[0]]||!loaded[pair[1]]){loadImages();setViewerStatus('Primero cargamos las imágenes reales; pulsa parpadear de nuevo cuando estén listas.');return;}
+ if(blinking){stopBlink();renderViewer();return;}
+ if(activeEpoch==='dss'||activeEpoch==='spherex'){showEpoch('wise');}
+ if(!loaded['dss']||!loaded[activeEpoch]){loadImages();setViewerStatus('Primero cargamos las imágenes reales (mira la pantalla de carga); pulsa «Parpadear» de nuevo cuando estén listas.');return;}
  blinking=true;this.textContent='⏸ Detener parpadeo';
- var imgB=document.getElementById('imgB');var on=false;
- blinkTimer=setInterval(function(){on=!on;imgB.style.opacity=on?1:0;document.getElementById('mixRange').value=on?100:0;},900);
+ var imgB=document.getElementById('imgB');imgB.style.display='block';var on=false;
+ blinkTimer=setInterval(function(){on=!on;imgB.style.opacity=on?1:0;document.getElementById('mixRange').value=on?100:0;setEpochNow(on?activeEpoch:'dss');},900);
 });
-document.getElementById('mixRange').addEventListener('input',function(){stopBlink();document.getElementById('imgB').style.opacity=this.value/100;});
-document.getElementById('epochPair').addEventListener('change',function(){pair=this.value.split(',');applyPair(false);});
-document.querySelectorAll('[data-epoch]').forEach(function(b){b.addEventListener('click',function(){showEpoch(b.getAttribute('data-epoch'));document.getElementById('viewer').scrollIntoView({behavior:'smooth',block:'center'});});});
+document.getElementById('mixRange').addEventListener('input',function(){stopBlink();if(activeEpoch!=='dss'&&activeEpoch!=='spherex'){document.getElementById('imgB').style.opacity=this.value/100;}});
+document.querySelectorAll('[data-epoch]').forEach(function(b){b.addEventListener('click',function(){showEpoch(b.getAttribute('data-epoch'));});});
 document.getElementById('loadImagesBtn').addEventListener('click',loadImages);
+document.getElementById('retryBtn').addEventListener('click',function(){document.getElementById('errorOverlay').classList.remove('show');loadImages();});
 
 function goToRegion(name,ra,dec,size){
  current={name:name,ra:ra,dec:dec,size:size||2};loaded={};stopBlink();
  document.getElementById('raInput').value=ra;document.getElementById('decInput').value=dec;
  updateRegionLinks();buildQuery(false);
- document.getElementById('viewerPlaceholder').style.display='flex';
  document.getElementById('imgA').style.display='none';document.getElementById('imgB').style.display='none';
  document.getElementById('spherexPanel').style.display='none';
  document.querySelectorAll('[data-epoch]').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-epoch')==='dss'?'true':'false');});
- activeEpoch='dss';pair=['dss','wise'];document.getElementById('epochPair').value='dss,wise';
- setViewerStatus('Región cambiada a <b>'+name+'</b>. Pulsa «Cargar imágenes reales» para verla en DSS2, 2MASS y WISE.');
+ activeEpoch='dss';setEpochNow('dss');document.getElementById('mixRange').value=0;
+ setViewerStatus('Región cambiada a <b>'+name+'</b>. Cargando sus imágenes reales…');
  document.getElementById('comparador').scrollIntoView({behavior:'smooth'});
  loadImages();
 }
@@ -479,7 +513,7 @@ function buildQuery(scroll){
  if(isNaN(ra)||isNaN(dec)){st.innerHTML='<b>Revisa las coordenadas:</b> usa grados (ej. 37.5, −15) o formato 02h 30m 00s / −15° 00′ 00″.';return;}
  ra=((ra%360)+360)%360;
  current.ra=Math.round(ra*100000)/100000;current.dec=Math.round(dec*100000)/100000;
- current.name='Coordenadas personalizadas';
+ if(scroll)current.name='Coordenadas personalizadas';
  current.size=parseFloat(document.getElementById('advSizeSelect').value)||2;
  var col=document.getElementById('collectionSelect').value;
  var radius=advRadius();
@@ -490,12 +524,15 @@ function buildQuery(scroll){
  document.getElementById('cutoutUrl').textContent='Sobre cada access_url FITS de la tabla: ?center='+current.ra+','+current.dec+'&size='+(radius*2);
  document.getElementById('queryResults').style.display='block';
  st.innerHTML='Consulta construida: <b>RA '+current.ra+'° · Dec '+current.dec+'° · radio '+radius+'° · colección '+col+'</b> — apunta a los servidores reales de IRSA.';
- loaded={};updateRegionLinks();
+ updateRegionLinks();
  if(scroll)document.getElementById('queryResults').scrollIntoView({behavior:'smooth',block:'center'});
 }
 document.getElementById('buildQueryBtn').addEventListener('click',function(){buildQuery(true);});
 document.getElementById('sendToViewerBtn').addEventListener('click',function(){goToRegion('Coordenadas personalizadas',current.ra,current.dec,current.size);});
+['raInput','decInput','sizeInput','collectionSelect','advSizeSelect'].forEach(function(id){var el=document.getElementById(id);if(el){el.addEventListener('change',function(){buildQuery(false);});el.addEventListener('input',function(){buildQuery(false);});}});
+['siaHtmlBtn','siaVotBtn'].forEach(function(id){document.getElementById(id).addEventListener('click',function(ev){if(!this.getAttribute('href')||this.getAttribute('href')==='#'){ev.preventDefault();buildQuery(false);var u=this.href;if(u&&u!=='#')window.open(u,'_blank','noopener');}});});
 updateRegionLinks();
+buildQuery(false);
 
 // ---------- Calculadora 1/d4 ----------
 function fmt(n){return n.toLocaleString('es-MX',{maximumFractionDigits:0});}
@@ -556,6 +593,23 @@ document.getElementById('copyList').addEventListener('click',function(){
  if(navigator.clipboard){navigator.clipboard.writeText(t);document.getElementById('exportStatus').textContent='Lista copiada. Pégala donde quieras compartirla.';}
 });
 renderCands();
+loadImages();
+</script>
+<script src="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js" charset="utf-8"></script>
+<script>
+(function(){
+ function fail(){var f=document.getElementById('aladinFallback');if(f)f.style.display='block';}
+ if(typeof A==='undefined'){fail();return;}
+ try{
+  A.init.then(function(){
+   try{
+    aladinObj=A.aladin('#aladin-lite-div',{survey:'P/DSS2/color',target:current.ra+' '+current.dec,fov:current.size*1.4,showReticle:true,showZoomControl:true,showFullscreenControl:true,showLayersControl:true,showGotoControl:true});
+    aladinReady=true;
+   }catch(e){fail();}
+  }).catch(function(){fail();});
+ }catch(e){fail();}
+ setTimeout(function(){if(!aladinReady)fail();},12000);
+})();
 </script>
 </body>
 </html>
