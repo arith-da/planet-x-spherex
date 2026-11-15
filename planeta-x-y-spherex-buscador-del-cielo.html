@@ -1,0 +1,1115 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Planeta X y SPHEREx — Buscador del cielo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --surface2:#eef1f4; --ink:#101828; --muted:#475467; --faint:#667085;
+  --line:#d9dee6; --accent:#08726d; --accent-ink:#ffffff; --accent-soft:#e0f2f0;
+  --amber:#b54708; --amber-soft:#fef3e2; --danger:#b42318; --ok:#067647;
+  --stage:#05080f; --chip:#101828;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0a0f1c; --surface:#121a2c; --surface2:#182238; --ink:#eef2f7; --muted:#b6c0d1; --faint:#8b96ab;
+    --line:#26324e; --accent:#2ec4b6; --accent-ink:#04211d; --accent-soft:#0d2f2c;
+    --amber:#fdb022; --amber-soft:#33270a; --danger:#f97066; --ok:#32d583;
+    --stage:#02040a; --chip:#eef2f7;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55;font-size:16px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+a{color:var(--accent)}
+button,[role="button"],select,input,textarea{min-height:44px}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+nav.top{position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;gap:6px;align-items:center;overflow-x:auto;padding-top:8px;padding-bottom:8px;scrollbar-width:none}
+nav.top .wrap::-webkit-scrollbar{display:none}
+nav.top a{white-space:nowrap;text-decoration:none;color:var(--ink);font-weight:600;font-size:.92rem;padding:10px 12px;border-radius:10px}
+nav.top a:hover{background:var(--surface2)}
+nav.top .brand{font-weight:800;color:var(--accent)}
+header.hero{padding:38px 0 10px}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:26px;align-items:start}
+@media(max-width:820px){.hero-grid{grid-template-columns:1fr}}
+h1{font-size:2.35rem;line-height:1.12;margin:0 0 12px;font-weight:800;letter-spacing:-.02em}
+@media(max-width:520px){h1{font-size:1.85rem}}
+.lede{font-size:1.08rem;color:var(--muted);margin:0 0 18px;max-width:56ch}
+.teamline{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--accent-soft);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:.9rem;font-weight:600;margin-bottom:16px}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;padding:10px 18px;text-decoration:none;font-size:.98rem}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:6px 12px;font-size:.88rem;min-height:40px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.facts{grid-template-columns:1fr}}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.fact b{display:block;font-size:1.25rem}
+.fact span{color:var(--muted);font-size:.9rem}
+section{padding:34px 0 8px}
+h2{font-size:1.55rem;margin:0 0 8px;letter-spacing:-.01em}
+h3{font-size:1.12rem;margin:0 0 6px}
+.sub{color:var(--muted);max-width:72ch;margin:0 0 18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:820px){.steps{grid-template-columns:1fr}}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.step .n{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:800;align-items:center;justify-content:center;margin-bottom:8px}
+.step p{margin:0;color:var(--muted);font-size:.95rem}
+/* Comparator */
+.stage-wrap{position:relative;background:var(--stage);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+.stage{position:relative;width:100%;aspect-ratio:1/1;max-height:640px;margin:0 auto}
+.stage img.layer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.stage img.layer.on{display:block}
+.stage img.layer.diff{mix-blend-mode:difference}
+.stage.side{display:grid;grid-template-columns:1fr 1fr;aspect-ratio:auto}
+.stage.side img.layer{position:relative;display:none}
+.stage.side img.layer.on{display:block}
+.badge{position:absolute;top:12px;left:12px;z-index:6;background:rgba(2,6,16,.82);color:#fff;border-radius:10px;padding:8px 14px;font-weight:800;font-size:.95rem;letter-spacing:.02em}
+.badge small{display:block;font-weight:600;font-size:.78rem;opacity:.85}
+.veil{position:absolute;inset:0;z-index:8;background:rgba(2,6,16,.78);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px}
+.veil.hide{display:none}
+.spinner{width:46px;height:46px;border-radius:50%;border:5px solid rgba(255,255,255,.25);border-top-color:#2ec4b6;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.spinner{animation:none} html{scroll-behavior:auto}}
+.markers{position:absolute;inset:0;z-index:5;pointer-events:none;display:none}
+.markers.on{display:block}
+.oval{position:absolute;width:11%;height:11%;border:3px solid #fdb022;border-radius:50%;transform:translate(-50%,-50%)}
+.oval span{position:absolute;top:-26px;left:50%;transform:translateX(-50%);background:#fdb022;color:#1a1000;font-size:.72rem;font-weight:800;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.comp-controls{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.epoch-btn{display:flex;flex-direction:column;align-items:flex-start;gap:0;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;text-align:left;min-width:150px}
+.epoch-btn b{font-size:.98rem}
+.epoch-btn span{font-size:.8rem;color:var(--muted)}
+.epoch-btn.active{border-color:var(--accent);background:var(--accent-soft)}
+.epoch-btn .st{font-size:.75rem;font-weight:700}
+.slider-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0}
+.slider-row input[type=range]{flex:1;min-width:160px;min-height:44px}
+.note{background:var(--amber-soft);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;color:var(--ink);font-size:.94rem}
+.note b{color:var(--amber)}
+.oknote{background:var(--accent-soft);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;font-size:.94rem}
+.statusline{font-size:.92rem;color:var(--muted);min-height:1.4em}
+/* Searchers */
+.presets{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:900px){.presets{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.presets{grid-template-columns:1fr}}
+.preset{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;color:var(--ink);width:100%}
+.preset:hover{border-color:var(--accent)}
+.preset b{display:block;font-size:1.02rem;margin-bottom:4px}
+.preset p{margin:0 0 8px;color:var(--muted);font-size:.9rem}
+.preset .coords{font-size:.8rem;color:var(--faint)}
+.preset.star{border-color:var(--amber);background:var(--amber-soft)}
+form.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:820px){form.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){form.grid{grid-template-columns:1fr}}
+label.f{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:.92rem}
+label.f input,label.f select{border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:10px 12px;font:inherit;font-weight:400;width:100%}
+label.f small{color:var(--muted);font-weight:400}
+.querybox{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:12px;word-break:break-all;font-size:.82rem}
+table{width:100%;border-collapse:collapse;font-size:.94rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.table-scroll{overflow-x:auto}
+@media(max-width:640px){
+  .stack-table table,.stack-table thead,.stack-table tbody,.stack-table tr,.stack-table td{display:block;width:100%}
+  .stack-table thead{display:none}
+  .stack-table tr{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:6px 4px;background:var(--surface)}
+  .stack-table td{border-bottom:none;padding:6px 12px}
+  .stack-table td::before{content:attr(data-l);display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+}
+#aladin{width:100%;height:480px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);background:#000}
+@media(max-width:560px){#aladin{height:380px}}
+textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:10px 12px;font:inherit}
+footer{margin-top:44px;border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);font-size:.92rem}
+.resources li{margin-bottom:8px}
+.demo-banner{background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:12px 16px;font-weight:700;display:none;margin-bottom:12px}
+.demo-banner.on{display:block}
+.schema{display:flex;gap:18px;flex-wrap:wrap;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.schema svg{flex:0 0 auto}
+.schema p{margin:0;color:var(--muted);max-width:52ch;font-size:.95rem}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <a class="brand" href="#comparador">Planeta X · SPHEREx</a>
+  <a href="#comparador">Comparador</a>
+  <a href="#buscador-simple">Regiones</a>
+  <a href="#buscador-avanzado">Buscador avanzado</a>
+  <a href="#visor">Visor del cielo</a>
+  <a href="#candidatos">Candidatos</a>
+  <a href="#proposito">Propósito</a>
+  <a href="#equipo">Equipo</a>
+  <a href="#recursos">Recursos</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="hero-grid">
+    <div>
+      <span class="teamline">Equipo THE SCARERS · NASA Space Apps Challenge 2026 · Proyecto: Planet X and SPHEREx</span>
+      <h1>El cielo cambia. Aquí puedes verlo con tus propios ojos.</h1>
+      <p class="lede">Esta herramienta muestra <strong>fotografías reales del mismo lugar del cielo tomadas en años distintos</strong> y las compara frente a ti: parpadeando entre ellas, lo que se movió, apareció o desapareció salta a la vista. Así se buscan planetas lejanos como el hipotético Planeta X en los datos de la misión SPHEREx de la NASA.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="#comparador">Ver el comparador</a>
+        <button class="btn" id="ctaBarnard" type="button">▶ Probar con la estrella de Barnard</button>
+      </div>
+      <p class="statusline">Comparar y explorar funciona dentro de esta página: las fotos vienen de NASA SkyView, el visor es Aladin Lite (CDS) y la consulta de SPHEREx a IRSA se construye y se intenta aquí mismo. Además, el 15 de noviembre de 2026 intentamos <strong>guardar dentro de esta página las tablas reales de SPHEREx de las 6 regiones principales</strong>, capturándolas de IRSA con reintentos: su servidor de consultas no respondió en esa captura, y la sección de tablas guardadas lo muestra región por región, con honestidad y sin inventar ni una fila. La única excepción son los archivos FITS originales de SPHEREx: ningún navegador puede mostrarlos como foto, así que se descargan desde IRSA con la consulta que esta página prepara.</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>11 mar 2025</b><span>Lanzamiento de SPHEREx, misión MIDEX de la NASA.</span></div>
+      <div class="fact"><b>102 bandas</b><span>Primer mapa espectral de todo el cielo en el infrarrojo cercano: 0.75–5.0 µm.</span></div>
+      <div class="fact"><b>12 nov 2026</b><span>Publicación de los datos DR1 de SPHEREx en IRSA.</span></div>
+      <div class="fact"><b>Cada ~6 meses</b><span>SPHEREx vuelve a fotografiar todo el cielo: 4 mapas en 2 años. Un planeta se mueve entre mapa y mapa.</span></div>
+    </div>
+  </div>
+</div></header>
+
+<section id="como"><div class="wrap">
+  <h2>Cómo funciona la comparación, en 20 segundos</h2>
+  <p class="sub">Es el método con el que Clyde Tombaugh descubrió Plutón en 1930, y sigue siendo la forma más directa de cazar objetos que se mueven.</p>
+  <div class="schema">
+    <svg width="300" height="120" viewBox="0 0 300 120" role="img" aria-label="Esquema: una estrella normal queda en el mismo sitio en las dos fotos; la que se mueve aparece en otro sitio y al parpadear salta.">
+      <rect x="4" y="8" width="130" height="104" rx="8" fill="#0b1220"/>
+      <circle cx="40" cy="40" r="3.5" fill="#fff"/><circle cx="95" cy="80" r="3" fill="#fff"/>
+      <circle cx="62" cy="62" r="5" fill="#fdb022"/>
+      <text x="69" y="106" fill="#fff" font-size="11" text-anchor="middle">ANTES · años 50</text>
+      <rect x="166" y="8" width="130" height="104" rx="8" fill="#0b1220"/>
+      <circle cx="202" cy="40" r="3.5" fill="#fff"/><circle cx="257" cy="80" r="3" fill="#fff"/>
+      <circle cx="252" cy="38" r="5" fill="#fdb022"/>
+      <text x="231" y="106" fill="#fff" font-size="11" text-anchor="middle">DESPUÉS · años 80–90</text>
+      <path d="M140 60 H160" stroke="#08726d" stroke-width="3"/>
+    </svg>
+    <p>Las estrellas están tan lejos que en décadas se mueven <strong>menos de un píxel</strong>: en las dos fotos quedan en el mismo sitio. Lo que sí se mueve —un asteroide, una estrella cercana y rápida, o un planeta lejano— aparece en <strong>otro sitio</strong> en la segunda foto. Al alternar las fotos (parpadear), ese objeto parece <strong>saltar</strong>. Ese salto es la señal que buscamos.</p>
+  </div>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><h3>Elige un lugar del cielo</h3><p>Usa una región famosa del buscador sencillo o escribe coordenadas exactas en el avanzado.</p></div>
+    <div class="step"><span class="n">2</span><h3>Mira las fotos de distintas épocas</h3><p>La página trae fotos reales de los años 50 y de los años 80–90 del mismo lugar, servidas por NASA SkyView.</p></div>
+    <div class="step"><span class="n">3</span><h3>Parpadea y busca el salto</h3><p>Pulsa «Parpadear» o el modo «Diferencia». Si algo salta, anótalo como candidato y verifícalo.</p></div>
+  </div>
+</div></section>
+
+<section id="comparador"><div class="wrap">
+  <h2>Comparador de épocas</h2>
+  <p class="sub">Estás viendo: <strong id="regionName">Estrella de Barnard — la demo donde el cambio SÍ se ve</strong> · <span class="mono" id="regionCoords">RA 269.452° · Dec +4.693° · campo 0.5°</span>. Las tres fotos son reales y llegan de NASA SkyView; cada una dice su archivo y sus años.</p>
+
+  <div class="demo-banner" id="demoBanner" role="status"></div>
+
+  <div class="comp-controls" role="group" aria-label="Elegir época">
+    <button type="button" class="epoch-btn" data-epoch="0"><b>1 · DSS</b><span>Placas fotográficas · años 50</span><span class="st" data-st>…</span></button>
+    <button type="button" class="epoch-btn" data-epoch="1"><b>2 · DSS2 Red</b><span>Luz roja · años 80–90</span><span class="st" data-st>…</span></button>
+    <button type="button" class="epoch-btn" data-epoch="2"><b id="ep3Title">3 · DSS2 Blue</b><span id="ep3Sub">Luz azul · años 80–90</span><span class="st" data-st>…</span></button>
+  </div>
+
+  <div class="stage-wrap">
+    <div class="stage" id="stage">
+      <img class="layer" id="img0" alt="Foto real del cielo, archivo DSS, años 50" />
+      <img class="layer" id="img1" alt="Foto real del cielo, archivo DSS2 Red, años 80 a 90" />
+      <img class="layer" id="img2" alt="Foto real del cielo, archivo DSS2 Blue, años 80 a 90" />
+      <div class="markers" id="markers" aria-hidden="true">
+        <div class="oval" style="left:40%;top:58%"><span>Barnard · años 50 (aprox.)</span></div>
+        <div class="oval" style="left:61%;top:40%"><span>Barnard · años 80–90 (aprox.)</span></div>
+      </div>
+      <div class="badge" id="badge">CARGANDO<small>Preparando fotos reales…</small></div>
+      <div class="veil" id="veil">
+        <div class="spinner" aria-hidden="true"></div>
+        <div><strong>Cargando imágenes reales de NASA SkyView…</strong><br /><span id="veilProgress">0 de 3 épocas listas</span></div>
+        <button class="btn small" id="veilRetry" type="button" style="display:none">Reintentar las que faltan</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="comp-controls">
+    <button class="btn primary" id="btnBlink" type="button">▶ Parpadear</button>
+    <button class="btn" id="btnDiff" type="button" aria-pressed="false">Diferencia</button>
+    <button class="btn" id="btnSide" type="button" aria-pressed="false">Lado a lado</button>
+    <button class="btn" id="btnMarkers" type="button" aria-pressed="false">Marcar Barnard</button>
+    <button class="btn" id="btnDemo" type="button">Demo guiada (5 pasos)</button>
+  </div>
+  <div class="slider-row">
+    <label for="mixRange" style="font-weight:600">Mezcla entre épocas</label>
+    <input type="range" id="mixRange" min="0" max="100" value="100" />
+    <span class="mono" id="mixVal">100%</span>
+  </div>
+  <p class="statusline" id="compStatus" role="status">Consejo: mantén pulsada la imagen para espiar la otra época y suelta para volver.</p>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Qué estás buscando (y por qué casi nada se mueve)</h3>
+    <p style="margin:0 0 8px">La mayoría de las estrellas están tan lejos que, entre los años 50 y los 90, se movieron menos de un píxel en estas fotos: por eso al parpadear <strong>casi todo parece quieto, y eso es normal</strong>. El parpadeo solo delata lo que de verdad cambió de sitio o de brillo:</p>
+    <ul style="margin:0;padding-left:20px">
+      <li><strong>Una estrella cercana y rápida</strong>, como Barnard: se mueve 10.3 segundos de arco por año, unos 5 minutos de arco entre estas épocas. Al parpadear, <em>salta</em>.</li>
+      <li><strong>Un asteroide</strong> que cruzaba el campo cuando se tomó una de las fotos.</li>
+      <li><strong>Algo que apareció o desapareció</strong>: en el modo <em>Diferencia</em> todo lo idéntico se vuelve negro y solo queda encendido lo que cambió; una estrella movida se ve como dos puntos.</li>
+      <li><strong>Un planeta lejano</strong>: SPHEREx fotografía todo el cielo cada ~6 meses y un planeta a cientos de UA se desplazaría ~1.5–5 minutos de arco entre mapas. Este comparador entrena el ojo con archivos históricos reales.</li>
+    </ul>
+  </div>
+  <p class="note" style="margin-top:12px"><b>Aviso honesto:</b> las épocas de 2MASS (1997–2001) y WISE (2010) están <strong>temporalmente caídas dentro de SkyView</strong>: su servidor no puede conectarse a esos archivos remotos por un problema de certificado de seguridad del lado de NASA, y devuelven una página de error en vez de una foto. Por eso esta versión compara DSS y DSS2, que sí responden hoy (verificado el 14 de noviembre de 2026). Cuando NASA lo repare, 2MASS y WISE volverán como épocas 4 y 5.</p>
+</div></section>
+
+<section id="buscador-simple"><div class="wrap">
+  <h2>Buscador sencillo — regiones para empezar</h2>
+  <p class="sub">Sin coordenadas ni tecnicismos: toca una tarjeta y el comparador y el visor se mueven a ese lugar con sus fotos reales. Empieza por Barnard si quieres ver un cambio de verdad.</p>
+  <div class="presets" id="presets"></div>
+</div></section>
+
+<section id="buscador-avanzado"><div class="wrap">
+  <h2>Buscador avanzado — coordenadas y datos SPHEREx en IRSA</h2>
+  <p class="sub">Para quien ya sabe dónde mirar: escribe coordenadas, envíalas al comparador y consulta aquí mismo qué archivos de SPHEREx existen para ese punto en IRSA, el archivo oficial de la misión. La consulta se construye sola al abrir la página y se reconstruye con cada cambio.</p>
+  <div class="card">
+    <form class="grid" id="advForm">
+      <label class="f">Ascensión recta (grados)<input id="inRA" type="number" step="any" min="0" max="360" value="37.5" /><small>Ejemplo: 37.5 equivale a 02h 30m.</small></label>
+      <label class="f">Declinación (grados)<input id="inDec" type="number" step="any" min="-90" max="90" value="-15" /><small>Negativa al sur del ecuador celeste.</small></label>
+      <label class="f">Tamaño del campo (grados)<input id="inFov" type="number" step="any" min="0.1" max="10" value="2" /><small>0.5 para detalle · 2 para explorar · Cetus usa 20 en el plan del equipo.</small></label>
+      <label class="f">Radio de consulta SPHEREx (grados)<input id="inRad" type="number" step="any" min="0.01" max="5" value="0.05" /><small>Radio del círculo de búsqueda en IRSA (SIA2). Con 0.05° o menos, cuando el servidor de IRSA responde, tarda unos 20 segundos; con 0.1° o más la consulta se cuelga minutos y termina en error de proxy. Hoy ese servidor además falla a ratos con un error instantáneo: por eso la consulta dentro de la página reintenta sola. Déjalo en 0.05 salvo que necesites un área mayor.</small></label>
+      <label class="f">Colección SPHEREx
+        <select id="inCol">
+          <option value="spherex_dr1">Wide Survey DR1</option>
+          <option value="spherex_dr1_deep">Deep Survey DR1</option>
+          <option value="spherex_dr1_cube">DR1 All-Sky Cube</option>
+          <option value="spherex_qr3">Wide Survey QR3</option>
+        </select><small>DR1 se publicó el 12 de noviembre de 2026.</small></label>
+      <label class="f">&nbsp;<button class="btn primary" type="submit" style="width:100%">Ver en el comparador y consultar SPHEREx</button></label>
+    </form>
+    <h3 style="margin-top:20px">Consulta a IRSA (servicio SIA2), lista para usar</h3>
+    <p style="color:var(--muted);margin:0 0 8px">Esta es la pregunta exacta que se le hace al servidor de IRSA. <strong>«Copiar consulta»</strong> la copia para pegarla donde quieras (toca la dirección para seleccionarla entera). <strong>«Consultar dentro de la página»</strong> muestra la tabla de resultados aquí mismo, sin salir de la herramienta. <strong>«Descargar la tabla (CSV)»</strong> baja esa misma tabla como archivo desde IRSA, en una pestaña nueva. <strong>Y lo más importante:</strong> justo debajo está la sección de <strong>tablas guardadas</strong>: el 15 de noviembre de 2026 intentamos capturar las tablas reales de las 6 regiones principales directamente de IRSA, reintentando hasta 40 veces por región, para que quedaran guardadas dentro de esta página. Su servidor de consultas <strong>no respondió en ninguno de los intentos de esa captura</strong>, y la página lo declara región por región, sin inventar filas; en cuanto IRSA responda, la captura se repetirá y esas tablas reales ocuparán ese lugar. Mientras tanto, esta consulta en vivo — que reintenta sola — sirve para <strong>cualquier coordenada</strong>, incluidas esas 6 regiones. <strong>Aviso importante, comprobado hoy (15 de noviembre de 2026): el servidor de consultas de IRSA (SIA/TAP) está fallando a ratos.</strong> La mayoría de los intentos devuelve al instante un <em>«502 Proxy Error»</em>, pero de vez en cuando — aproximadamente 1 de cada 4 a 6 intentos — responde bien, y entonces tarda unos 20 segundos. La señal para distinguirlo es el tiempo: <strong>el error llega en menos de 1 segundo y la respuesta buena tarda ~20 s</strong>. Por eso «Consultar dentro de la página» ahora <strong>reintenta sola</strong> cuando detecta el error instantáneo, y para el CSV basta cerrar la pestaña del error y pulsar otra vez. No es tu conexión ni esta página: es el servidor de IRSA. El <strong>radio</strong> también manda: con 0.05° o menos la respuesta llega (por eso viene puesto así, con tope de 500 filas); con 0.1° o más la consulta se cuelga minutos. <strong>Los archivos FITS, en cambio, sí se pueden descargar siempre</strong>: están espejados en el archivo oficial en la nube de IRSA (AWS), que responde bien — más abajo hay un explorador para bajarlos desde esta misma página, sin depender del servidor de consultas.</p>
+    <div class="querybox mono" id="siaUrl" title="Toca para seleccionar toda la consulta"></div>
+    <div class="comp-controls">
+      <button class="btn" id="btnCopySia" type="button">Copiar consulta</button>
+      <button class="btn" id="btnFetchSia" type="button">Consultar dentro de la página</button>
+      <a class="btn small" id="btnOpenSia" href="#" target="_blank" rel="noopener">Descargar la tabla (CSV) desde IRSA</a>
+    </div>
+    <p class="statusline" id="siaRadWarn" role="alert" style="display:none"></p>
+    <p class="statusline" id="siaStatus" role="status"></p>
+    <div id="siaFrameWrap" style="display:none;margin-top:10px">
+      <div class="comp-controls" style="margin:0 0 8px">
+        <button class="btn small" id="btnStopSia" type="button" style="display:none">Detener carga</button>
+        <button class="btn small" id="btnRetrySia" type="button" style="display:none">Reintentar</button>
+        <button class="btn small" id="btnRetrySmall" type="button" style="display:none">Reintentar con radio 0.05</button>
+      </div>
+      <iframe id="siaFrame" title="Tabla de resultados de SPHEREx servida por IRSA" style="width:100%;height:430px;border:1px solid var(--line);border-radius:10px;background:#fff"></iframe>
+      <p class="statusline">Esa tabla la sirve IRSA y se está viendo <strong>dentro de esta página</strong>. Como su servidor falla a ratos con un error que llega en menos de 1 segundo, esta página <strong>reintenta sola hasta 6 veces</strong>; la respuesta buena tarda unos 20 segundos. Cuando la tabla llegue, para bajar un archivo FITS copia el enlace de la columna <span class="mono">access_url</span> de su fila y ábrelo: la descarga empieza en el servidor de archivos de IRSA, que sí responde bien. Si tras todos los reintentos sigue saliendo «Proxy Error», baja los FITS desde el explorador del espejo oficial, aquí debajo.</p>
+    </div>
+    <h3 style="margin-top:26px" id="tablas-guardadas">Tablas guardadas en esta página — la captura de IRSA del 15 de noviembre de 2026</h3>
+    <p style="color:var(--muted);margin:0 0 8px">La idea era exactamente la que pidió el equipo: hacer la consulta a IRSA <strong>una vez, con paciencia y reintentos</strong>, y <strong>guardar las tablas reales dentro de esta misma página</strong>, para no depender de que su servidor responda en el momento de abrirla. La captura se hizo el <strong>15 de noviembre de 2026</strong> con los mismos parámetros de la consulta en vivo (servicio SIA2, colección <span class="mono">spherex_dr1</span>, radio 0.05°, tope MAXREC 500), reintentando <strong>hasta 40 veces por región</strong>. El resultado fue este, y la página lo dice sin adornos: <strong>el servidor de consultas de IRSA no respondió en ninguno de los intentos</strong> — más de 280 consultas entre las 06:53 y las 07:38 h CST, todas con su «502 Proxy Error» o sin respuesta, mientras el resto del sitio de IRSA sí respondía en menos de 1 segundo —. Por eso <strong>ninguna región trae tabla guardada y no hay ni una fila inventada</strong>: cada panel lo declara y te deja el camino que sí funciona (la consulta en vivo, que reintenta sola, y el explorador del espejo oficial en AWS, más abajo). En cuanto IRSA responda, la captura se repite y las tablas reales aparecerán aquí, con su fecha y hora. Elige una región para ver su estado:</p>
+    <div class="comp-controls" id="savedChips" role="group" aria-label="Elegir región con tabla guardada" style="margin-bottom:8px"></div>
+    <p class="statusline" id="savedMeta" role="status"></p>
+    <div id="savedPanel">
+      <div class="table-scroll stack-table">
+        <table><thead><tr><th>Archivo</th><th>RA</th><th>Dec</th><th>Fecha UTC</th><th>Instrumento / banda</th><th>Tamaño</th><th></th></tr></thead><tbody id="savedBody"></tbody></table>
+      </div>
+      <p class="statusline" id="savedMore"></p>
+      <div class="comp-controls">
+        <button class="btn primary" id="btnSavedCsv" type="button">Descargar el CSV completo de esta región</button>
+      </div>
+      <p class="statusline" id="savedCsvNote">El CSV se genera en tu navegador desde las filas guardadas en esta página: no llama a IRSA y funciona aunque su servidor esté caído.</p>
+    </div>
+    <div id="savedFail" style="display:none">
+      <p class="note" id="savedFailText"></p>
+      <div class="comp-controls">
+        <button class="btn" id="btnSavedLive" type="button">Intentar la consulta en vivo para esta región</button>
+      </div>
+    </div>
+    <h3 style="margin-top:22px">Los archivos FITS sin depender del servidor de consultas: espejo oficial en la nube (AWS)</h3>
+    <p style="color:var(--muted);margin:0 0 8px">IRSA guarda <strong>una copia idéntica de todos los datos de SPHEREx</strong> en la nube de Amazon (AWS), y ese archivo sí responde hoy (comprobado el 15 de noviembre de 2026: lista las carpetas en ~1 segundo y los FITS se descargan directos). Este explorador lee ese espejo <strong>desde esta misma página</strong>: navega por las carpetas (versión → semana de observación → detector) y descarga el FITS que quieras. La única diferencia con la consulta de arriba: el espejo se recorre <strong>por carpetas</strong>, no por coordenadas — buscar por coordenadas es justo el servicio de IRSA que hoy falla a ratos (y cuya caída también dejó vacía, por ahora, la sección de tablas guardadas de aquí arriba; este explorador no depende de ese servidor). Cada FITS pesa unos 65 MB. El botón «Recorte en IRSA» pide al servidor de archivos de IRSA (que también responde) el mismo archivo ya cortado a tus coordenadas de arriba, para bajar solo un pedazo: ojo, IRSA tarda unos 20–30 segundos en hacer el corte, y el recorte solo funciona si ese archivo concreto cubre tus coordenadas — cada archivo apunta a su propio pedazo de cielo y, si el tuyo queda fuera, IRSA contesta con un error y toca descargar el FITS completo.</p>
+    <div class="comp-controls" style="margin-bottom:8px">
+      <button class="btn primary" id="btnS3Open" type="button">Explorar los archivos de SPHEREx en el espejo</button>
+    </div>
+    <p class="statusline" id="s3Status" role="status"></p>
+    <div id="s3Wrap" style="display:none">
+      <p class="mono" id="s3Crumbs" style="font-size:.85rem;margin:0 0 8px;word-break:break-all"></p>
+      <div id="s3List"></div>
+      <div class="comp-controls" style="margin-top:8px">
+        <button class="btn small" id="btnS3More" type="button" style="display:none">Mostrar más entradas</button>
+      </div>
+    </div>
+    <div class="oknote">
+      <strong>¿Qué es un recorte FITS?</strong> FITS es el formato de los astrónomos profesionales: un solo archivo guarda la imagen <em>más</em> sus mediciones y sus coordenadas exactas del cielo. No es una foto normal y el navegador no puede mostrarlo como foto; por eso las imágenes de SPHEREx no se pintan con una etiqueta de imagen. Un <strong>recorte</strong> es un pedacito cortado de una imagen enorme alrededor de tus coordenadas: en vez de descargar cientos de megabytes, IRSA corta el pedazo en su servidor (se añade <span class="mono">?center=RA,Decdeg&amp;size=…deg</span> a la dirección del archivo; las unidades «deg» son obligatorias: sin ellas IRSA rechaza el pedido y no descarga nada) y descargas solo eso. El corte tarda unos 20–30 segundos en el servidor de IRSA. En la tabla de resultados de IRSA, la columna <span class="mono">access_url</span> trae la dirección de cada archivo FITS. Referencia: <a href="https://irsa.ipac.caltech.edu/data/SPHEREx/docs/cutout_tool.html" target="_blank" rel="noopener">herramienta oficial de recortes de IRSA</a> y <a href="https://irsa.ipac.caltech.edu/ibe/cutouts.html" target="_blank" rel="noopener">documentación del servicio de recortes</a>.
+    </div>
+  </div>
+</div></section>
+
+<section id="visor"><div class="wrap">
+  <h2>Visor de todo el cielo — Aladin Lite, dentro de la página</h2>
+  <p class="sub">Un mapa interactivo del cielo real: arrastra para moverte y usa la rueda o los dedos para acercar. Lo construye el <strong>CDS — Centro de Datos Astronómicos de Estrasburgo (Francia)</strong>; no es de la NASA, aunque muchos de los datos que muestra sí son de misiones de la NASA (DSS, 2MASS, WISE) servidos desde el CDS. Aladin Lite <strong>no incluye SPHEREx</strong>: para SPHEREx está la consulta a IRSA de arriba. El visor sigue automáticamente la región que elijas en los buscadores.</p>
+  <div id="aladin"><div id="aladinPlaceholder" style="color:#fff;padding:20px">Cargando el visor del cielo…</div></div>
+  <div class="comp-controls">
+    <button class="btn small aladin-survey" data-survey="dss" type="button">DSS2 a color</button>
+    <button class="btn small aladin-survey" data-survey="mass" type="button">2MASS</button>
+    <button class="btn small aladin-survey" data-survey="wise" type="button">AllWISE</button>
+    <button class="btn small" id="btnAladinRetry" type="button" style="display:none">Reintentar el visor</button>
+  </div>
+  <p class="statusline" id="aladinStatus" role="status"></p>
+  <p class="note"><b>Aviso:</b> el CDS de Estrasburgo anunció un incidente de ciberseguridad en su red (noviembre de 2026) y sus servidores de imágenes están caídos o muy degradados, así que ningún visor puede cargar las fotos desde allí por ahora. Este visor carga las <strong>mismas encuestas</strong> (DSS2, 2MASS, AllWISE) desde los <strong>servidores espejo oficiales que el propio CDS recomienda</strong>: STScI/MAST, IRSA, CASDA (Australia) y la ESA. Cuando el CDS se recupere, el visor podrá volver a sus servidores originales.</p>
+</div></section>
+
+<section id="candidatos"><div class="wrap">
+  <h2>Lista de candidatos</h2>
+  <p class="sub">Si al parpadear ves algo que salta, aparece o desaparece, anótalo aquí con sus coordenadas y la época donde lo viste. Un candidato <strong>no es un descubrimiento</strong>: primero hay que verificarlo contra los catálogos conocidos. La lista vive en esta pestaña mientras trabajas; expórtala para guardarla o compartirla con el equipo.</p>
+  <div class="card">
+    <form class="grid" id="candForm">
+      <label class="f">Nombre o apodo<input id="cName" required placeholder="Ej. Punto que salta en Barnard" /></label>
+      <label class="f">RA (grados)<input id="cRA" type="number" step="any" required /></label>
+      <label class="f">Dec (grados)<input id="cDec" type="number" step="any" required /></label>
+      <label class="f">Qué se observó<input id="cObs" placeholder="Ej. Salta entre DSS y DSS2 Red" /></label>
+      <label class="f">Estado
+        <select id="cState"><option>Sin verificar</option><option>Verificado contra catálogos</option><option>Descartado (objeto conocido)</option><option>Candidato — necesita seguimiento</option></select></label>
+      <label class="f">&nbsp;<button class="btn primary" type="submit" style="width:100%">Añadir a la lista</button></label>
+    </form>
+    <div class="table-scroll stack-table" style="margin-top:16px">
+      <table><thead><tr><th>Candidato</th><th>Coordenadas</th><th>Observación</th><th>Estado</th><th></th></tr></thead><tbody id="candBody"></tbody></table>
+    </div>
+    <div class="comp-controls">
+      <button class="btn" id="btnCsv" type="button">Exportar CSV</button>
+      <button class="btn" id="btnJson" type="button">Exportar JSON</button>
+      <button class="btn" id="btnUseCurrent" type="button">Usar la región actual del comparador</button>
+    </div>
+    <p class="statusline" id="candStatus" role="status"></p>
+  </div>
+</div></section>
+
+<section id="proposito"><div class="wrap">
+  <h2>Propósito: buscar el Planeta X con SPHEREx</h2>
+  <div class="card">
+    <h3>La misión SPHEREx</h3>
+    <p>SPHEREx es una misión MIDEX de la NASA lanzada el 11 de marzo de 2025. Es el primer estudio espectral de <strong>todo el cielo</strong> en el infrarrojo cercano: observa en 102 bandas entre 0.75 y 5.0 µm y construirá 4 mapas completos del cielo en 2 años, uno cada ~6 meses. Sus datos se publican en IRSA (IPAC, Caltech); la primera entrega, DR1, salió el 12 de noviembre de 2026. Fuente: <a href="https://science.nasa.gov/mission/spherex/" target="_blank" rel="noopener">NASA — misión SPHEREx</a> y <a href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener">archivo SPHEREx en IRSA</a>.</p>
+    <h3>La hipótesis del Planeta X (Planeta Nueve)</h3>
+    <p>Batygin y Brown propusieron en 2016 que las órbitas agrupadas de objetos lejanos del cinturón de Kuiper se explican con un planeta aún no visto: de unas <strong>4–10 masas terrestres</strong>, a <strong>300–800 UA</strong> del Sol. A noviembre de 2026 <strong>no ha sido descubierto, tampoco descartado, y no hay consenso</strong>. El equipo eligió como región inicial de búsqueda RA 02h 30m (37.5°), Dec −15°, en Cetus, dentro del área refinada de 600–800 grados cuadrados que sale de los datos de Cassini (Holman &amp; Payne) y de los modelos de Batygin &amp; Brown — pero esta herramienta puede mirar <strong>cualquier</strong> región del cielo.</p>
+    <h3>La advertencia honesta</h3>
+    <p>Un Planeta Nueve frío (28–53 K) emitiría su máximo térmico entre 50 y 100 µm, <strong>fuera</strong> del rango de SPHEREx (hasta 5.0 µm). SPHEREx ayuda por otro camino: su cobertura repetida de todo el cielo. Un planeta así se movería unos <strong>1.5–5 minutos de arco entre mapas separados por 6 meses</strong>, y eso es exactamente lo que un comparador por parpadeo puede delatar. Por eso aquí todo hallazgo se registra como <em>candidato que necesita seguimiento</em>, nunca como detección confirmada.</p>
+    <h3>Un candidato real de la literatura: Phan et al. 2025</h3>
+    <p>Phan y colaboradores (2025) encontraron un objeto que aparece en datos de IRAS (1983) y de AKARI (2006) separado por 47.46 minutos de arco en 23 años. Está <strong>sin confirmar</strong>, y su inclinación orbital implícita (~120°) no encaja con el Planeta Nueve de Batygin–Brown (15–20°). Lo precargamos en la lista de candidatos como ejemplo de cómo se documenta un caso real.</p>
+  </div>
+  <h2 style="margin-top:28px">Los 6 requisitos del reto y cómo los cumple esta herramienta</h2>
+  <div class="card table-scroll stack-table">
+    <table><thead><tr><th>#</th><th>Requisito del reto</th><th>Cómo se cumple aquí</th></tr></thead><tbody>
+      <tr><td data-l="#">1</td><td data-l="Requisito">Explorar datos de todo el cielo y encontrar candidatos que se mueven</td><td data-l="Cómo">Comparador por parpadeo con fotos reales de varias épocas, visor Aladin Lite y consulta SIA2 a IRSA, todo dentro de la página.</td></tr>
+      <tr><td data-l="#">2</td><td data-l="Requisito">Verificar los candidatos contra catálogos conocidos</td><td data-l="Cómo">Cada candidato lleva estado de verificación; el visor permite contrastar la posición con los archivos DSS, 2MASS y AllWISE.</td></tr>
+      <tr><td data-l="#">3</td><td data-l="Requisito">Visualizar imágenes y espectros a través de las épocas</td><td data-l="Cómo">Épocas DSS (años 50) y DSS2 Red/Blue (años 80–90) con parpadeo, mezcla, diferencia y lado a lado — y DSS2 IR hacia el centro galáctico, donde el polvo bloquea la luz azul —; los espectros e imágenes SPHEREx se consultan por SIA2 en IRSA, y la página incluye una sección de tablas guardadas que declara, región por región, el resultado real de la captura intentada contra IRSA el 15 de noviembre de 2026 (ese día su servidor de consultas no respondió en más de 280 intentos, y así se dice, sin filas inventadas).</td></tr>
+      <tr><td data-l="#">4</td><td data-l="Requisito">Guardar, compartir y exportar listas de candidatos</td><td data-l="Cómo">Lista de candidatos con exportación a CSV y JSON para compartir con el equipo.</td></tr>
+      <tr><td data-l="#">5</td><td data-l="Requisito">Documentación clara y tutoriales</td><td data-l="Cómo">Explicación en 20 segundos, demo guiada de 5 pasos, glosario en línea (FITS, recortes, Aladin Lite) y enlaces a los tutoriales oficiales de SPHEREx en IRSA.</td></tr>
+      <tr><td data-l="#">6</td><td data-l="Requisito">Manejar un gran volumen de datos con eficiencia</td><td data-l="Cómo">La página nunca descarga archivos gigantes: SkyView genera recortes JPEG de 600×600 y SPHEREx se consulta por SIA2 y recortes FITS cortados en el servidor de IRSA.</td></tr>
+    </tbody></table>
+  </div>
+</div></section>
+
+<section id="equipo"><div class="wrap">
+  <h2>Equipo THE SCARERS</h2>
+  <p class="sub">Proyecto <strong>Planet X and SPHEREx</strong> · Repositorio: <a href="https://github.com/arith-da/planet-x-spherex" target="_blank" rel="noopener">github.com/arith-da/planet-x-spherex</a> · Página pública del equipo: <a href="https://arith-da.github.io/planet-x-spherex/" target="_blank" rel="noopener">arith-da.github.io/planet-x-spherex</a></p>
+  <div class="card table-scroll stack-table">
+    <table><thead><tr><th>Integrante</th><th>Rol en el proyecto</th></tr></thead><tbody>
+      <tr><td data-l="Integrante">Erick Arith Dominguez Acosta</td><td data-l="Rol">Dueño del equipo · Coordinador general y presentador</td></tr>
+      <tr><td data-l="Integrante">Emir Cruz Ramos</td><td data-l="Rol">GitHub y publicación</td></tr>
+      <tr><td data-l="Integrante">Gerardo Cruz Ramos</td><td data-l="Rol">Datos y verificación</td></tr>
+      <tr><td data-l="Integrante">Andrea Martinez Pineda</td><td data-l="Rol">Experiencia de usuario y pruebas</td></tr>
+      <tr><td data-l="Integrante">Aaron Zaid Grajeda Diaz</td><td data-l="Rol">Documentación</td></tr>
+      <tr><td data-l="Integrante">Fernando Martinez Gonzales</td><td data-l="Rol">Video de demostración y presentación</td></tr>
+    </tbody></table>
+  </div>
+</div></section>
+
+<section id="recursos"><div class="wrap">
+  <h2>Recursos y herramientas utilizados</h2>
+  <p class="sub">Todo lo que esta página usa es público y está citado. Las imágenes son reales y cada una lleva el nombre de su archivo y su época.</p>
+  <div class="card"><ul class="resources" style="margin:0;padding-left:20px">
+    <li><strong>NASA SkyView</strong> (GSFC) — genera las fotos reales del comparador (DSS, DSS2 Red, DSS2 Blue y DSS2 IR para el centro galáctico). <a href="https://skyview.gsfc.nasa.gov/" target="_blank" rel="noopener">skyview.gsfc.nasa.gov</a></li>
+    <li><strong>IRSA — IPAC / Caltech</strong> — archivo oficial de SPHEREx: página de la misión, servicio SIA2, explorador de datos y servicio de recortes FITS. <a href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener">Archivo SPHEREx en IRSA</a> · <a href="https://caltech-ipac.github.io/spherex-archive-documentation/spherex-data-access/" target="_blank" rel="noopener">Documentación de acceso a datos</a> · <a href="https://caltech-ipac.github.io/irsa-tutorials/spherex/" target="_blank" rel="noopener">Tutoriales de SPHEREx</a></li>
+    <li><strong>Espejo oficial de SPHEREx en la nube (AWS)</strong> — copia idéntica de los datos de SPHEREx que IRSA publica en Amazon S3 (bucket público <span class="mono">nasa-irsa-spherex</span>); es la ruta que usa el explorador de archivos de esta página cuando el servidor de consultas SIA de IRSA no responde. <a href="https://irsa.ipac.caltech.edu/cloud_access/" target="_blank" rel="noopener">Acceso a datos en la nube de IRSA</a></li>
+    <li><strong>Tablas guardadas de IRSA</strong> — el 15 de noviembre de 2026 se intentó capturar las tablas reales de las 6 regiones principales desde el servicio SIA2 de IRSA (colección <span class="mono">spherex_dr1</span>, radio 0.05°, MAXREC 500), con hasta 40 reintentos por región y más de 280 intentos en total entre las 06:53 y las 07:38 h CST. Su servidor de consultas no respondió en ningún intento («502 Proxy Error»), mientras el resto del sitio de IRSA sí respondía, por lo que la sección de tablas guardadas muestra ese estado con honestidad y sin filas inventadas, y deja la consulta en vivo y el espejo en AWS como vías de acceso. Cuando IRSA responda, la captura se repetirá y las tablas quedarán guardadas en la página con su fecha y hora, cada enlace FITS apuntando al <span class="mono">access_url</span> original de IRSA.</li>
+    <li><strong>Aladin Lite v3</strong> — visor de todo el cielo del CDS, Observatorio de Estrasburgo (CNRS / Universidad de Estrasburgo, Francia). <a href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noopener">aladin.cds.unistra.fr</a> · Mientras el CDS se recupera de su incidente de noviembre de 2026, las encuestas del visor se sirven desde los espejos oficiales que el propio CDS recomienda: <a href="https://mast.stsci.edu/" target="_blank" rel="noopener">STScI/MAST</a>, <a href="https://irsa.ipac.caltech.edu/" target="_blank" rel="noopener">IRSA</a>, <a href="https://casda.csiro.au/" target="_blank" rel="noopener">CASDA/CSIRO</a> y <a href="https://www.esa.int/" target="_blank" rel="noopener">ESA</a>.</li>
+    <li><strong>NASA — misión SPHEREx</strong>. <a href="https://science.nasa.gov/mission/spherex/" target="_blank" rel="noopener">science.nasa.gov/mission/spherex</a></li>
+    <li><strong>NASA Space Apps Challenge 2026</strong> — enunciado oficial del reto Planet X and SPHEREx. <a href="https://www.spaceappschallenge.org/2026/challenges/planet-x-and-spherex/" target="_blank" rel="noopener">spaceappschallenge.org</a></li>
+    <li><strong>Archivo Gaia</strong> (referencia para verificación de catálogos). <a href="https://archive.stsci.edu/missions-and-data/gaia" target="_blank" rel="noopener">archive.stsci.edu — Gaia</a></li>
+    <li><strong>WiseView</strong> — comparador de épocas de WISE (referencia). <a href="http://byw.tools/wiseview" target="_blank" rel="noopener">byw.tools/wiseview</a></li>
+  </ul></div>
+</div></section>
+
+<footer><div class="wrap">
+  <p><strong>Código abierto — licencia MIT.</strong> Esta herramienta es un proyecto público del equipo THE SCARERS para el NASA Space Apps Challenge 2026. El código vive en <a href="https://github.com/arith-da/planet-x-spherex" target="_blank" rel="noopener">github.com/arith-da/planet-x-spherex</a>: cualquiera puede usarlo, estudiarlo y mejorarlo citando al equipo. Las imágenes pertenecen a sus archivos de origen (NASA SkyView / DSS / STScI, CDS) y los datos de SPHEREx a la NASA y al equipo de la misión, servidos por IRSA.</p>
+  <p>Hecha por estudiantes, con datos reales y las advertencias honestas que la ciencia exige: ningún candidato de esta página es un planeta confirmado.</p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* ---------- State ---------- */
+var EPOCHS=[
+ {key:"dss", survey:"DSS", label:"DSS", years:"años 50", tag:"ANTES"},
+ {key:"red", survey:"DSS2 Red", label:"DSS2 Red", years:"años 80–90", tag:"DESPUÉS"},
+ {key:"blue", survey:"DSS2 Blue", label:"DSS2 Blue", years:"años 80–90 · luz azul", tag:"DESPUÉS"}
+];
+var EPOCH3_BLUE={key:"blue", survey:"DSS2 Blue", label:"DSS2 Blue", years:"años 80–90 · luz azul", tag:"DESPUÉS"};
+var EPOCH3_IR={key:"ir", survey:"DSS2 IR", label:"DSS2 IR", years:"años 80–90 · luz infrarroja", tag:"DESPUÉS"};
+var state={ra:269.452, dec:4.693, fov:0.5, name:"Estrella de Barnard — la demo donde el cambio SÍ se ve", barnard:true};
+var loaded=[false,false,false], failed=[false,false,false];
+var current=0, compare=1, blinking=false, blinkTimer=null, diffOn=false, sideOn=false, demoStep=0, demoTimer=null, markersOn=false;
+
+var PRESETS=[
+ {name:"Estrella de Barnard — la demo", desc:"La estrella que más rápido se mueve en todo el cielo (10.3″ al año). Entre los años 50 y los 80–90 se desplazó ~5 minutos de arco: al parpadear, salta. Empieza aquí.", ra:269.452, dec:4.693, fov:0.5, star:true, barnard:true},
+ {name:"Cetus — región del equipo", desc:"La región inicial de búsqueda del Planeta X del equipo: RA 02h 30m, Dec −15°, dentro del área refinada por los datos de Cassini y los modelos de Batygin & Brown.", ra:37.5, dec:-15, fov:2},
+ {name:"Cinturón de Orión", desc:"Las tres estrellas en fila más famosas del cielo de invierno, sobre el ecuador celeste. Un campo brillante y fácil de reconocer.", ra:85.2, dec:-1.2, fov:2},
+ {name:"Las Pléyades", desc:"El cúmulo de estrellas jóvenes en Tauro que se ve a simple vista: cientos de estrellas nacidas del mismo gas hace unos 100 millones de años.", ra:56.8, dec:24.1, fov:2},
+ {name:"Centro de la Vía Láctea", desc:"La dirección más poblada del cielo: hacia el centro de nuestra galaxia, en Sagitario, donde las estrellas se amontonan por millones. Dato: en luz azul esta zona sale negra — el polvo de la galaxia la bloquea por completo — así que aquí la tercera foto es en luz infrarroja (DSS2 IR), que sí atraviesa el polvo.", ra:266.4, dec:-29.0, fov:2, alt3:true},
+ {name:"Galaxia de Andrómeda (M31)", desc:"Nuestra galaxia vecina, a 2.5 millones de años luz: el objeto más lejano que se puede ver sin telescopio en una noche oscura.", ra:10.68, dec:41.27, fov:2}
+];
+
+/* ---------- SkyView URLs (no crossOrigin: SkyView sends no CORS header) ---------- */
+function skyUrl(ep){
+  var q="Survey="+encodeURIComponent(EPOCHS[ep].survey)
+    +"&position="+encodeURIComponent(state.ra+","+state.dec)
+    +"&size="+encodeURIComponent(state.fov+","+state.fov)
+    +"&Pixels=600,600&Scaling=Log&return=jpg";
+  return "https://skyview.gsfc.nasa.gov/current/cgi/runquery.pl?"+q;
+}
+function setBadge(){
+  var b=$("badge");
+  if(!loaded[current]){ b.innerHTML="CARGANDO<small>"+EPOCHS[current].label+" · "+EPOCHS[current].years+" — aún no llega de SkyView</small>"; return; }
+  b.innerHTML=EPOCHS[current].tag+" · "+EPOCHS[current].label+"<small>"+EPOCHS[current].years+" · foto real de NASA SkyView</small>";
+}
+function updateVeil(){
+  var n=loaded.filter(Boolean).length;
+  $("veilProgress").textContent=n+" de 3 épocas listas";
+  if(n>=1){ $("veil").classList.add("hide"); }
+  else { $("veil").classList.remove("hide"); }
+  $("veilRetry").style.display=(failed.some(Boolean)&&n<3)?"inline-flex":"none";
+  document.querySelectorAll(".epoch-btn").forEach(function(btn,i){
+    var st=btn.querySelector("[data-st]");
+    if(loaded[i]){ st.textContent="✓ lista"; st.style.color="var(--ok)"; }
+    else if(failed[i]){ st.textContent="✕ no cargó · toca para reintentar"; st.style.color="var(--danger)"; }
+    else { st.textContent="cargando…"; st.style.color=""; }
+    btn.classList.toggle("active", i===current && !sideOn);
+  });
+  setBadge();
+}
+function render(){
+  for(var i=0;i<3;i++){
+    var img=$("img"+i);
+    var show=false;
+    if(sideOn){ show=(i===0||i===compare); img.style.opacity="1"; img.classList.toggle("diff",false); }
+    else if(diffOn){ show=(i===0||i===compare); img.style.opacity=(i===compare)?($("mixRange").value/100):"1"; img.classList.toggle("diff", i===compare); }
+    else { show=(i===0||i===current); if(i!==0&&i===current){ img.style.opacity=($("mixRange").value/100); } else { img.style.opacity="1"; } img.classList.toggle("diff",false); }
+    img.classList.toggle("on", show&&loaded[i]);
+  }
+  $("stage").classList.toggle("side", sideOn);
+  $("markers").classList.toggle("on", markersOn && state.barnard && !sideOn);
+  setBadge(); updateVeilLabelsOnly();
+}
+function updateVeilLabelsOnly(){ /* badge handled in render; veil in updateVeil */ }
+function loadEpoch(i, force){
+  if(loaded[i]&&!force) return;
+  failed[i]=false; updateVeil();
+  var probe=new Image(); /* deliberately NO crossOrigin */
+  probe.onload=function(){ loaded[i]=true; failed[i]=false; var img=$("img"+i); img.src=skyUrl(i); render(); updateVeil(); maybeAutoBlink(); };
+  probe.onerror=function(){ failed[i]=true; updateVeil();
+    var bad=EPOCHS.filter(function(e,j){return failed[j]&&!loaded[j];}).map(function(e){return e.label;});
+    var good=EPOCHS.filter(function(e,j){return loaded[j];}).map(function(e){return e.label;});
+    if(good.length===0){ $("compStatus").textContent="Ninguna época llegó de SkyView todavía (fallaron: "+bad.join(", ")+"). Toca cualquier botón de época o «Reintentar las que faltan» para intentarlo de nuevo."; }
+    else { $("compStatus").textContent="No llegó: "+bad.join(", ")+". Toca su botón para reintentarla. Sí están disponibles: "+good.join(", ")+"."; }
+  };
+  probe.src=skyUrl(i)+(force?"&r="+Date.now():"");
+}
+function loadAll(){ loaded=[false,false,false]; failed=[false,false,false]; $("veil").classList.remove("hide"); updateVeil(); for(var i=0;i<3;i++) loadEpoch(i,false); render(); }
+function readyForBlink(){ return loaded[0] && loaded.some(function(v,i){return i>0&&v;}); }
+var pendingBlink=false;
+function maybeAutoBlink(){ if(pendingBlink&&readyForBlink()){ pendingBlink=false; startBlink(); } }
+function startBlink(){
+  if(!readyForBlink()){ pendingBlink=true; $("compStatus").textContent="Esperando a que lleguen la foto antigua y una más… el parpadeo arrancará solo."; return; }
+  if(!loaded[compare]){ compare=loaded[1]?1:2; }
+  blinking=true; $("btnBlink").textContent="⏸ Detener parpadeo"; $("btnBlink").classList.add("active");
+  var showCompare=false;
+  blinkTimer=setInterval(function(){ showCompare=!showCompare; current=showCompare?compare:0; render(); },900);
+  $("compStatus").textContent="Parpadeando entre "+EPOCHS[0].label+" ("+EPOCHS[0].years+") y "+EPOCHS[compare].label+" ("+EPOCHS[compare].years+"). Busca lo que salta.";
+}
+function stopBlink(){ blinking=false; pendingBlink=false; if(blinkTimer)clearInterval(blinkTimer); blinkTimer=null; $("btnBlink").textContent="▶ Parpadear"; $("btnBlink").classList.remove("active"); }
+
+/* ---------- Region switching ---------- */
+function setRegion(r){
+  stopBlink(); stopDemo();
+  state={ra:r.ra, dec:r.dec, fov:r.fov, name:r.name, barnard:!!r.barnard};
+  current=0; compare=1;
+  /* Epoch 3: DSS2 Blue everywhere EXCEPT where the blue plate comes back
+     completely black (verified: galactic centre, mean pixel value 0.0 —
+     interstellar dust absorbs all blue light toward the galactic centre).
+     There the third epoch is DSS2 IR, which does cross the dust. */
+  EPOCHS[2]=r.alt3?EPOCH3_IR:EPOCH3_BLUE;
+  $("ep3Title").textContent="3 · "+EPOCHS[2].label;
+  $("ep3Sub").textContent=(r.alt3?"Luz infrarroja":"Luz azul")+" · años 80–90";
+  $("img2").alt="Foto real del cielo, archivo "+EPOCHS[2].survey+", años 80 a 90";
+  /* Barnard markers belong ONLY to the Barnard region: hide the button
+     everywhere else and force the ovals off. */
+  var bm=$("btnMarkers");
+  bm.style.display=r.barnard?"":"none";
+  if(!r.barnard){ markersOn=false; bm.classList.remove("active"); bm.setAttribute("aria-pressed","false"); }
+  $("regionName").textContent=r.name;
+  $("regionCoords").textContent="RA "+r.ra+"° · Dec "+(r.dec>=0?"+":"")+r.dec+"° · campo "+r.fov+"°";
+  $("inRA").value=r.ra; $("inDec").value=r.dec; $("inFov").value=r.fov;
+  buildSia();
+  loadAll();
+  if(window.__aladin){ try{ window.__aladin.gotoRaDec(r.ra, r.dec); }catch(e){} }
+  $("compStatus").textContent="Cargando fotos reales de «"+r.name+"» desde NASA SkyView…"+(r.alt3?" En esta región la foto de luz azul sale completamente negra (el polvo de la galaxia la bloquea), por eso la tercera época es DSS2 IR, en luz infrarroja.":"");
+}
+
+/* ---------- Presets ---------- */
+var presetsEl=$("presets");
+PRESETS.forEach(function(p){
+  var b=document.createElement("button"); b.type="button"; b.className="preset"+(p.star?" star":"");
+  b.innerHTML="<b>"+p.name+"</b><p>"+p.desc+"</p><span class='coords mono'>RA "+p.ra+"° · Dec "+(p.dec>=0?"+":"")+p.dec+"° · campo "+p.fov+"°</span>";
+  b.addEventListener("click",function(){ setRegion(p); document.getElementById("comparador").scrollIntoView({behavior:"smooth"}); });
+  presetsEl.appendChild(b);
+});
+$("ctaBarnard").addEventListener("click",function(){ setRegion(PRESETS[0]); document.getElementById("comparador").scrollIntoView({behavior:"smooth"}); startDemo(); });
+
+/* ---------- Comparator controls ---------- */
+document.querySelectorAll(".epoch-btn").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    var i=parseInt(btn.getAttribute("data-epoch"),10);
+    if(failed[i]&&!loaded[i]){ loadEpoch(i,true); return; }
+    stopBlink(); current=i; if(i>0)compare=i; render();
+  });
+});
+$("btnBlink").addEventListener("click",function(){ blinking?stopBlink():startBlink(); });
+$("btnDiff").addEventListener("click",function(){
+  stopBlink(); diffOn=!diffOn; this.setAttribute("aria-pressed",diffOn); this.classList.toggle("active",diffOn);
+  if(diffOn&&!loaded[compare]){ $("compStatus").textContent="Diferencia activada, pero la época de comparación aún no llega; en cuanto cargue se verá."; }
+  else if(diffOn){ $("compStatus").textContent="Modo Diferencia: lo idéntico se vuelve negro; solo queda encendido lo que cambió, se movió o apareció."; }
+  render();
+});
+$("btnSide").addEventListener("click",function(){
+  stopBlink(); sideOn=!sideOn; this.setAttribute("aria-pressed",sideOn); this.classList.toggle("active",sideOn); render();
+});
+$("btnMarkers").addEventListener("click",function(){
+  if(!state.barnard){ return; } /* button is hidden outside Barnard; belt and braces */
+  markersOn=!markersOn; this.setAttribute("aria-pressed",markersOn); this.classList.toggle("active",markersOn); render();
+  $("compStatus").textContent=markersOn?"Óvalos visibles: el de la izquierda marca dónde estaba Barnard en los años 50 y el de la derecha dónde estaba en los años 80–90 (posiciones aproximadas).":"Óvalos ocultos. Parpadea y busca la estrella que salta.";
+});
+$("mixRange").addEventListener("input",function(){ $("mixVal").textContent=this.value+"%"; if(!blinking) render(); });
+$("veilRetry").addEventListener("click",function(){ for(var i=0;i<3;i++) if(!loaded[i]) loadEpoch(i,true); });
+/* press-and-hold peek */
+var stageEl=$("stage"), peekPrev=null;
+function peekStart(e){ if(sideOn||diffOn) return; peekPrev=current; current=(current===0)?compare:0; render(); }
+function peekEnd(){ if(peekPrev!==null){ current=peekPrev; peekPrev=null; render(); } }
+stageEl.addEventListener("pointerdown",peekStart); stageEl.addEventListener("pointerup",peekEnd); stageEl.addEventListener("pointerleave",peekEnd);
+
+/* ---------- Guided demo ---------- */
+var DEMO=[
+ "Paso 1 de 5 — Esta es la foto ANTIGUA: DSS, placas de los años 50. Todo lo que ves son estrellas lejanas… y una estrella cercana: Barnard.",
+ "Paso 2 de 5 — Ahora la foto NUEVA: DSS2 Red, de los años 80–90. Parece la misma foto, ¿verdad? Casi todo está en el mismo sitio.",
+ "Paso 3 de 5 — Parpadeo: alternamos las dos fotos. Fíjate bien: UNA estrella salta de un lado a otro. Esa es Barnard, moviéndose de verdad.",
+ "Paso 4 de 5 — Modo Diferencia: lo que no cambió se apaga a negro. Quedan dos puntos encendidos: donde Barnard estaba y donde está ahora.",
+ "Paso 5 de 5 — Así se busca el Planeta X: un objeto que salta entre épocas. Si lo encuentras, anótalo en la lista de candidatos y verifícalo. ¡Ahora inténtalo tú!"
+];
+function stopDemo(){ if(demoTimer)clearInterval(demoTimer); demoTimer=null; demoStep=0; $("demoBanner").classList.remove("on"); }
+function startDemo(){
+  if(!state.barnard){ setRegion(PRESETS[0]); }
+  stopBlink(); diffOn=false; $("btnDiff").classList.remove("active");
+  var banner=$("demoBanner"); banner.classList.add("on");
+  demoStep=0;
+  function step(){
+    banner.textContent=DEMO[demoStep];
+    if(demoStep===0){ current=0; render(); }
+    if(demoStep===1){ current=1; compare=1; render(); }
+    if(demoStep===2){ startBlink(); }
+    if(demoStep===3){ stopBlink(); diffOn=true; $("btnDiff").classList.add("active"); $("btnDiff").setAttribute("aria-pressed","true"); current=1; render(); }
+    if(demoStep===4){ diffOn=false; $("btnDiff").classList.remove("active"); current=0; render(); }
+    demoStep++;
+    if(demoStep>=DEMO.length){ clearInterval(demoTimer); demoTimer=null; }
+  }
+  step(); demoTimer=setInterval(step,4200);
+}
+$("btnDemo").addEventListener("click",function(){ stopDemo(); startDemo(); document.getElementById("comparador").scrollIntoView({behavior:"smooth"}); });
+
+/* ---------- Advanced search + IRSA SIA2 ---------- */
+function buildSia(){
+  var ra=parseFloat($("inRA").value), dec=parseFloat($("inDec").value), rad=parseFloat($("inRad").value), col=$("inCol").value;
+  if(isNaN(ra)||isNaN(dec)||isNaN(rad)) return "";
+  var url="https://irsa.ipac.caltech.edu/SIA?COLLECTION="+encodeURIComponent(col)
+    +"&POS="+encodeURIComponent("circle "+ra+" "+dec+" "+rad)+"&RESPONSEFORMAT=HTML&MAXREC=500";
+  $("siaUrl").textContent=url;
+  /* The download button asks IRSA for the same table as CSV. MAXREC caps
+     the result at 500 rows and the server honours it (verified: MAXREC=100
+     returned exactly 100 rows). The radius decides whether a query can
+     finish at all — radius 0.1 hung past 150 s even with MAXREC, until
+     the proxy cut it — hence the 0.05 default and the warning shown
+     whenever the radius goes above it. Re-verified 2026-11-15: IRSA's
+     query server is also intermittent (most attempts fail instantly with
+     a 502; a successful radius-0.05 answer takes ~21 s), which is why
+     the in-page consult below auto-retries on fast loads. */
+  $("btnOpenSia").href=url.replace("RESPONSEFORMAT=HTML","RESPONSEFORMAT=CSV");
+  var warn=$("siaRadWarn");
+  if(rad>0.05){
+    warn.style.display="block";
+    warn.textContent="Ojo con el radio: con más de 0.05° la consulta a IRSA se cuelga minutos y suele terminar en «Proxy Error» (comprobado hoy). Para que la respuesta pueda llegar — tarda unos 20 segundos cuando el servidor responde — usa 0.05 o menos.";
+  } else { warn.style.display="none"; }
+  return url;
+}
+["inRA","inDec","inRad","inCol"].forEach(function(id){ $(id).addEventListener("input",buildSia); $(id).addEventListener("change",buildSia); });
+$("advForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  var ra=parseFloat($("inRA").value), dec=parseFloat($("inDec").value), fov=parseFloat($("inFov").value);
+  if(isNaN(ra)||isNaN(dec)||isNaN(fov)){ $("siaStatus").textContent="Revisa las coordenadas: RA entre 0 y 360, Dec entre −90 y 90."; return; }
+  setRegion({name:"Coordenadas personalizadas", ra:ra, dec:dec, fov:Math.min(Math.max(fov,0.1),10), barnard:false});
+  document.getElementById("comparador").scrollIntoView({behavior:"smooth"});
+});
+/* Copy with a real fallback chain: the async clipboard API is blocked
+   inside many embedded frames, so fall back to the classic
+   textarea + execCommand route, and finally to selecting the text so
+   the user only has to press Ctrl/Cmd+C. */
+function selectSiaText(){
+  var el=$("siaUrl"); var range=document.createRange(); range.selectNodeContents(el);
+  var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+}
+$("siaUrl").addEventListener("click",selectSiaText);
+function copySiaText(text,done){
+  function classic(){
+    var ta=document.createElement("textarea");
+    ta.value=text; ta.setAttribute("readonly","");
+    ta.style.position="fixed"; ta.style.left="-9999px"; ta.style.top="0"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    var ok=false; try{ ok=document.execCommand("copy"); }catch(e){ ok=false; }
+    ta.remove(); done(ok);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText&&window.isSecureContext){
+    navigator.clipboard.writeText(text).then(function(){ done(true); },classic);
+  } else { classic(); }
+}
+$("btnCopySia").addEventListener("click",function(){
+  var url=buildSia(); if(!url){ $("siaStatus").textContent="Primero revisa las coordenadas: la consulta no se pudo construir."; return; }
+  copySiaText(url,function(ok){
+    if(ok){ $("siaStatus").textContent="✓ Consulta copiada. Ya puedes pegarla donde la necesites (en un mensaje, en tu navegador o en tus notas)."; }
+    else { selectSiaText(); $("siaStatus").textContent="Tu navegador bloqueó el copiado automático, pero la consulta quedó seleccionada en el recuadro de arriba: pulsa Ctrl+C (o Cmd+C en Mac) para copiarla."; }
+  });
+});
+/* In-page IRSA consult: fetch() can NEVER work here — IRSA sends no CORS
+   headers (verified), so the browser blocks reading the response. An
+   embedded frame is not subject to CORS and IRSA sends no
+   X-Frame-Options (verified), so the official HTML table loads and is
+   usable inside this page. Failure modes, all on IRSA's side and all
+   verified live on 2026-11-15: (1) queries with radius 0.1 or more hang
+   past 150 s until the proxy cuts them; (2) the query server is
+   INTERMITTENT — most attempts return an instant "502 Proxy Error"
+   (<1.3 s in every observed failure), but roughly 1 in 4–6 attempts
+   succeeds, and a success takes ~21 s and returns the real table
+   (260 rows for the default Cetus query). That timing gap is the only
+   detection signal available: the frame is cross-origin, so the page
+   cannot read whether it received the table or the error page, but a
+   load that finishes in under ~3.5 s is the proxy error's signature.
+   So this loader AUTO-RETRIES on fast loads (up to 6 attempts), shows
+   the attempt number and elapsed seconds, offers stop at any moment,
+   and after 45 s without any answer says so plainly and offers a
+   one-click retry at radius 0.05. */
+var siaLoading=false, siaArmed=false, siaElapsedTimer=null, siaSlowTimer=null, siaRetryTimer=null;
+var siaStart=0, siaAttemptStart=0, siaAttempt=0, siaUrlCurrent="";
+var SIA_MAX_AUTO=6, SIA_FAST_FAIL_MS=3500;
+function siaSetBtns(loading,done){
+  $("btnStopSia").style.display=loading?"":"none";
+  $("btnRetrySia").style.display=done?"":"none";
+  $("btnRetrySmall").style.display=done?"":"none";
+}
+function siaClearTimers(){
+  if(siaElapsedTimer){ clearInterval(siaElapsedTimer); siaElapsedTimer=null; }
+  if(siaSlowTimer){ clearTimeout(siaSlowTimer); siaSlowTimer=null; }
+  if(siaRetryTimer){ clearTimeout(siaRetryTimer); siaRetryTimer=null; }
+}
+function siaLoadingMsg(){
+  var s=Math.round((Date.now()-siaAttemptStart)/1000);
+  $("siaStatus").textContent="Consultando a IRSA… intento "+siaAttempt+" de "+SIA_MAX_AUTO+" ("+s+" s en este intento). La respuesta buena tarda unos 20 segundos; si llega el error de proxy (menos de 1 s), la página reintenta sola. Puedes detenerlo cuando quieras.";
+}
+function siaFireFrame(){
+  var frame=$("siaFrame");
+  siaArmed=false;
+  frame.src="about:blank";
+  setTimeout(function(){ if(!siaLoading) return; siaArmed=true; siaAttemptStart=Date.now(); frame.src=siaUrlCurrent; },60);
+}
+function startSiaLoad(){
+  var url=buildSia(); var st=$("siaStatus");
+  if(!url){ st.textContent="Primero revisa las coordenadas: la consulta no se pudo construir."; return; }
+  var wrap=$("siaFrameWrap");
+  wrap.style.display="block";
+  siaUrlCurrent=url;
+  siaLoading=true; siaAttempt=1; siaStart=Date.now(); siaAttemptStart=Date.now();
+  siaSetBtns(true,false); siaClearTimers(); siaLoadingMsg();
+  siaElapsedTimer=setInterval(function(){ if(siaLoading) siaLoadingMsg(); },1000);
+  siaSlowTimer=setTimeout(function(){
+    if(!siaLoading) return;
+    st.textContent="IRSA lleva más de 45 segundos sin responder en este intento: la consulta probablemente se colgó en su servidor (pasa con radios mayores de 0.05 o cuando está saturado). Detén la carga y reintenta, o reintenta directo con radio 0.05.";
+    siaSetBtns(true,true);
+  },45000);
+  siaFireFrame();
+  wrap.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+$("siaFrame").addEventListener("load",function(){
+  if(!siaArmed||!siaLoading) return; /* ignores the about:blank reset */
+  siaArmed=false;
+  var el=Date.now()-siaAttemptStart;
+  var s=Math.max(1,Math.round(el/1000));
+  /* The frame is cross-origin, so this page cannot read what IRSA actually
+     sent: a real table and IRSA's own "502 Proxy Error" page both fire this
+     same load event. The distinguisher is TIME, verified live 2026-11-15:
+     every observed proxy error arrived in under 1.3 s, and every real
+     answer took ~21 s. A load under 3.5 s is therefore treated as the
+     proxy error and retried automatically; a slow load is reported as
+     "very likely the table" without claiming certainty. */
+  if(el<SIA_FAST_FAIL_MS&&siaAttempt<SIA_MAX_AUTO){
+    $("siaStatus").textContent="IRSA devolvió su error de proxy en "+s+" s (su error llega al instante; la respuesta buena tarda ~20 s). Reintentando solo: va el intento "+(siaAttempt+1)+" de "+SIA_MAX_AUTO+"…";
+    siaRetryTimer=setTimeout(function(){
+      if(!siaLoading) return;
+      siaAttempt++; siaLoadingMsg(); siaFireFrame();
+    },2500);
+    return;
+  }
+  siaLoading=false; siaClearTimers(); siaSetBtns(false,true);
+  if(el<SIA_FAST_FAIL_MS){
+    $("siaStatus").textContent="Se intentó "+SIA_MAX_AUTO+" veces y IRSA devolvió su error de proxy al instante en todas: su servidor de consultas está fallando ahora mismo y no es tu conexión. Espera unos minutos y pulsa «Reintentar», o baja los archivos FITS desde el explorador del espejo oficial (AWS) aquí debajo, que no depende de ese servidor.";
+  } else {
+    $("siaStatus").textContent="IRSA tardó "+s+" s en responder en el intento "+siaAttempt+": ese tiempo coincide con una respuesta de verdad (su error de proxy llega en menos de 1 s), así que lo más probable es que la tabla de abajo sea la buena. Cada fila es un archivo de SPHEREx y su enlace FITS está en la columna access_url. Si en cambio ves «Proxy Error», pulsa «Reintentar».";
+  }
+});
+$("btnFetchSia").addEventListener("click",startSiaLoad);
+$("btnRetrySia").addEventListener("click",startSiaLoad);
+$("btnRetrySmall").addEventListener("click",function(){ $("inRad").value="0.05"; startSiaLoad(); });
+$("btnStopSia").addEventListener("click",function(){
+  siaLoading=false; siaArmed=false; siaClearTimers(); siaSetBtns(false,true);
+  $("siaFrame").src="about:blank";
+  $("siaStatus").textContent="Carga detenida. Cuando quieras, pulsa «Reintentar» o «Reintentar con radio 0.05».";
+});
+$("btnOpenSia").addEventListener("click",function(){
+  $("siaStatus").textContent="La tabla CSV se pide en una pestaña nueva, directa al servidor de consultas de IRSA, que hoy (15 de noviembre de 2026) falla a ratos. Si la pestaña muestra «502 Proxy Error», ciérrala y vuelve a pulsar este botón: el error llega en menos de 1 segundo, así que se nota enseguida, y a fuerza de intentos el servidor acaba respondiendo. Cuando responde, tarda unos 20 segundos y el CSV baja (comprobado hoy: 260 filas para la región por defecto). Si prefieres no pelear con la pestaña, usa «Consultar dentro de la página», que reintenta sola. Y los archivos FITS bajan siempre desde el explorador del espejo oficial (AWS), aquí debajo.";
+});
+
+/* ---------- SPHEREx files via the official AWS mirror (works while SIA is down) ----------
+   IRSA mirrors every SPHEREx file on AWS S3 (bucket "nasa-irsa-spherex",
+   documented on IRSA's Cloud Data Access page). Verified live 2026-11-15
+   while SIA/TAP returned 502 on every query: bucket listings answer in
+   ~1 s, FITS files download directly, and — unlike IRSA's own services —
+   the bucket sends Access-Control-Allow-Origin: *, so this page can list
+   it with fetch() and show the files right here. Browsing is by folder
+   (release / planning period / version / detector), not by coordinates:
+   coordinate search is precisely the IRSA service that is down. */
+var S3_BASE="https://nasa-irsa-spherex.s3.us-east-1.amazonaws.com";
+var s3Prefix=null, s3Token=null, s3Busy=false;
+function s3RootForCollection(){
+  var col=$("inCol").value;
+  if(col==="spherex_dr1_cube") return "dr1/hips5_cube/";
+  if(col==="spherex_qr3") return "qr3/level2/";
+  return "dr1/level2/"; /* spherex_dr1 and spherex_dr1_deep share the DR1 image tree */
+}
+function s3FmtSize(n){
+  n=parseInt(n,10); if(isNaN(n)) return "";
+  if(n>=1048576) return (n/1048576).toFixed(1).replace(".",",")+" MB";
+  if(n>=1024) return Math.round(n/1024)+" KB";
+  return n+" B";
+}
+function s3RenderCrumbs(){
+  var root=s3RootForCollection();
+  var parts=s3Prefix.split("/").filter(Boolean);
+  var rootParts=root.split("/").filter(Boolean);
+  var html="<button type='button' class='btn small' data-crumb='"+root+"'>Inicio ("+rootParts.join(" / ")+")</button>";
+  var acc="";
+  parts.forEach(function(p,i){
+    acc+=p+"/";
+    if(i>=rootParts.length){ html+=" / <button type='button' class='btn small' data-crumb='"+acc+"'>"+p+"</button>"; }
+  });
+  $("s3Crumbs").innerHTML=html;
+  $("s3Crumbs").querySelectorAll("[data-crumb]").forEach(function(b){
+    b.addEventListener("click",function(){ s3Load(b.getAttribute("data-crumb"),false); });
+  });
+}
+function s3Load(prefix, append){
+  if(s3Busy) return;
+  s3Busy=true; s3Prefix=prefix;
+  $("s3Wrap").style.display="block";
+  $("s3Status").textContent="Leyendo la carpeta "+prefix+" en el espejo oficial (AWS)…";
+  if(!append){ $("s3List").innerHTML=""; s3Token=null; }
+  var url=S3_BASE+"/?list-type=2&prefix="+encodeURIComponent(prefix)+"&delimiter=/&max-keys=200"
+    +(append&&s3Token?"&continuation-token="+encodeURIComponent(s3Token):"");
+  fetchWithTimeout(url,20000).then(function(r){
+    if(!r.ok) throw new Error("http "+r.status);
+    return r.text();
+  }).then(function(xml){
+    var doc=new DOMParser().parseFromString(xml,"text/xml");
+    var folders=[], files=[];
+    Array.prototype.forEach.call(doc.getElementsByTagName("CommonPrefixes"),function(n){
+      var p=n.getElementsByTagName("Prefix")[0].textContent;
+      if(p!==prefix) folders.push(p);
+    });
+    Array.prototype.forEach.call(doc.getElementsByTagName("Contents"),function(n){
+      var k=n.getElementsByTagName("Key")[0].textContent;
+      if(k===prefix) return;
+      var sz=n.getElementsByTagName("Size")[0]?n.getElementsByTagName("Size")[0].textContent:"";
+      files.push({key:k,size:sz});
+    });
+    var trunc=doc.getElementsByTagName("IsTruncated")[0]&&doc.getElementsByTagName("IsTruncated")[0].textContent==="true";
+    var tok=doc.getElementsByTagName("NextContinuationToken")[0];
+    s3Token=(trunc&&tok)?tok.textContent:null;
+    $("btnS3More").style.display=s3Token?"":"none";
+    var list=$("s3List");
+    folders.forEach(function(f){
+      var name=f.slice(prefix.length).replace(/\/$/,"");
+      var b=document.createElement("button");
+      b.type="button"; b.className="btn"; b.style.cssText="display:flex;width:100%;justify-content:flex-start;margin-bottom:6px";
+      b.textContent="Carpeta · "+name+"/";
+      b.addEventListener("click",function(){ s3Load(f,false); });
+      list.appendChild(b);
+    });
+    var ra=parseFloat($("inRA").value), dec=parseFloat($("inDec").value), rad=parseFloat($("inRad").value);
+    files.forEach(function(fi){
+      var name=fi.key.slice(prefix.length);
+      var row=document.createElement("div");
+      row.style.cssText="display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-bottom:6px";
+      var label=document.createElement("span");
+      label.className="mono"; label.style.cssText="font-size:.82rem;word-break:break-all;flex:1;min-width:200px";
+      label.textContent=name+(fi.size?" · "+s3FmtSize(fi.size):"");
+      row.appendChild(label);
+      var dl=document.createElement("a");
+      dl.className="btn small primary"; dl.href=S3_BASE+"/"+fi.key; dl.setAttribute("download","");
+      dl.textContent="Descargar FITS"; row.appendChild(dl);
+      if(/\.fits$/.test(name)&&fi.key.indexOf("/level2/")>-1&&!isNaN(ra)&&!isNaN(dec)){
+        var cut=document.createElement("a");
+        cut.className="btn small"; cut.target="_blank"; cut.rel="noopener";
+        /* IRSA's cutout service REQUIRES the unit suffix: without "deg"
+           it answers 422 and nothing ever downloads (verified live
+           2026-11-15). With units, the same file returned a real FITS
+           cutout (HTTP 200, ~4 MB) in ~23 s. The cutout only succeeds
+           when this file's own footprint covers the requested point. */
+        cut.href="https://irsa.ipac.caltech.edu/ibe/data/spherex/"+fi.key+"?center="+ra+","+dec+"deg&size="+(isNaN(rad)?0.05:rad)+"deg";
+        cut.textContent="Recorte en IRSA a tus coordenadas"; row.appendChild(cut);
+      }
+      list.appendChild(row);
+    });
+    s3RenderCrumbs();
+    if(!folders.length&&!files.length){ $("s3Status").textContent="Esta carpeta está vacía en el espejo."; }
+    else { $("s3Status").textContent="Carpeta "+prefix+" — "+folders.length+" carpeta(s) y "+files.length+" archivo(s) visibles. Toca una carpeta para entrar o «Descargar FITS» para bajar un archivo (cada uno pesa unos 65 MB)."; }
+    s3Busy=false;
+  }).catch(function(){
+    s3Busy=false;
+    $("s3Status").textContent="El espejo de AWS no respondió esta vez. Pulsa de nuevo «Explorar los archivos de SPHEREx en el espejo» para reintentar.";
+  });
+}
+$("btnS3Open").addEventListener("click",function(){ s3Load(s3RootForCollection(),false); });
+$("btnS3More").addEventListener("click",function(){ if(s3Prefix) s3Load(s3Prefix,true); });
+$("inCol").addEventListener("change",function(){ if($("s3Wrap").style.display!=="none") s3Load(s3RootForCollection(),false); });
+
+/* ---------- Saved real IRSA tables (captured 2026-11-15 from the live
+   SIA2 endpoint, retried until IRSA answered; rows stored verbatim) ---- */
+/*__SAVED_DATA_START__*/
+var SAVED_TABLES = {"cetus":{"name":"Cetus — región del equipo","ra":37.5,"dec":-15,"ok":false,"attempts":40,"rows":[]},"barnard":{"name":"Estrella de Barnard","ra":269.452,"dec":4.693,"ok":false,"attempts":40,"rows":[]},"orion":{"name":"Cinturón de Orión","ra":85.2,"dec":-1.2,"ok":false,"attempts":40,"rows":[]},"pleiades":{"name":"Las Pléyades","ra":56.8,"dec":24.1,"ok":false,"attempts":40,"rows":[]},"galactico":{"name":"Centro de la Vía Láctea","ra":266.4,"dec":-29,"ok":false,"attempts":40,"rows":[]},"andromeda":{"name":"Galaxia de Andrómeda (M31)","ra":10.68,"dec":41.27,"ok":false,"attempts":40,"rows":[]}};
+/*__SAVED_DATA_END__*/
+var SAVED_ORDER=["cetus","barnard","orion","pleiades","galactico","andromeda"];
+var savedCurrent="cetus";
+function savedFmtSize(kb){
+  if(kb===""||kb===null||kb===undefined||isNaN(kb)) return "—";
+  var v=parseFloat(kb);
+  if(v>=1024) return (v/1024).toFixed(1).replace(".",",")+" MB";
+  return Math.round(v)+" KB";
+}
+function renderSavedChips(){
+  var wrap=$("savedChips"); wrap.innerHTML="";
+  SAVED_ORDER.forEach(function(key){
+    var e=SAVED_TABLES[key]; if(!e) return;
+    var b=document.createElement("button");
+    b.type="button"; b.className="btn small"+(key===savedCurrent?" active":"");
+    b.textContent=e.name+(e.ok?" · "+e.n+" filas":" · sin tabla");
+    b.addEventListener("click",function(){ savedCurrent=key; renderSavedChips(); renderSaved(); });
+    wrap.appendChild(b);
+  });
+}
+function renderSaved(){
+  var e=SAVED_TABLES[savedCurrent]; if(!e) return;
+  var panel=$("savedPanel"), fail=$("savedFail");
+  if(!e.ok){
+    panel.style.display="none"; fail.style.display="block";
+    $("savedMeta").textContent=e.name+" · RA "+e.ra+"° · Dec "+(e.dec>=0?"+":"")+e.dec+"° · radio 0.05° · colección spherex_dr1 · MAXREC 500";
+    $("savedFailText").innerHTML="<b>Esta región no se pudo guardar:</b> durante la captura del 15 de noviembre de 2026, IRSA no respondió en "+(e.attempts||40)+" intentos seguidos para estas coordenadas (su servidor devolvió el «502 Proxy Error» en todos). No hay ninguna fila inventada: esta región queda honestamente sin tabla guardada. Puedes intentarlo ahora con la consulta en vivo de arriba — que reintenta sola — o bajar los archivos FITS desde el explorador del espejo oficial (AWS), más abajo, que no depende de ese servidor.";
+    return;
+  }
+  fail.style.display="none"; panel.style.display="block";
+  $("savedMeta").textContent=e.n+" filas reales devueltas por IRSA para "+e.name+" (radio 0.05°, colección spherex_dr1, tope MAXREC 500) · Capturada el "+(e.capturedLabel||"15 de noviembre de 2026")+(e.attempts?(" · IRSA respondió tras "+e.attempts+" intento(s)"):"")+" · Se muestran las primeras "+Math.min(50,e.n)+" filas.";
+  var tb=$("savedBody"); tb.innerHTML="";
+  e.rows.slice(0,50).forEach(function(r){
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td data-l='Archivo' class='mono' style='font-size:.78rem;word-break:break-all'></td><td data-l='RA' class='mono'></td><td data-l='Dec' class='mono'></td><td data-l='Fecha UTC'></td><td data-l='Instrumento / banda'></td><td data-l='Tamaño'></td><td data-l='FITS'></td>";
+    tr.children[0].textContent=r[0];
+    tr.children[1].textContent=r[1];
+    tr.children[2].textContent=r[2];
+    tr.children[3].textContent=r[3]||"—";
+    tr.children[4].textContent=r[4]||"SPHEREx";
+    tr.children[5].textContent=savedFmtSize(r[5]);
+    var a=document.createElement("a");
+    a.className="btn small"; a.href=r[6]; a.target="_blank"; a.rel="noopener"; a.textContent="Descargar FITS";
+    tr.children[6].appendChild(a);
+    tb.appendChild(tr);
+  });
+  $("savedMore").textContent=e.n>50?("+"+(e.n-50)+" filas más: están en el CSV completo de esta región, que se genera aquí mismo desde las filas guardadas."):"";
+}
+$("btnSavedCsv").addEventListener("click",function(){
+  var e=SAVED_TABLES[savedCurrent]; if(!e||!e.ok) return;
+  var head=["archivo","ra_grados","dec_grados","fecha_utc","instrumento_banda","tamano_kb","access_url"];
+  function q(v){ return '"'+String(v===null||v===undefined?"":v).replace(/"/g,'""')+'"'; }
+  var lines=[head.join(",")];
+  e.rows.forEach(function(r){ lines.push([r[0],r[1],r[2],r[3],r[4],r[5],r[6]].map(q).join(",")); });
+  var blob=new Blob([lines.join("\n")],{type:"text/csv"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="spherex_dr1_"+savedCurrent+"_radio0.05_guardada.csv";
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400);
+  $("savedCsvNote").textContent="✓ CSV generado en tu navegador con las "+e.n+" filas guardadas de "+e.name+" (sin llamar a IRSA).";
+});
+$("btnSavedLive").addEventListener("click",function(){
+  var e=SAVED_TABLES[savedCurrent]; if(!e) return;
+  $("inRA").value=e.ra; $("inDec").value=e.dec; $("inRad").value="0.05";
+  buildSia(); startSiaLoad();
+  document.getElementById("buscador-avanzado").scrollIntoView({behavior:"smooth"});
+});
+renderSavedChips(); renderSaved();
+
+/* ---------- Candidates (in-memory, exportable) ---------- */
+var candidates=[
+ {name:"Candidato de Phan et al. 2025 (IRAS 1983 + AKARI 2006)", ra:"—", dec:"—", obs:"Objeto visto en IRAS (1983) y AKARI (2006), separado 47.46′ en 23 años. Ejemplo real de la literatura.", state:"Sin verificar — no confirmado; inclinación ~120°, no encaja con Batygin–Brown"}
+];
+function renderCandidates(){
+  var tb=$("candBody"); tb.innerHTML="";
+  candidates.forEach(function(c,i){
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td data-l='Candidato'><strong></strong></td><td data-l='Coordenadas' class='mono'></td><td data-l='Observación'></td><td data-l='Estado'></td><td><button class='btn small' type='button'>Quitar</button></td>";
+    tr.children[0].querySelector("strong").textContent=c.name;
+    tr.children[1].textContent="RA "+c.ra+" · Dec "+c.dec;
+    tr.children[2].textContent=c.obs||"—";
+    tr.children[3].textContent=c.state;
+    tr.querySelector("button").addEventListener("click",function(){ candidates.splice(i,1); renderCandidates(); });
+    tb.appendChild(tr);
+  });
+  $("candStatus").textContent=candidates.length+" candidato(s) en la lista de esta pestaña. Expórtalos para no perderlos al cerrar.";
+}
+$("candForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  candidates.push({name:$("cName").value.trim(), ra:$("cRA").value, dec:$("cDec").value, obs:$("cObs").value.trim(), state:$("cState").value});
+  this.reset(); renderCandidates();
+});
+$("btnUseCurrent").addEventListener("click",function(){ $("cRA").value=state.ra; $("cDec").value=state.dec; $("cName").value="Candidato en "+state.name; document.getElementById("cName").focus(); });
+function download(name, text, type){
+  var blob=new Blob([text],{type:type}); var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400);
+}
+$("btnCsv").addEventListener("click",function(){
+  var rows=[["nombre","ra_grados","dec_grados","observacion","estado"]];
+  candidates.forEach(function(c){ rows.push([c.name,c.ra,c.dec,c.obs,c.state]); });
+  var csv=rows.map(function(r){ return r.map(function(v){ return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'; }).join(","); }).join("\n");
+  download("candidatos-planeta-x.csv", csv, "text/csv");
+});
+$("btnJson").addEventListener("click",function(){ download("candidatos-planeta-x.json", JSON.stringify(candidates,null,2), "application/json"); });
+
+/* ---------- Aladin Lite (CDS) embedded, via official mirror servers ----------
+   CDS Strasbourg announced a cybersecurity incident (Nov 2026) and took its
+   HiPS image servers (alasky.cds.unistra.fr) offline/degraded: every survey
+   "properties" file there answers a CDS "Page unavailable" 404, so no Aladin
+   viewer can start from the CDS originals right now. CDS itself lists
+   official mirrors for the popular surveys; every URL below was verified
+   live (properties file + a real tile + CORS *) on 2026-11-15. The viewer
+   pre-flights each survey's mirrors and uses the first that answers. */
+var ALADIN_SOURCES=[
+ "https://cdn.jsdelivr.net/npm/aladin-lite@3.8.2/dist/aladin.js",
+ "https://aladin.cds.unistra.fr/AladinLite/aladin_3.9.0-beta-idia-1.js"
+];
+var SURVEY_MIRRORS={
+ dss:{label:"DSS2 a color", urls:[
+   "https://stpubdata.s3.us-east-1.amazonaws.com/mast/skybackgrounds/DSSColor",
+   "https://irsa.ipac.caltech.edu/data/hips/CDS/DSS2/color",
+   "https://casda.csiro.au/hips/DSS2/color",
+   "https://hips.china-vo.org/m/CDS_P_DSS2_color"]},
+ mass:{label:"2MASS", urls:[
+   "https://casda.csiro.au/hips/2MASS/Color",
+   "https://hips.china-vo.org/m/CDS_P_2MASS_color",
+   "https://skies.esac.esa.int/2MASSColor"]},
+ wise:{label:"AllWISE", urls:[
+   "https://hips.china-vo.org/m/CDS_P_allWISE_color",
+   "https://skies.esac.esa.int/AllWISEColor"]}
+};
+var mirrorCache={};
+function fetchWithTimeout(url, ms){
+  return new Promise(function(resolve, reject){
+    var ctrl=("AbortController" in window)?new AbortController():null;
+    var done=false;
+    var t=setTimeout(function(){ if(done)return; done=true; if(ctrl)ctrl.abort(); reject(new Error("timeout")); }, ms);
+    fetch(url, ctrl?{signal:ctrl.signal}:undefined).then(function(r){ if(done)return; done=true; clearTimeout(t); resolve(r); },
+      function(e){ if(done)return; done=true; clearTimeout(t); reject(e); });
+  });
+}
+function pickMirror(key){
+  if(mirrorCache[key]) return Promise.resolve(mirrorCache[key]);
+  var urls=SURVEY_MIRRORS[key].urls.slice();
+  function next(){
+    if(!urls.length) return Promise.reject(new Error("sin espejos disponibles"));
+    var u=urls.shift();
+    return fetchWithTimeout(u+"/properties", 9000).then(function(r){
+      if(!r.ok) throw new Error("http "+r.status);
+      mirrorCache[key]=u; return u;
+    }).catch(next);
+  }
+  return next();
+}
+function loadAladinLib(idx){
+  return new Promise(function(resolve, reject){
+    if(idx>=ALADIN_SOURCES.length){ reject(new Error("ninguna fuente de Aladin Lite cargó")); return; }
+    var s=document.createElement("script");
+    s.src=ALADIN_SOURCES[idx];
+    s.onload=function(){
+      if(!(window.A&&A.aladin)){ loadAladinLib(idx+1).then(resolve,reject); return; }
+      var settled=false;
+      var to=setTimeout(function(){ if(!settled){ settled=true; loadAladinLib(idx+1).then(resolve,reject); } }, 25000);
+      Promise.resolve(A.init).then(function(){ if(!settled){ settled=true; clearTimeout(to); resolve(); } },
+        function(){ if(!settled){ settled=true; clearTimeout(to); loadAladinLib(idx+1).then(resolve,reject); } });
+    };
+    s.onerror=function(){ loadAladinLib(idx+1).then(resolve,reject); };
+    document.head.appendChild(s);
+  });
+}
+var aladinStarted=false;
+function initAladin(){
+  if(aladinStarted) return; aladinStarted=true;
+  $("btnAladinRetry").style.display="none";
+  $("aladinStatus").textContent="Cargando el visor del cielo desde un servidor espejo oficial…";
+  loadAladinLib(0).then(function(){ return pickMirror("dss"); }).then(function(url){
+    $("aladin").innerHTML="";
+    window.__aladin=A.aladin("#aladin",{survey:url, fov:state.fov*1.5, target:state.ra+" "+state.dec, showCooGrid:true});
+    var dssBtn=document.querySelector('.aladin-survey[data-survey="dss"]'); if(dssBtn) dssBtn.classList.add("active");
+    $("aladinStatus").textContent="Visor listo: muestra la misma región que el comparador y se mueve cuando eliges otra. Las imágenes llegan de un servidor espejo oficial mientras el CDS se recupera.";
+  }).catch(function(){
+    aladinStarted=false;
+    if(!$("aladinPlaceholder")){ $("aladin").innerHTML='<div id="aladinPlaceholder" style="color:#fff;padding:20px"></div>'; }
+    $("aladinPlaceholder").textContent="El visor no pudo cargar en esta sesión: los servidores del CDS están degradados y ningún espejo oficial respondió. Pulsa «Reintentar el visor» para intentarlo de nuevo.";
+    $("aladinStatus").textContent="El visor de Aladin Lite no cargó esta vez. Pulsa «Reintentar el visor»; mientras tanto, el comparador de arriba sigue funcionando.";
+    $("btnAladinRetry").style.display="inline-flex";
+  });
+}
+document.querySelectorAll(".aladin-survey").forEach(function(b){
+  b.addEventListener("click",function(){
+    var key=b.getAttribute("data-survey");
+    if(!window.__aladin){ $("aladinStatus").textContent="El visor aún no está listo: espera a que cargue o pulsa «Reintentar el visor»."; return; }
+    document.querySelectorAll(".aladin-survey").forEach(function(x){ x.classList.toggle("active", x===b); });
+    $("aladinStatus").textContent="Cargando "+SURVEY_MIRRORS[key].label+" desde un servidor espejo…";
+    pickMirror(key).then(function(url){
+      try{ window.__aladin.setImageSurvey(url); $("aladinStatus").textContent="Visor mostrando "+SURVEY_MIRRORS[key].label+"."; }
+      catch(e){ $("aladinStatus").textContent="No se pudo cambiar de encuesta en el visor; sigue mostrando la anterior."; }
+    }).catch(function(){ $("aladinStatus").textContent="Ningún espejo de "+SURVEY_MIRRORS[key].label+" respondió ahora mismo; prueba con otra encuesta o reintenta en un momento."; });
+  });
+});
+$("btnAladinRetry").addEventListener("click",function(){ initAladin(); });
+initAladin();
+
+/* ---------- Init ---------- */
+buildSia(); renderCandidates(); loadAll(); render();
+})();
+</script>
+</body>
+</html>
