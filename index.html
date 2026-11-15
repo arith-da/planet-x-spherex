@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:,">
-<title>Buscador del Planeta X con SPHEREx</title>
+<title>Buscador del Planeta X con SPHEREx — Cielo real de IRSA y SkyView</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -13,23 +13,21 @@
 @media(prefers-color-scheme:dark){:root{--bg:#0b0f14;--surface:#151b23;--surface2:#1c242f;--ink:#e8ecf1;--muted:#9aa7b4;--line:#2a3542;--accent:#f59e0b;--accent-ink:#111827;--teal:#2dd4bf;--teal-bg:#12302c;--amber-bg:#3a2f14;--red:#f87171;--code-bg:#0d131a;--code-ink:#dbeafe}}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
 a{color:var(--teal);text-decoration-thickness:1px;text-underline-offset:2px}
-button,[role=button],select,input,summary,textarea{font:inherit}
+button,select,input,summary{font:inherit}
 button,select,input[type=text],input[type=number]{min-height:44px}
 .wrap{max-width:1120px;margin:0 auto;padding:0 18px 64px}
-nav{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap;padding:10px 18px;display:flex;gap:8px}
+nav{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap;padding:10px 18px;display:flex;gap:8px}
 nav a{color:var(--ink);text-decoration:none;font-size:.88rem;font-weight:600;padding:10px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);display:inline-block}
-.hero{padding:28px 0 8px}
+.hero{padding:30px 0 8px}
 .kicker{font-family:"IBM Plex Mono",monospace;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
-h1{font-size:clamp(2rem,6vw,3.4rem);line-height:1.02;margin:.35em 0 .4em;letter-spacing:-.02em}
+h1{font-size:clamp(2rem,6vw,3.2rem);line-height:1.03;margin:.35em 0 .4em;letter-spacing:-.02em}
 h2{font-size:clamp(1.45rem,3.5vw,2rem);line-height:1.15;margin:0 0 .5em;letter-spacing:-.01em}
 h3{font-size:1.08rem;margin:0 0 .4em}
-.lead{font-size:1.08rem;color:var(--muted);max-width:68ch}
-.heroimg{width:100%;border-radius:18px;border:1px solid var(--line);display:block;margin:22px 0 6px;aspect-ratio:16/8;object-fit:cover;background:#000}
-.caption{font-size:.82rem;color:var(--muted)}
+.lead{font-size:1.08rem;color:var(--muted);max-width:70ch}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:20px 0}
 @media(min-width:760px){.stats{grid-template-columns:repeat(4,1fr)}}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
-.stat b{display:block;font-size:1.45rem;line-height:1.1}
+.stat b{display:block;font-size:1.4rem;line-height:1.1}
 .stat span{font-size:.83rem;color:var(--muted)}
 .alert{border:1px solid var(--accent);background:var(--amber-bg);border-radius:var(--radius);padding:16px 18px;margin:18px 0}
 .alert b{color:var(--accent)}
@@ -40,25 +38,24 @@ section{margin-top:52px}
 .card p{margin:.3em 0;color:var(--muted)}
 .tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:.72rem;padding:3px 8px;border-radius:999px;background:var(--teal-bg);color:var(--teal);font-weight:600;margin-bottom:8px}
 .tool{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:14px}
-canvas.blink{width:100%;height:auto;display:block;border-radius:10px;background:#05080d;border:1px solid var(--line)}
 .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
-.btn{border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;min-height:44px}
+.btn{border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;min-height:44px;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .btn.teal{background:var(--teal);color:#fff;border-color:var(--teal)}
 .btn:active{transform:scale(.98)}
+.btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 label{font-weight:600;font-size:.92rem;display:block;margin-bottom:6px}
 input[type=range]{width:100%;min-height:44px;accent-color:var(--accent)}
-select,input[type=text],textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);color:var(--ink)}
-textarea{min-height:150px;font-family:"IBM Plex Mono",monospace;font-size:.85rem}
-.output{font-family:"IBM Plex Mono",monospace;background:var(--surface2);border-radius:10px;padding:14px;font-size:.92rem}
-.output b{font-size:1.15rem}
+select,input[type=text],input[type=number]{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);color:var(--ink)}
+.output{font-family:"IBM Plex Mono",monospace;background:var(--surface2);border-radius:10px;padding:14px;font-size:.9rem;word-break:break-all}
+.output b{font-size:1.1rem}
 table{width:100%;border-collapse:collapse;font-size:.92rem}
 th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
 th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .tablewrap{overflow-x:auto}
 ol.steps,ul.clean{padding-left:1.2em}ol.steps li,ul.clean li{margin:.55em 0}
 code{font-family:"IBM Plex Mono",monospace;font-size:.86em;background:var(--surface2);padding:2px 6px;border-radius:6px}
-pre{background:var(--code-bg);color:var(--code-ink);padding:16px;border-radius:12px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:.85rem;line-height:1.6}
+pre{background:var(--code-bg);color:var(--code-ink);padding:16px;border-radius:12px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:.82rem;line-height:1.6;white-space:pre-wrap;word-break:break-all}
 pre code{background:none;padding:0;color:inherit}
 .timeline{border-left:3px solid var(--line);padding-left:18px;margin-left:6px}
 .timeline div{margin:0 0 18px;position:relative}
@@ -73,326 +70,434 @@ pre code{background:none;padding:0;color:inherit}
 .footer{margin-top:56px;border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font-size:.88rem}
 details{border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:var(--surface);margin:10px 0}
 summary{cursor:pointer;font-weight:700;min-height:36px;display:flex;align-items:center}
-svg{max-width:100%;height:auto;display:block}
 .num{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--accent)}
+.viewer{position:relative;background:#05080d;border:1px solid var(--line);border-radius:12px;overflow:hidden;aspect-ratio:1/1;max-height:640px;margin:0 auto;width:100%}
+.viewer img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#05080d}
+.viewer .placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#cbd5e1;text-align:center;padding:24px;gap:10px}
+.epochbar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.epochbar .btn[aria-pressed="true"]{background:var(--teal);color:#fff;border-color:var(--teal)}
+.preset{display:flex;flex-direction:column;gap:6px}
+.preset .btn{justify-content:center}
+.fieldrow{display:grid;gap:12px}
+@media(min-width:760px){.fieldrow{grid-template-columns:1fr 1fr 1fr}}
+.linklist{display:grid;gap:10px;margin-top:12px}
+.linkrow{background:var(--surface2);border-radius:10px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.linkrow .u{font-family:"IBM Plex Mono",monospace;font-size:.78rem;word-break:break-all;color:var(--muted);flex:1 1 260px}
 </style>
 </head>
 <body>
 <nav aria-label="Secciones">
-<a href="#herramienta">🔭 Herramienta</a><a href="#reto">Reto oficial</a><a href="#spherex">SPHEREx</a><a href="#planeta-x">Planeta X</a><a href="#como-se-hizo">Cómo se hizo</a><a href="#github">GitHub paso a paso</a><a href="#equipo">El equipo</a>
+<a href="#explorar">Explorar el cielo</a><a href="#comparador">Ver el cambio en el tiempo</a><a href="#avanzado">Buscador avanzado</a><a href="#proposito">Para qué sirve</a><a href="#candidatos">Candidatos</a><a href="#recursos">Recursos</a><a href="#equipo">El equipo</a>
 </nav>
 <div class="wrap">
 
 <header class="hero">
-<div class="kicker">NASA Space Apps Challenge 2026 · Equipo THE SCARERS · Proyecto: Planet X and SPHEREx · 14–15 nov 2026</div>
-<h1>Buscador del Planeta X con SPHEREx</h1>
-<p class="lead">Herramienta pública del equipo <strong>THE SCARERS</strong> para el proyecto <strong>Planet X and SPHEREx</strong>: que cualquiera explore el cielo infrarrojo de SPHEREx, compare épocas con el método de <strong>parpadeo</strong>, filtre lo ya conocido y guarde candidatos que se mueven lento, son muy rojos y no están en ningún catálogo. Sin prometer un descubrimiento: con la honestidad que la ciencia exige.</p>
-<img class="heroimg" src="assets/hero-cielo.webp" alt="Ilustración de un mapa de todo el cielo en infrarrojo, con miles de estrellas y galaxias en tonos ámbar y turquesa">
-<p class="caption">Ilustración generada para esta página, inspirada en un mapa espectral de todo el cielo. No es una imagen real de SPHEREx; las imágenes científicas están en el archivo IRSA (enlaces abajo).</p>
+<div class="kicker">NASA Space Apps Challenge 2026 · Equipo THE SCARERS · Proyecto: Planet X and SPHEREx</div>
+<h1>El cielo real de SPHEREx, época por época</h1>
+<p class="lead">Esta página existe para una cosa: que <strong>cualquier persona</strong> pueda mirar el cielo infrarrojo que está fotografiando la misión <strong>SPHEREx</strong> de la NASA, compararlo con imágenes reales de décadas anteriores y ver con sus propios ojos <strong>qué cambió con el tiempo</strong>. Todo el cielo, no una sola región: eliges un lugar —o tocas una región famosa— y la página consulta los servidores reales de la misión en <strong>IRSA</strong> (el archivo oficial de SPHEREx) y los archivos públicos de <strong>NASA SkyView</strong>. Sin imágenes inventadas: cada imagen que ves es real y lleva escrito de qué estudio viene y de qué época es.</p>
+<p class="lead">¿Y el Planeta X? Es la excusa científica perfecta para mirar el cambio: si existe un planeta gigante y lejano, no brillará fijo como una estrella — <strong>se moverá un poco entre un mapa del cielo y el siguiente</strong>. Comparar épocas es exactamente el método con el que se puede buscar.</p>
 <div class="stats">
 <div class="stat"><b>102</b><span>bandas espectrales por cada punto del cielo (0.75–5.0 µm)</span></div>
-<div class="stat"><b>12 nov 2026</b><span>Data Release 1 (DR1) publicada en IRSA — hace 2 días</span></div>
+<div class="stat"><b>12 nov 2026</b><span>Data Release 1 (DR1) de SPHEREx publicado en IRSA</span></div>
 <div class="stat"><b>4 mapas</b><span>de todo el cielo en 2 años, uno cada ~6 meses</span></div>
-<div class="stat"><b>Sin confirmar</b><span>estado del Planeta Nueve en noviembre de 2026</span></div>
+<div class="stat"><b>~70 años</b><span>de cielo real para comparar: placas DSS de los años 50–90 hasta SPHEREx 2026</span></div>
 </div>
-<div class="alert"><b>La advertencia honesta que sostiene todo el proyecto:</b> un Planeta Nueve frío (28–53 K) emitiría su pico térmico a 50–100 µm, en el infrarrojo lejano, y SPHEREx solo llega a 5.0 µm. SPHEREx <strong>no ve ese pico</strong>. Su aporte real es otro: mapea <strong>todo el cielo, repetido y uniforme</strong>, así que un objeto que se mueve entre un mapa y el siguiente se puede buscar parpadeando épocas — el mismo método con el que se encontró Plutón y con el que Backyard Worlds busca objetos fríos en datos de WISE.</div>
+<div class="alert"><b>Honestidad ante todo:</b> las imágenes científicas de SPHEREx son archivos <strong>FITS</strong> (el formato de la astronomía profesional) y un navegador no puede mostrarlos como una foto normal. Por eso esta página funciona en dos pisos: <strong>dentro de la página</strong> ves y comparas imágenes reales ya convertidas de los archivos DSS, 2MASS y WISE (vía NASA SkyView), y <strong>con un clic</strong> saltas a los servidores de IRSA con tus mismas coordenadas para ver y descargar los datos reales de SPHEREx (DR1) de ese mismo lugar. Nada de lo que ves aquí es una simulación disfrazada de dato.</div>
 </header>
 
-<!-- HERRAMIENTA -->
-<section id="herramienta">
-<h2>La herramienta: pruébala aquí mismo</h2>
-<p class="lead">Esto es un prototipo interactivo y honesto: el campo de estrellas es simulado para aprender el método. El flujo —elegir región, parpadear, verificar, guardar y exportar— es exactamente el que conectarían a los recortes reales de IRSA.</p>
-
-<div class="tool">
-<span class="tag">PASO 1 · COMPARACIÓN POR PARPADEO</span>
-<h3>¿Algo se movió entre épocas?</h3>
-<p class="small">Entre dos mapas de SPHEREx separados ~6 meses, un planeta a 500–700 UA se desplazaría ~1.5–5 minutos de arco: entre 15 y 50 veces el píxel de SPHEREx (6.2″). Las estrellas y galaxias no se mueven. Lo que salta al parpadear es sospechoso.</p>
-<div style="margin:12px 0">
-<label for="regionSelect">Región del cielo de la demostración</label>
-<select id="regionSelect">
-<option value="cetus" selected>Región elegida — Cetus, eclíptica sur · RA 02h 30m (37.5°), Dec −15° · campo 20° × 20°</option>
-</select>
-<p class="small" style="margin-top:8px"><strong>Por qué esta región:</strong> está sobre la eclíptica en el hemisferio sur celeste, en Cetus, una franja compatible con el rango amplio de búsqueda que dejan los modelos actuales (semiejes de ~290 a más de 500 UA según el estudio) y menos saturada por los grandes barridos del hemisferio norte que ya descartaron gran parte de la zona más probable. Es una región de <strong>demostración</strong> para probar el método completo —explorar, parpadear, verificar y exportar— no una predicción de dónde está el planeta.</p>
+<!-- EXPLORAR: SELECTOR SIMPLE -->
+<section id="explorar">
+<h2>Explora el cielo sin saber de coordenadas</h2>
+<p class="lead">Toca una región y listo: la página carga sus imágenes reales en el comparador de abajo y prepara tus enlaces a SPHEREx en IRSA. No necesitas saber qué es la ascensión recta.</p>
+<div class="grid grid3">
+<div class="card preset"><span class="tag">LA REGIÓN DEL EQUIPO</span><h3>Cetus — la zona de búsqueda</h3><p>La franja donde los modelos de Holman &amp; Payne (datos de la sonda Cassini + modelos de Batygin &amp; Brown) sitúan la posición más probable del planeta, dentro del área refinada de búsqueda de 600–800 grados cuadrados.</p><p class="small">RA 37.5° · Dec −15° · campo 20° × 20°</p><button class="btn primary" data-preset="cetus">Ver esta región</button></div>
+<div class="card preset"><span class="tag">CONSTELACIÓN DE ORIÓN</span><h3>El Cinturón de Orión</h3><p>Las tres estrellas en fila más fáciles de reconocer del cielo de invierno: el mejor punto de partida para aprender a orientarse entre constelaciones.</p><p class="small">RA 85.2° · Dec −1.2°</p><button class="btn primary" data-preset="orion">Ver esta región</button></div>
+<div class="card preset"><span class="tag">CONSTELACIÓN DE TAURO</span><h3>Las Pléyades</h3><p>Un cúmulo de estrellas jóvenes y azules visible a simple vista: en infrarrojo se revela el polvo que las rodea, invisible en luz normal.</p><p class="small">RA 56.8° · Dec +24.1°</p><button class="btn primary" data-preset="pleyades">Ver esta región</button></div>
+<div class="card preset"><span class="tag">VÍA LÁCTEA</span><h3>El centro de nuestra galaxia</h3><p>La zona más poblada del cielo: millones de estrellas y nubes de polvo hacia el agujero negro central de la Vía Láctea. En infrarrojo se ve a través del polvo.</p><p class="small">RA 266.4° · Dec −29.0°</p><button class="btn primary" data-preset="centro">Ver esta región</button></div>
+<div class="card preset"><span class="tag">GALAXIA VECINA</span><h3>La galaxia de Andrómeda (M31)</h3><p>La galaxia grande más cercana a la nuestra, a 2.5 millones de años luz: en imágenes de distintas épocas se aprecia cómo cambia lo que cada telescopio puede ver de ella.</p><p class="small">RA 10.68° · Dec +41.27°</p><button class="btn primary" data-preset="andromeda">Ver esta región</button></div>
+<div class="card preset"><span class="tag">TU TURNO</span><h3>¿Otro lugar?</h3><p>Si ya tienes unas coordenadas —de un artículo, de clase o de tu propia búsqueda— usa el buscador avanzado: acepta grados o formato horas:minutos:segundos.</p><p class="small">Tú eliges el lugar y el tamaño del campo.</p><a class="btn" href="#avanzado">Ir al buscador avanzado</a></div>
 </div>
-<canvas class="blink" id="blinkCanvas" width="960" height="420" aria-label="Simulador de parpadeo entre dos épocas del cielo en la región de Cetus, eclíptica sur"></canvas>
+</section>
+
+<!-- COMPARADOR -->
+<section id="comparador">
+<h2>El comparador: el mismo cielo, en distintas épocas</h2>
+<p class="lead">Aquí está el corazón de la página. Las estrellas y galaxias casi no se mueven; un planeta sí. Alterna entre épocas reales y busca lo que <strong>no está en el mismo sitio</strong> — o lo que aparece y desaparece.</p>
+<div class="tool">
+<h3 id="viewerTitle">Región actual: Cetus — la zona de búsqueda</h3>
+<p class="small" id="viewerCoords">RA 37.5° · Dec −15° · Campo: 2° × 2° para las imágenes de SkyView (el campo amplio de 20° se consulta en IRSA con el buscador avanzado).</p>
+<div class="epochbar" role="group" aria-label="Épocas disponibles">
+<button class="btn" data-epoch="dss" aria-pressed="true">DSS2 Red · placas ~1950s–1990s</button>
+<button class="btn" data-epoch="2mass" aria-pressed="false">2MASS-J · 1997–2001 · 1.25 µm</button>
+<button class="btn" data-epoch="wise" aria-pressed="false">WISE · 2010 · 3.4 µm</button>
+<button class="btn" data-epoch="spherex" aria-pressed="false">SPHEREx DR1 · 2026 · en IRSA</button>
+</div>
+<div class="viewer" id="viewer">
+<div class="placeholder" id="viewerPlaceholder">
+<p style="font-size:1.05rem;margin:0"><strong>Toca «Cargar imágenes reales»</strong></p>
+<p style="margin:0;max-width:52ch">La página pedirá a NASA SkyView las imágenes reales de esta región en las épocas DSS2, 2MASS y WISE. Pueden tardar unos segundos: son imágenes generadas al momento desde el archivo, no archivos guardados aquí.</p>
+<button class="btn primary" id="loadImagesBtn">Cargar imágenes reales</button>
+</div>
+<img id="imgA" alt="" style="display:none">
+<img id="imgB" alt="" style="display:none;opacity:0">
+</div>
+<div id="spherexPanel" style="display:none" class="alert">
+<b>SPHEREx DR1 (2026) vive en IRSA:</b> sus imágenes son archivos FITS científicos y no se pueden mostrar como foto en el navegador. Con tus coordenadas ya puestas, abre la consulta real al servicio SIA2 de IRSA o el explorador oficial y verás los datos de SPHEREx de este mismo lugar:
 <div class="controls">
-<button class="btn primary" id="blinkToggle">⏸ Pausar parpadeo</button>
-<button class="btn" id="diffBtn">Ver diferencia (Época 2 − Época 1)</button>
-<button class="btn teal" id="markBtn">＋ Marcar lo que se movió como candidato</button>
-<label style="margin:0">Velocidad <input type="range" id="blinkSpeed" min="300" max="2000" value="900" step="100" style="width:140px;vertical-align:middle"></label>
+<a class="btn teal" id="spherexSiaLink" href="#" target="_blank" rel="noopener">Consultar SPHEREx DR1 en IRSA (SIA2)</a>
+<a class="btn" href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener">Archivo de la misión SPHEREx en IRSA</a>
+<a class="btn" href="https://irsa.ipac.caltech.edu/data/SPHEREx/docs/cutout_tool.html" target="_blank" rel="noopener">Herramienta de recortes de SPHEREx</a>
 </div>
-<p class="output" id="blinkStatus">Región: <b>Cetus, eclíptica sur — RA 02h 30m, Dec −15°</b> · Mostrando: <b>Época 1 — Survey 1 (2025)</b> · La fuente roja es la única que cambia de posición. En datos reales usarías recortes FITS de IRSA de esta misma región en dos épocas.</p>
+</div>
+<div class="controls">
+<button class="btn primary" id="blinkBtn">▶ Parpadear entre épocas</button>
+<label style="margin:0;flex:1 1 220px">Mezcla manual entre las dos épocas elegidas <input type="range" id="mixRange" min="0" max="100" value="0"></label>
+</div>
+<label for="epochPair">Par de épocas para parpadear / mezclar</label>
+<select id="epochPair">
+<option value="dss,2mass">DSS2 Red (~1950s–1990s) ↔ 2MASS-J (1997–2001)</option>
+<option value="2mass,wise">2MASS-J (1997–2001) ↔ WISE 3.4 µm (2010)</option>
+<option value="dss,wise" selected>DSS2 Red (~1950s–1990s) ↔ WISE 3.4 µm (2010)</option>
+</select>
+<p class="output" id="viewerStatus">Sin cargar todavía. Elige una región arriba o pulsa «Cargar imágenes reales».</p>
+<p class="small">Créditos de imagen: NASA SkyView (GSFC) sirve imágenes de los estudios DSS/DSS2 (placas fotográficas digitalizadas), 2MASS (UMass/IPAC-Caltech, financiado por NASA y NSF) y WISE (NASA/JPL-Caltech). Cada imagen se etiqueta con su estudio, longitud de onda y época: un parpadeo entre ellas es un parpadeo entre <strong>imágenes reales de años distintos</strong>. Para comparar épocas de la propia WISE entre sí, prueba también <a href="http://byw.tools/wiseview" target="_blank" rel="noopener">WiseView</a>.</p>
 </div>
 
 <div class="tool">
-<span class="tag">PASO 2 · CALCULADORA DE DISTANCIA</span>
+<span class="tag">EL VISOR DE TODO EL CIELO</span>
+<h3>Mueve el cielo con el dedo: Aladin Lite</h3>
+<p class="small">El visor interactivo de Aladin Lite (CDS, Estrasburgo) muestra los mismos estudios reales (DSS2 en color, 2MASS, AllWISE) y te deja arrastrar, acercar y saltar a cualquier coordenada. Ojo: Aladin Lite <strong>no</strong> incluye SPHEREx; para SPHEREx usa los enlaces a IRSA de esta página.</p>
+<div class="controls">
+<a class="btn teal" id="aladinLink" href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noopener">Abrir esta región en Aladin Lite</a>
+</div>
+</div>
+</section>
+
+<!-- BUSCADOR AVANZADO -->
+<section id="avanzado">
+<h2>Buscador avanzado: directo a los servidores de SPHEREx</h2>
+<p class="lead">Para quien sí trabaja con coordenadas. Escribe un lugar del cielo y la página construye la <strong>consulta real</strong> al servicio SIA2 de IRSA —el protocolo estándar con el que los archivos astronómicos entregan datos de SPHEREx— junto con los enlaces de recorte, SkyView y Aladin para ese mismo punto. Todo se abre en los servidores oficiales: aquí no se guarda ni se simula ningún dato de SPHEREx.</p>
+<div class="tool">
+<div class="fieldrow">
+<div><label for="raInput">Ascensión recta</label><input type="text" id="raInput" value="37.5" inputmode="decimal"><p class="small">En grados (0–360) o en formato 02h 30m 00s.</p></div>
+<div><label for="decInput">Declinación</label><input type="text" id="decInput" value="-15" inputmode="decimal"><p class="small">En grados (−90 a +90) o en formato −15° 00′ 00″.</p></div>
+<div><label for="sizeInput">Radio de búsqueda (grados)</label><input type="number" id="sizeInput" value="0.5" min="0.01" max="10" step="0.01"><p class="small">Radio del círculo de consulta SIA2 alrededor del punto.</p></div>
+</div>
+<div class="fieldrow" style="margin-top:12px">
+<div><label for="collectionSelect">Colección de SPHEREx en IRSA</label>
+<select id="collectionSelect">
+<option value="spherex_dr1" selected>Wide Survey DR1 — todo el cielo (spherex_dr1)</option>
+<option value="spherex_dr1_deep">Deep Survey DR1 — campos profundos (spherex_dr1_deep)</option>
+<option value="spherex_dr1_cube">DR1 All-Sky Cube — cubo espectral HiPS (spherex_dr1_cube)</option>
+<option value="spherex_qr3">Wide Survey QR3 — liberación rápida (spherex_qr3)</option>
+</select></div>
+<div><label for="advSizeSelect">Campo para imágenes de SkyView</label>
+<select id="advSizeSelect">
+<option value="0.5">0.5° × 0.5° — detalle</option>
+<option value="2" selected>2° × 2° — contexto</option>
+<option value="5">5° × 5° — campo amplio</option>
+</select></div>
+<div style="display:flex;align-items:flex-end"><button class="btn primary" id="buildQueryBtn" style="width:100%;justify-content:center">Construir consulta a IRSA</button></div>
+</div>
+<div id="queryResults" style="display:none">
+<h3 style="margin-top:18px">Tus enlaces, generados con tus coordenadas</h3>
+<div class="linklist">
+<div class="linkrow"><div><strong>1 · Datos reales de SPHEREx (SIA2, tabla en el navegador)</strong><div class="u" id="siaHtmlUrl"></div></div><a class="btn teal" id="siaHtmlBtn" href="#" target="_blank" rel="noopener">Abrir consulta</a></div>
+<div class="linkrow"><div><strong>2 · La misma consulta en formato VOTable</strong> (para TOPCAT, Python/astroquery…)<div class="u" id="siaVotUrl"></div></div><a class="btn" id="siaVotBtn" href="#" target="_blank" rel="noopener">Abrir VOTable</a></div>
+<div class="linkrow"><div><strong>3 · Recortes FITS de SPHEREx</strong> — la herramienta oficial de recortes de IRSA; sobre cada archivo FITS de la consulta puedes pedir un recorte añadiendo <code>?center=RA,Dec&amp;size=…</code> a su dirección<div class="u" id="cutoutUrl"></div></div><a class="btn" href="https://irsa.ipac.caltech.edu/data/SPHEREx/docs/cutout_tool.html" target="_blank" rel="noopener">Abrir Cutout Tool</a></div>
+<div class="linkrow"><div><strong>4 · Este mismo lugar en el comparador</strong> — carga las imágenes reales DSS2 / 2MASS / WISE de estas coordenadas aquí arriba<div class="u">NASA SkyView · épocas reales</div></div><button class="btn primary" id="sendToViewerBtn">Ver en el comparador</button></div>
+<div class="linkrow"><div><strong>5 · Explorador oficial de datos SPHEREx</strong> — la interfaz web de IRSA para buscar, visualizar y descargar datos de la misión (enlace desde la documentación oficial de acceso a datos)<div class="u">https://caltech-ipac.github.io/spherex-archive-documentation/spherex-data-access/</div></div><a class="btn" href="https://caltech-ipac.github.io/spherex-archive-documentation/spherex-data-access/" target="_blank" rel="noopener">Abrir documentación de acceso</a></div>
+</div>
+<p class="small" style="margin-top:10px">Cómo leer la respuesta de IRSA: la tabla SIA2 trae una columna <code>access_url</code> con la dirección de cada archivo FITS de SPHEREx que cubre tu punto. Descárgalos o pide recortes con la sintaxis de arriba; la guía oficial está en <a href="https://irsa.ipac.caltech.edu/ibe/cutouts.html" target="_blank" rel="noopener">irsa.ipac.caltech.edu/ibe/cutouts.html</a>. Tutoriales oficiales para trabajar estos datos: <a href="https://caltech-ipac.github.io/irsa-tutorials/spherex/" target="_blank" rel="noopener">caltech-ipac.github.io/irsa-tutorials/spherex</a>.</p>
+</div>
+<p class="output" id="advStatus">Coordenadas actuales: <b>RA 37.5° · Dec −15°</b> (Cetus). Pulsa «Construir consulta a IRSA».</p>
+</div>
+</section>
+
+<!-- PROPÓSITO -->
+<section id="proposito">
+<h2>Para qué sirve esta página</h2>
+<p class="lead">SPHEREx está fotografiando <strong>todo el cielo</strong> en infrarrojo, una y otra vez. Eso crea algo nuevo: una película del cielo entero. Esta página es la puerta sencilla a esa película — y a la búsqueda del planeta que podría estar escondido en ella.</p>
+<div class="grid grid2">
+<div class="card"><span class="tag">LA MISIÓN</span><h3>SPHEREx: el primer mapa espectral de todo el cielo</h3>
+<p>SPHEREx (<em>Spectro-Photometer for the History of the Universe, Epoch of Reionization and Ices Explorer</em>) es un observatorio de la NASA lanzado el <strong>11 de marzo de 2025</strong>. Es el primer estudio <strong>espectral</strong> de todo el cielo en infrarrojo cercano: fotografía cada punto en <strong>102 bandas</strong> entre 0.75 y 5.0 µm, y repetirá el mapa completo <strong>4 veces en 2 años</strong> (una cada ~6 meses). Su primera liberación de datos, <strong>DR1, salió el 12 de noviembre de 2026</strong> en IRSA e incluye además un cubo espectral de todo el cielo en formato HiPS.</p>
+<p>Sus metas oficiales son otras —la historia del universo, la luz de todas las galaxias y los hielos donde nacen los planetas— pero sus mapas repetidos son, de regalo, una máquina de buscar cosas que se mueven.</p></div>
+<div class="card"><span class="tag">LA HIPÓTESIS</span><h3>El Planeta X / Planeta Nueve</h3>
+<p>En 2016, <strong>Batygin y Brown</strong> propusieron que las órbitas agrupadas de varios objetos lejanos del cinturón de Kuiper delatan un planeta sin descubrir: de unas <strong>4–10 masas terrestres</strong>, en una órbita de <strong>300–800 UA</strong> (cientos de veces más lejos que la Tierra del Sol). En noviembre de 2026 sigue <strong>sin descubrirse y sin descartarse</strong>: no hay consenso.</p>
+<p>Si está a esa distancia, entre un mapa de SPHEREx y el siguiente (6 meses) se desplazaría unos <strong>1.5–5 minutos de arco</strong>: poquísimo para el ojo… y exactamente lo que un comparador por parpadeo hace visible. Por eso esta página compara épocas.</p></div>
+</div>
+<div class="alert"><b>El límite honesto de la búsqueda:</b> un Planeta Nueve frío (28–53 K) emitiría su pico térmico a 50–100 µm, muy fuera del rango de SPHEREx (máximo 5.0 µm). SPHEREx ayuda por su <strong>cobertura repetida de todo el cielo</strong>, no por ver ese pico. Y todo lo que salga de comparar épocas es un <strong>candidato que necesita seguimiento</strong> con otros telescopios — nunca una detección anunciada. Incluso el candidato publicado por Phan et al. en 2025 (una pareja de fuentes de IRAS 1983 y AKARI 2006 separadas 47.46′ en 23 años) sigue <strong>sin confirmar</strong>, y su inclinación implícita (~120°) ni siquiera encaja con el Planeta Nueve de Batygin y Brown (15–20°).</div>
+
+<h3 style="margin-top:22px">La misión, en fechas</h3>
+<div class="timeline">
+<div><b>11 mar 2025</b><span>Lanzamiento de SPHEREx. El 1 de mayo de 2025 comienza la ciencia.</span></div>
+<div><b>2025–2027</b><span>Cuatro mapas completos de todo el cielo, uno cada ~6 meses: la materia prima para comparar épocas.</span></div>
+<div><b>12 nov 2026</b><span><strong>Data Release 1 (DR1)</strong> en IRSA: imágenes reprocesadas del Wide Survey, el Deep Survey y el cubo espectral de todo el cielo (HiPS). Es el conjunto de datos con el que trabaja esta página.</span></div>
+</div>
+
+<h3 style="margin-top:22px">Cómo responde esta página a lo que pide el reto de Space Apps</h3>
+<div class="tablewrap"><table>
+<tr><th>#</th><th>Lo que pide el reto</th><th>Cómo lo hace esta página</th></tr>
+<tr><td class="num">1</td><td>Explorar datos de todo el cielo e identificar fuentes en movimiento candidatas</td><td>Selector de regiones para todos + buscador avanzado que consulta cualquier coordenada del cielo en el archivo real de SPHEREx (SIA2 en IRSA)</td></tr>
+<tr><td class="num">2</td><td>Verificar candidatos contra catálogos conocidos</td><td>Lista de candidatos con su ficha de verificación (movimiento, catálogos como Gaia, espectro) y su estado honesto</td></tr>
+<tr><td class="num">3</td><td>Visualizar imágenes y espectros en diferentes épocas</td><td>Comparador por parpadeo entre imágenes reales DSS2 / 2MASS / WISE y acceso directo a la época SPHEREx DR1 en IRSA</td></tr>
+<tr><td class="num">4</td><td>Guardar, compartir y exportar listas de candidatos</td><td>Exportación CSV y JSON y botón para copiar la lista (la lista vive en tu sesión: expórtala para conservarla)</td></tr>
+<tr><td class="num">5</td><td>Documentación clara y tutoriales para empezar de inmediato</td><td>Explicaciones en lenguaje sencillo en cada sección y enlaces a los tutoriales oficiales de IRSA</td></tr>
+<tr><td class="num">6</td><td>Manejar el gran volumen de datos con eficiencia</td><td>Nunca se descarga la encuesta completa: se consultan los servidores de IRSA y SkyView y se piden solo recortes de la región elegida</td></tr>
+</table></div>
+<p class="small">Enunciado oficial del reto: <a href="https://www.spaceappschallenge.org/2026/challenges/planet-x-and-spherex/" target="_blank" rel="noopener">spaceappschallenge.org/2026/challenges/planet-x-and-spherex</a></p>
+
+<div class="grid grid2" style="margin-top:14px">
+<div class="tool" style="margin-top:0">
+<span class="tag">ENTIÉNDELO CON NÚMEROS</span>
 <h3>¿Por qué es tan difícil verlo? El problema 1/d⁴</h3>
-<p class="small">La luz del Sol llega debilitada como 1/d² y la reflejada se debilita otro 1/d² al volver: el brillo reflejado cae como <strong>1/d⁴</strong>. Mueve la distancia y compruébalo con los números del informe.</p>
-<label for="distRange">Distancia supuesta del planeta: <span class="num" id="distLabel">500 UA</span></label>
+<p class="small">La luz del Sol llega al planeta debilitada como 1/d² y la reflejada se debilita otro 1/d² al volver: el brillo cae como <strong>1/d⁴</strong>.</p>
+<label for="distRange">Distancia supuesta: <span class="num" id="distLabel">500 UA</span></label>
 <input type="range" id="distRange" min="200" max="800" value="500" step="10">
 <div class="grid grid2" style="margin-top:10px">
 <div class="output">Sol que recibe vs. la Tierra<br><b id="sunOut">1 / 250,000</b></div>
-<div class="output">Brillo reflejado vs. si estuviera a 1 UA<br><b id="reflOut">1 / 62,500 millones</b></div>
-<div class="output">Periodo orbital (Kepler, órbita circular aprox.)<br><b id="periodOut">≈ 11,180 años</b></div>
-<div class="output">Movimiento orbital aproximado<br><b id="motionOut">≈ 3′ de arco / año</b></div>
+<div class="output">Brillo reflejado vs. a 1 UA<br><b id="reflOut">1 / 62,500 millones</b></div>
+<div class="output">Periodo orbital aprox.<br><b id="periodOut">≈ 11,180 años</b></div>
+<div class="output">Movimiento orbital aprox.<br><b id="motionOut">≈ 3′ de arco / año</b></div>
 </div>
-<p class="small" style="margin-top:10px">Magnitud aparente esperada según los modelos: ~21–23, al menos ~600 veces más tenue que Plutón. Por eso una sola foto no basta: parece una estrella más.</p>
 </div>
-
-<div class="tool">
-<span class="tag">PASO 3 · EXPLORADOR ESPECTRAL — 102 BANDAS</span>
-<h3>¿En qué color infrarrojo debería brillar?</h3>
-<p class="small">SPHEREx fotografía cada punto del cielo 102 veces, una por banda, de 0.75 a 5.0 µm. Un candidato real sería débil o invisible en bandas cortas (luz reflejada) y relativamente más presente hacia 3–5 µm. Su pico térmico real (50–100 µm) queda <em>fuera</em> de SPHEREx: por eso ningún candidato de SPHEREx se confirma sin seguimiento en otras longitudes de onda.</p>
-<label for="waveRange">Longitud de onda: <span class="num" id="waveLabel">3.4 µm — banda tipo WISE W1</span></label>
+<div class="tool" style="margin-top:0">
+<span class="tag">LAS 102 BANDAS</span>
+<h3>¿En qué «color» infrarrojo mirar?</h3>
+<p class="small">SPHEREx fotografía cada punto 102 veces, de 0.75 a 5.0 µm. Mueve el marcador y mira dónde cae cada zona — y dónde queda el pico real del planeta: <strong>fuera</strong>.</p>
+<label for="waveRange">Longitud de onda: <span class="num" id="waveLabel">3.4 µm</span></label>
 <input type="range" id="waveRange" min="75" max="500" value="340" step="5">
-<svg viewBox="0 0 720 140" role="img" aria-label="Espectro esquemático: eje de 0.75 a 5 micrómetros con marcador móvil">
-<rect x="40" y="30" width="640" height="70" rx="8" fill="#1f2937"></rect>
-<rect x="40" y="30" width="640" height="70" rx="8" fill="none" stroke="#9ca3af"></rect>
-<text x="40" y="20" fill="currentColor" font-size="12">0.75 µm</text><text x="610" y="20" fill="currentColor" font-size="12">5.0 µm · SPHEREx</text>
-<text x="40" y="125" fill="currentColor" font-size="11">← débil</text><text x="590" y="125" fill="currentColor" font-size="11">más señal →</text>
-<line id="waveMarker" x1="472" y1="22" x2="472" y2="108" stroke="#f59e0b" stroke-width="3"></line>
-<circle id="waveDot" cx="472" cy="65" r="8" fill="#f59e0b"></circle>
-</svg>
-<p class="output" id="waveOut">A 3.4 µm estás en la zona donde los modelos de atmósfera (Fortney et al. 2016) permiten que el planeta brille más que un cuerpo negro simple. Es la banda más prometedora de SPHEREx para esta búsqueda.</p>
+<p class="output" id="waveOut"></p>
 </div>
+</div>
+</section>
 
+<!-- CANDIDATOS -->
+<section id="candidatos">
+<h2>Candidatos: verificar, guardar y exportar</h2>
+<p class="lead">Un candidato solo vale si pasa tres filtros: <strong>(1)</strong> se mueve entre épocas, <strong>(2)</strong> no está en Gaia ni en catálogos de objetos conocidos, <strong>(3)</strong> su espectro no parece estrella, galaxia ni enana marrón. Y aun así hacen falta más épocas para fijar una órbita. Cuando encuentres algo en el comparador, anótalo aquí con sus coordenadas.</p>
 <div class="tool">
-<span class="tag">PASO 4 · LISTA DE CANDIDATOS</span>
-<h3>Verificar, guardar y exportar</h3>
-<p class="small">Un candidato solo vale si pasa tres filtros: <strong>(1)</strong> se mueve entre épocas, <strong>(2)</strong> no está en Gaia ni en catálogos de asteroides/enanas marrones conocidos, <strong>(3)</strong> su espectro de 102 bandas no parece estrella, galaxia ni enana marrón. Y aun así: <strong>dos épocas no fijan una órbita; hace falta una tercera</strong>. La lista vive solo en esta sesión; expórtala para conservarla y compartirla con el equipo.</p>
 <div id="candList"></div>
+<div class="fieldrow" style="margin-top:14px">
+<div><label for="candName">Nombre / descripción</label><input type="text" id="candName" placeholder="Ej.: Fuente que se movió en Cetus"></div>
+<div><label for="candCoords">Coordenadas (RA, Dec en grados)</label><input type="text" id="candCoords" placeholder="Ej.: 37.52, −14.98"></div>
+<div><label for="candMove">Movimiento observado</label><input type="text" id="candMove" placeholder="Ej.: ~2′ entre 2001 y 2010"></div>
+</div>
 <div class="controls">
+<button class="btn teal" id="addCandBtn">＋ Agregar candidato</button>
 <button class="btn primary" id="exportCsv">⬇ Exportar CSV</button>
 <button class="btn" id="exportJson">⬇ Exportar JSON</button>
 <button class="btn" id="copyList">Copiar lista para compartir</button>
 </div>
-<p class="output" id="exportStatus">Candidatos en la lista: <b id="candCount">0</b> · Precargamos el candidato real publicado en 2025 (IRAS+AKARI) como ejemplo de cómo se documenta uno, con su estado honesto.</p>
+<p class="output" id="exportStatus">Candidatos en la lista: <b id="candCount">0</b> · Precargamos el candidato real publicado en 2025 (IRAS + AKARI) como ejemplo de cómo se documenta uno, con su estado honesto. La lista vive solo en esta sesión: expórtala para conservarla y compartirla.</p>
 </div>
 </section>
-<!-- RETO -->
-<section id="reto">
-<h2>El enunciado oficial del reto</h2>
-<p class="lead">El reto pide <strong>una herramienta web pública que ayude a cualquier persona a buscar el Planeta X en los datos de SPHEREx</strong>: explorar el cielo, identificar objetos en movimiento y distinguir candidatos de estrellas, galaxias y artefactos conocidos. Categorías: ciencia de datos, ciencia planetaria y astronomía, y desarrollo de software. Agencia asociada: Agencia Espacial Canadiense.</p>
-<div class="tablewrap"><table>
-<tr><th>#</th><th>Lo que pide la NASA</th><th>Cómo lo cubre esta página / el prototipo</th></tr>
-<tr><td class="num">1</td><td>Explorar datos de todo el cielo e identificar fuentes en movimiento candidatas</td><td>Comparador por parpadeo entre épocas (Paso 1) con la región elegida de Cetus (RA 02h 30m, Dec −15°) + recortes de IRSA de esa región</td></tr>
-<tr><td class="num">2</td><td>Verificar candidatos contra catálogos de estrellas, galaxias y objetos del sistema solar</td><td>Filtros Gaia / asteroides / enanas marrones en la ficha de cada candidato (Paso 4)</td></tr>
-<tr><td class="num">3</td><td>Visualizar imágenes y espectros de candidatos en diferentes épocas</td><td>Parpadeo por épocas + explorador espectral de 102 bandas (Pasos 1 y 3)</td></tr>
-<tr><td class="num">4</td><td>Guardar, compartir y exportar listas de candidatos</td><td>Lista con exportación CSV y JSON y botón para copiar y compartir (Paso 4)</td></tr>
-<tr><td class="num">5</td><td>Documentación clara, tutoriales y ejemplos para empezar de inmediato</td><td>Esta misma página: tutorial del método, candidato de ejemplo precargado y guía paso a paso</td></tr>
-<tr><td class="num">6</td><td>Manejar el gran volumen de datos de forma eficiente</td><td>Solo recortes (cutouts) de la región elegida, nunca la encuesta completa (~190 TB de imágenes): se consulta, no se descarga</td></tr>
-</table></div>
-<p class="small">Página del reto: <a href="https://www.spaceappschallenge.org/2026/challenges/planet-x-and-spherex/">spaceappschallenge.org/2026/challenges/planet-x-and-spherex</a></p>
-</section>
 
-<!-- SPHEREx -->
-<section id="spherex">
-<h2>La misión SPHEREx, en corto</h2>
-<p class="lead">SPHEREx (<em>Spectro-Photometer for the History of the Universe, Epoch of Reionization and Ices Explorer</em>) es un observatorio espacial de la NASA operado por el JPL, con Caltech e IPAC a cargo de los datos. Es el primer estudio <strong>espectral</strong> de todo el cielo en infrarrojo cercano: no apunta a un objeto, barre el cielo entero una y otra vez.</p>
+<!-- RECURSOS / CÓDIGO ABIERTO -->
+<section id="recursos">
+<h2>Recursos y código abierto</h2>
+<p class="lead">Todo lo que usa esta página es público y gratuito. Las imágenes y los datos no se guardan aquí: se consultan en vivo en los servidores oficiales citados abajo, y cada imagen lleva su crédito.</p>
 <div class="grid grid2">
-<div class="card"><span class="tag">FICHA TÉCNICA</span><h3>Los números que importan</h3>
+<div class="card"><span class="tag">DATOS DE SPHEREx — IRSA (NASA/IPAC)</span><h3>Los servidores reales de la misión</h3><ul class="clean">
+<li><a href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener">Archivo de la misión SPHEREx en IRSA</a> — la puerta oficial a todos los datos.</li>
+<li><a href="https://caltech-ipac.github.io/spherex-archive-documentation/spherex-data-access/" target="_blank" rel="noopener">Documentación oficial de acceso a datos</a> — de aquí salen el servicio SIA2 y el enlace al SPHEREx Data Explorer.</li>
+<li><strong>Servicio SIA2:</strong> <code>https://irsa.ipac.caltech.edu/SIA?</code> con colecciones <code>spherex_dr1</code>, <code>spherex_dr1_deep</code>, <code>spherex_dr1_cube</code> y <code>spherex_qr3</code> — es el que consulta el buscador avanzado.</li>
+<li><a href="https://irsa.ipac.caltech.edu/data/SPHEREx/docs/cutout_tool.html" target="_blank" rel="noopener">SPHEREx Cutout Tool</a> y <a href="https://irsa.ipac.caltech.edu/ibe/cutouts.html" target="_blank" rel="noopener">documentación de recortes</a>.</li>
+<li><a href="https://caltech-ipac.github.io/irsa-tutorials/spherex/" target="_blank" rel="noopener">Tutoriales oficiales de SPHEREx en IRSA</a> (Jupyter).</li>
+</ul></div>
+<div class="card"><span class="tag">IMÁGENES REALES POR ÉPOCA</span><h3>Los archivos del comparador</h3><ul class="clean">
+<li><a href="https://skyview.gsfc.nasa.gov/" target="_blank" rel="noopener">NASA SkyView (GSFC)</a> — genera las imágenes DSS/DSS2, 2MASS y WISE que ves en el comparador, al momento y desde el archivo.</li>
+<li><a href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noopener">Aladin Lite v3 (CDS, Estrasburgo)</a> — visor interactivo de todo el cielo con estudios HiPS reales (DSS2 color, 2MASS, AllWISE).</li>
+<li><a href="http://byw.tools/wiseview" target="_blank" rel="noopener">WiseView</a> — comparación por épocas dentro de las imágenes de WISE.</li>
+<li><a href="https://archive.stsci.edu/missions-and-data/gaia" target="_blank" rel="noopener">Archivo de Gaia (STScI)</a> — el catálogo para descartar estrellas conocidas al verificar un candidato.</li>
+</ul></div>
+<div class="card"><span class="tag">LA MISIÓN Y EL RETO</span><h3>Fuentes del contenido</h3><ul class="clean">
+<li><a href="https://science.nasa.gov/mission/spherex/" target="_blank" rel="noopener">NASA — página oficial de la misión SPHEREx</a>.</li>
+<li><a href="https://www.spaceappschallenge.org/2026/challenges/planet-x-and-spherex/" target="_blank" rel="noopener">NASA Space Apps 2026 — reto «Planet X and SPHEREx»</a> (enunciado y sus 6 requisitos).</li>
+<li>Batygin &amp; Brown (2016) — la hipótesis del Planeta Nueve; Holman &amp; Payne — la región probable usada en el preset de Cetus; Phan et al. (2025) — el candidato IRAS + AKARI, sin confirmar.</li>
+</ul></div>
+<div class="card"><span class="tag">CÓDIGO ABIERTO</span><h3>Esta página es software libre</h3>
+<p>El código de esta página es <strong>abierto</strong>: puedes leerlo, copiarlo, modificarlo y republicarlo bajo la <strong>licencia MIT</strong>. Los datos e imágenes enlazados conservan los créditos y condiciones de sus archivos de origen (IRSA, NASA SkyView, CDS).</p>
 <ul class="clean">
-<li><strong>Lanzamiento:</strong> 11 mar 2025 (hora de California; 12 mar 03:10 UTC), Falcon 9 desde Vandenberg, junto a PUNCH.</li>
-<li><strong>Ciencia desde:</strong> 1 may 2025 · <strong>Duración nominal:</strong> 2 años / 25 meses (2025–2027).</li>
-<li><strong>Telescopio:</strong> 20 cm de apertura · <strong>Órbita:</strong> polar heliosíncrona, ~700 km, ~14.5 órbitas/día, ~600 exposiciones/día.</li>
-<li><strong>Rango:</strong> 0.75–5.0 µm en <strong>102 bandas</strong>, píxel de ~6.2″, campo de 3.5° × 11°.</li>
-<li><strong>Rendimiento esperado:</strong> &gt;450 millones de galaxias y &gt;100 millones de estrellas de la Vía Láctea con espectro; catálogo futuro de ~100,000 asteroides.</li>
-<li><strong>Profundidad (4 mapas):</strong> 19.5–19.9 mag AB (0.75–3.8 µm) y 17.8–18.8 mag AB (3.8–5.0 µm), 5σ.</li>
-</ul></div>
-<div class="card"><span class="tag">SUS 3 METAS CIENTÍFICAS</span><h3>Para qué se construyó</h3>
-<ol class="steps">
-<li>Mapa 3D de cientos de millones de galaxias para estudiar la inflación cósmica.</li>
-<li>Medir el brillo colectivo total de todas las galaxias (luz de fondo extragaláctica).</li>
-<li>Buscar en la Vía Láctea reservas ocultas de agua, CO₂ y otros ingredientes de la vida.</li>
-</ol>
-<p>Buscar el Planeta X <strong>no</strong> es una meta oficial de la misión: es un uso ingenioso de sus mapas repetidos, y así hay que presentarlo.</p></div>
+<li>Repositorio: <a href="https://github.com/arith-da/planet-x-spherex" target="_blank" rel="noopener">github.com/arith-da/planet-x-spherex</a></li>
+<li>Versión publicada: <a href="https://arith-da.github.io/planet-x-spherex/" target="_blank" rel="noopener">arith-da.github.io/planet-x-spherex</a></li>
+</ul>
+<p class="small">Crédito de datos requerido por IRSA: “This publication makes use of data products from the Spectro-Photometer for the History of the Universe, Epoch of Reionization and Ices Explorer (SPHEREx), which is a joint project of the Jet Propulsion Laboratory and the California Institute of Technology, and is funded by the National Aeronautics and Space Administration.”</p></div>
 </div>
-<h3 style="margin-top:22px">Línea de tiempo y datos públicos</h3>
-<div class="timeline">
-<div><b>Feb 2019</b><span>NASA selecciona SPHEREx como misión MIDEX.</span></div>
-<div><b>11–12 mar 2025</b><span>Lanzamiento. El 1 de mayo de 2025 comienza la ciencia.</span></div>
-<div><b>Jul 2025</b><span>Quick Release 1: primeras imágenes espectrales públicas en IRSA.</span></div>
-<div><b>Dic 2025</b><span>Primer mapa completo de todo el cielo (anunciado el 18 dic 2025). Ese año SPHEREx también observó el cometa interestelar 3I/ATLAS: prueba de que puede caracterizar cuerpos en movimiento.</span></div>
-<div><b>12 nov 2026 — hace 2 días</b><span><strong>Data Release 1 (DR1)</strong>: imágenes reprocesadas uniformes + cubo espectral de todo el cielo en 102 canales. DOI: 10.26131/IRSA678 (imágenes) y 10.26131/IRSA679 (cubo). Este es el conjunto de datos del hackatón.</span></div>
-<div><b>2027–2028</b><span>Catálogo de fuentes de alta fiabilidad (ago 2027) y catálogos legado, incluido el de objetos del sistema solar (may 2028). Aún no existen: no los citen como disponibles.</span></div>
-</div>
-<div class="card" style="margin-top:14px"><span class="tag">DÓNDE VIVEN LOS DATOS</span><h3>IRSA — NASA/IPAC Infrared Science Archive</h3>
-<p>Todos los datos de SPHEREx son <strong>públicos y gratuitos, sin registro</strong>: <a href="https://irsa.ipac.caltech.edu/Missions/spherex.html">irsa.ipac.caltech.edu/Missions/spherex.html</a>. Formato FITS. Herramientas web: Data Explorer, Mosaic Tool, Cutout Tool, Spectrophotometry Tool, Source Discovery Tool y MOST (busca imágenes de objetos en movimiento por su órbita). Por código: <code>astroquery</code> en Python (<code>Irsa.query_sia(...)</code>). Volumen total ~190 TB en imágenes: por eso la herramienta pide recortes, jamás descarga la encuesta.</p>
-<p class="small">Tutoriales Jupyter oficiales: <a href="https://caltech-ipac.github.io/irsa-tutorials/spherex-mosaic/">cubos mosaico</a> · <a href="https://caltech-ipac.github.io/irsa-tutorials/spherex-hipscube/">cubo HiPS de todo el cielo</a> · <a href="https://caltech-ipac.github.io/irsa-tutorials/spherex-source-discovery-tool-demo/">Source Discovery Tool (el más parecido a esta búsqueda: resta imágenes y extrae espectros)</a> · Visualizador por épocas tipo WiseView: <a href="http://byw.tools/wiseview">byw.tools/wiseview</a> · Estrellas para filtrar (Gaia): <a href="https://archive.stsci.edu/missions-and-data/gaia">archive.stsci.edu/missions-and-data/gaia</a></p></div>
-</section>
-
-<!-- PLANETA X -->
-<section id="planeta-x">
-<h2>El Planeta X / Planeta Nueve: la hipótesis</h2>
-<p class="lead">Ojo con el nombre: “Planeta X” fue el nombre de Percival Lowell a principios del siglo XX (esa búsqueda llevó a Plutón en 1930). La hipótesis científica moderna es el <strong>Planeta Nueve</strong>, de Konstantin Batygin y Michael E. Brown (Caltech), publicada el 20 de enero de 2016. No tiene nada que ver con “Nibiru” ni planetas apocalípticos: eso es pseudociencia, y decirlo en la presentación suma credibilidad.</p>
-<div class="grid grid2">
-<div class="card"><span class="tag">LA EVIDENCIA</span><h3>Órbitas que se alinean</h3><p>Seis objetos transneptunianos extremos conocidos en 2016 (Sedna, 2012 VP113 y otros), todos con semieje &gt;250 UA y perihelio &gt;30 UA, tenían sus perihelios agrupados en la misma dirección y sus planos orbitales inclinados de forma parecida (~22°). Batygin y Brown calcularon solo <strong>0.007% de probabilidad</strong> de que esa doble alineación fuera azar. Un planeta masivo lejano los estaría “pastoreando” gravitacionalmente.</p></div>
-<div class="card"><span class="tag">POR QUÉ NADIE LO HA VISTO</span><h3>Tenue, lento y con un cielo enorme</h3><p>Brillo reflejado que cae como 1/d⁴ (ver calculadora), magnitud ~21–23, movimiento de solo ~3′ de arco al año, y un área de búsqueda refinada de <strong>600–800 grados cuadrados</strong> — cientos de veces la Luna llena — sin saber en qué punto de su órbita está. Hacia 2023, Subaru, DES, Pan-STARRS y ZTF ya habían descartado ~78–80% de la región más probable, sin detectarlo.</p></div>
-</div>
-<h3 style="margin-top:22px">¿Cómo sería? Depende del modelo — preséntenlo como rango</h3>
-<div class="tablewrap"><table>
-<tr><th>Propiedad</th><th>2016 (original)</th><th>2021 (Brown &amp; Batygin)</th><th>2025 (Siraj et al., 51 ETNOs)</th></tr>
-<tr><td>Masa</td><td>~10 Tierras</td><td>6.2 Tierras</td><td>4.4 ± 1.1 Tierras</td></tr>
-<tr><td>Semieje mayor</td><td>400–800 UA</td><td>380 UA</td><td>290 ± 30 UA</td></tr>
-<tr><td>Periodo orbital</td><td>10,000–20,000 años</td><td>—</td><td>~4,940 años</td></tr>
-<tr><td>Radio</td><td colspan="3">2–4 radios terrestres (súper-Tierra / mini-Neptuno); con atmósfera, hasta 2.7–6</td></tr>
-</table></div>
-<h3 style="margin-top:22px">El debate en noviembre de 2026: sin consenso</h3>
-<div class="grid grid2">
-<div class="card"><h3>Lo que debilita la versión simple</h3><ul class="clean">
-<li><strong>Sesgo observacional</strong> (Napier et al. 2021): con tan pocos objetos (~14 sostienen la afirmación), el agrupamiento podría ser un efecto de dónde y cuándo miran los telescopios. El bando contrario responde con análisis “sin sesgo” de 99.6% de significancia. No está resuelto.</li>
-<li><strong>Ammonite (2023 KQ14)</strong>, 4º sednoide, anunciado en <em>Nature Astronomy</em> (jul 2025): su perihelio apunta al lado opuesto y su órbita es estable desde hace 4,500 millones de años; empuja cualquier Planeta Nueve a ≳500 UA.</li>
-<li><strong>2017 OF201</strong> (2025): órbita enorme (~830 UA) que <em>no</em> se agrupa con las demás.</li>
-</ul></div>
-<div class="card"><h3>Candidatos y la prueba decisiva</h3><ul class="clean">
-<li><strong>Candidato Phan et al. 2025</strong> (IRAS 1983 + AKARI 2006): una pareja de fuentes separadas 47.46′. En noviembre de 2026, Brown y Batygin señalaron que su inclinación implícita (~120°) no encaja con su Planeta Nueve (15–20°): sería, si es real, otra cosa (“Planeta 8.5”). <strong>Sin confirmar.</strong></li>
-<li><strong>Observatorio Vera Rubin / LSST</strong>: comenzó el 29–30 jun 2026 en Chile. Se espera que ponga a prueba la mayor parte del espacio predicho en 1–2 años. Aún <strong>sin resultado</strong> sobre el Planeta Nueve.</li>
-<li>Explicaciones alternativas vivas: disco masivo de escombros (~10 Tierras en cuerpos helados), inestabilidad colectiva del disco, agujero negro primordial de 5–10 Tierras (invisible para SPHEREx: solo se detectaría por microlentes), o un planeta que esculpió las órbitas y luego fue expulsado.</li>
-</ul></div>
-</div>
-</section>
-<!-- CÓMO SE HIZO -->
-<section id="como-se-hizo">
-<h2>Cómo se creó esta página (el proceso, explicado)</h2>
-<p class="lead">Nadie del equipo programa, así que aquí está el proceso completo, sin magia: esto es lo que se hizo, en este orden, y esto es lo que hace cada parte cuando la abren.</p>
-<ol class="steps">
-<li><strong>Investigación primero, código después.</strong> Se recopilaron fuentes primarias (NASA, JPL, IRSA/IPAC, artículos revisados por pares) sobre SPHEREx y el Planeta Nueve, con fecha y enlace por dato. De ahí salió cada número de esta página. Lo que no se pudo verificar —por ejemplo, que exista un estudio publicado que use SPHEREx para buscar el Planeta Nueve: <em>no se encontró ninguno</em>— se dice tal cual, no se rellena.</li>
-<li><strong>Se definió el flujo antes que el diseño.</strong> El reto pide 6 cosas; la página se organizó como ese flujo: explorar → parpadear → calcular → revisar el espectro → guardar/exportar candidatos. Cada requisito tiene su sección interactiva (ver la tabla del reto).</li>
-<li><strong>Una sola página, sin servidor.</strong> Todo vive en un único archivo <code>index.html</code> (estructura + estilos + lógica) más una carpeta <code>assets/</code> con la ilustración. No hay base de datos ni cuenta que pagar: por eso se puede publicar gratis en GitHub Pages y por eso la lista de candidatos vive en la sesión y se exporta en CSV/JSON en vez de “guardarse en la nube”.</li>
-<li><strong>Las interacciones son simulaciones honestas del método real.</strong> El parpadeo usa un campo de estrellas generado por código (no son datos de SPHEREx) para que cualquiera entienda qué salta a la vista cuando algo se mueve. La calculadora sí usa la física real (1/d⁴, Kepler) y el explorador usa el rango real de SPHEREx (0.75–5.0 µm) con el pico térmico (50–100 µm) marcado fuera de rango a propósito.</li>
-<li><strong>Se probó en celular y computadora.</strong> Botones grandes para tocar, tablas que se adaptan, modo claro y oscuro según el sistema, y ningún contenido que se salga de la pantalla.</li>
-<li><strong>Lo que falta para datos reales (siguiente paso, opcional).</strong> Sustituir el campo simulado por recortes FITS de IRSA: pedir a IRSA, con <code>astroquery</code>, la misma región en dos épocas, mostrarlas en el mismo parpadeo y cruzar cada candidato con Gaia. La página ya está estructurada para ese cambio; el tutorial de Source Discovery Tool de IRSA es la plantilla técnica.</li>
-</ol>
-<details><summary>Anatomía del archivo: qué es cada parte de index.html</summary>
-<ul class="clean">
-<li><code>&lt;head&gt;</code> — título, idioma (español) y la tipografía IBM Plex.</li>
-<li><code>&lt;style&gt;</code> — todos los colores y el diseño, con variables para modo claro/oscuro. Cambiar <code>--accent</code> cambia el color principal de toda la página.</li>
-<li><code>&lt;section&gt;</code> — cada bloque de contenido: herramienta, reto, SPHEREx, Planeta X, GitHub… El menú superior enlaza a cada una por su <code>id</code>.</li>
-<li><code>&lt;canvas&gt;</code> + <code>&lt;script&gt;</code> al final — el dibujo del cielo y toda la lógica: parpadeo, calculadora, espectro, candidatos y exportaciones. Sin librerías externas: nada que instalar.</li>
-<li><code>assets/hero-cielo.webp</code> — la única imagen, ilustración generada y etiquetada como tal.</li>
-</ul></details>
-</section>
-
-<!-- GITHUB -->
-<section id="github">
-<h2>Git y GitHub: subirla y trabajar en equipo</h2>
-<p class="lead">Git es el control de versiones (el “historial con deshacer” del proyecto) y GitHub es donde vive la copia compartida. Para este equipo resuelven tres cosas: <strong>nadie sobrescribe a nadie, la página se publica gratis, y la entrega queda en un enlace público</strong>, que es lo que el reto pide.</p>
-<h3>Paso 1 · Crear el repositorio y agregar colaboradores</h3>
-<ol class="steps">
-<li>El repositorio lo crea <strong>Emir Cruz Ramos</strong> con su cuenta de GitHub <strong><code>emirCR-zip</code></strong>: entra a GitHub → <strong>New repository</strong> → nombre: <code>planet-x-spherex</code> → visibilidad <strong>Public</strong> → Create. El repo del equipo THE SCARERS quedará en <code>github.com/emirCR-zip/planet-x-spherex</code>.</li>
-<li>En el repo: <strong>Settings → Collaborators → Add people</strong>, Emir escribe el usuario de GitHub de cada compañero, permiso <strong>Write</strong>. Cada uno debe <strong>aceptar la invitación</strong> que le llega por correo/notificaciones (caduca en 7 días; que la acepten hoy). Sin cuenta de GitHub no se puede colaborar: primero se crea la cuenta.</li>
-<li>Para colaborar sin programar: editen textos, README y tutorial directamente en la web de GitHub, revisen los cambios de los demás y aprueben los Pull Requests. El código lo puede actualizar quien lo pida, sin que nadie tenga que tocarlo a mano.</li>
-</ol>
-<h3>Paso 2 · Subir esta página por primera vez</h3>
-<p>Guarden esta página como <code>index.html</code> junto a la carpeta <code>assets/</code>, abran una terminal en esa carpeta y ejecuten estos comandos — ya traen la cuenta de Emir (<code>emirCR-zip</code>), no hay que cambiar nada:</p>
-<pre><code>git init
-git add .
-git commit -m "Página inicial: Buscador del Planeta X con SPHEREx — THE SCARERS"
-git branch -M main
-git remote add origin https://github.com/emirCR-zip/planet-x-spherex.git
-git push -u origin main</code></pre>
-<div class="controls"><button class="btn" data-copy="git init&#10;git add .&#10;git commit -m &quot;Página inicial: Buscador del Planeta X con SPHEREx — THE SCARERS&quot;&#10;git branch -M main&#10;git remote add origin https://github.com/emirCR-zip/planet-x-spherex.git&#10;git push -u origin main">Copiar estos comandos</button></div>
-<h3>Paso 3 · El ritmo de trabajo de cada quien</h3>
-<pre><code>git clone https://github.com/emirCR-zip/planet-x-spherex.git
-cd planet-x-spherex
-git checkout -b visor        # tu rama; solo la primera vez
-# ...edita archivos...
-git add .
-git commit -m "Qué cambié, en una frase"
-git push origin visor</code></pre>
-<p>Luego, en GitHub: <strong>Pull requests → New pull request</strong> → de tu rama a <code>main</code> → otro compañero lo revisa → <strong>Merge</strong>. Regla de oro del equipo: <strong>nadie trabaja directo sobre <code>main</code></strong>, cambios pequeños y seguidos, y mensajes de commit que digan qué se hizo. Si algo se rompe, <code>git log</code> muestra el historial y se puede volver a la versión que funcionaba.</p>
-<h3>Paso 4 · Publicarla gratis con GitHub Pages</h3>
-<ol class="steps">
-<li>En el repo: <strong>Settings → Pages → Build and deployment → Deploy from a branch → main / (root) → Save</strong>.</li>
-<li>En 1–2 minutos la página queda pública en <code>https://emircr-zip.github.io/planet-x-spherex/</code> — GitHub escribe el nombre de usuario en minúsculas en la dirección de Pages, es la misma cuenta <code>emirCR-zip</code>. <strong>Ese enlace y el del repositorio (<code>https://github.com/emirCR-zip/planet-x-spherex</code>) son los que van en la entrega del proyecto.</strong></li>
-<li>Cada vez que se haga merge a <code>main</code>, Pages republica solo. No hay que volver a subir nada a mano.</li>
-</ol>
-<h3>Estructura recomendada del repositorio</h3>
-<pre><code>planet-x-spherex/
-├─ index.html        ← esta página (la herramienta)
-├─ assets/           ← imágenes (nada de archivos FITS pesados)
-├─ README.md         ← qué es, cómo se usa, enlaces oficiales
-├─ docs/
-│  ├─ guia-git.md    ← esta guía, para el equipo
-│  └─ tutorial.md    ← tutorial de uso para visitantes
-├─ data/             ← solo listas de candidatos (CSV/JSON pequeños)
-└─ .gitignore        ← excluye *.fits y archivos temporales</code></pre>
-<div class="alert"><b>Regla de datos:</b> nunca suban archivos FITS ni encuestas completas al repositorio (pesan GB/TB y GitHub los rechaza). Al repo van el código, los textos y las listas de candidatos exportadas; los datos pesados se <em>consult</em>an en IRSA con enlaces y coordenadas.</div>
 </section>
 
 <!-- EQUIPO -->
 <section id="equipo">
 <h2>El equipo: THE SCARERS</h2>
-<p class="lead">Equipo registrado en NASA Space Apps Challenge 2026 como <strong>THE SCARERS</strong>, con el proyecto <strong>Planet X and SPHEREx</strong>. Repositorio creado por Emir Cruz Ramos en GitHub como <code>emirCR-zip</code>.</p>
+<p class="lead">Equipo registrado en NASA Space Apps Challenge 2026 como <strong>THE SCARERS</strong>, con el proyecto <strong>Planet X and SPHEREx</strong>.</p>
 <div class="tablewrap"><table>
 <tr><th>Integrante</th><th>Rol en el equipo</th></tr>
 <tr><td><strong>Erick Arith Dominguez Acosta</strong></td><td>Dueño del equipo</td></tr>
 <tr><td><strong>Aaron Zaid Grajeda Diaz</strong></td><td>Sin tarea asignada</td></tr>
 <tr><td><strong>Andrea Martinez Pineda</strong></td><td>Sin tarea asignada</td></tr>
 <tr><td><strong>Gerardo Cruz Ramos</strong></td><td>Sin tarea asignada</td></tr>
-<tr><td><strong>Emir Cruz Ramos</strong></td><td>Sin tarea asignada · Creador del repositorio (GitHub: <code>emirCR-zip</code>)</td></tr>
+<tr><td><strong>Emir Cruz Ramos</strong></td><td>Sin tarea asignada · GitHub: <code>emirCR-zip</code></td></tr>
 <tr><td><strong>Fernando Martinez Gonzales</strong></td><td>Sin tarea asignada</td></tr>
 </table></div>
-<div class="card" style="margin-top:14px"><span class="tag">REGIÓN ELEGIDA PARA LA DEMO</span><h3>Cetus, eclíptica sur — RA 02h 30m, Dec −15°</h3>
-<p>Como el equipo no tenía una región definida, esta página usa como preset del comparador por parpadeo un campo de 20° × 20° en <strong>Cetus, sobre la eclíptica en el hemisferio sur celeste (RA 02h 30m / 37.5°, Dec −15°)</strong>. Se eligió por estar en la franja eclíptica sur compatible con el rango amplio de búsqueda de los modelos actuales y menos cubierta por los barridos del hemisferio norte. Es la región de demostración del método, no una predicción de la posición del planeta.</p></div>
-<h3 style="margin-top:22px">Checklist opcional para cerrar la entrega</h3>
-<p class="small">La página ya está completa con los datos del equipo. Solo quedan estos datos que aparecen cuando ustedes los generan; pásenlos cuando estén y se agregan en minutos:</p>
-<ul class="clean">
-<li>Enlaces finales del repositorio y de la demo en GitHub Pages — ya previstos arriba como <code>github.com/emirCR-zip/planet-x-spherex</code> y <code>emircr-zip.github.io/planet-x-spherex</code>; confirmen cuando estén activos.</li>
-<li>Sede: ¿evento local o virtual universal? Y si es local, su hora de cierre y de pitch, que puede ser antes del cierre global.</li>
-<li>Si quieren, se les redacta en inglés el texto de la página del proyecto en Space Apps y un guion corto de demo, listos para pegar.</li>
-<li>Seguimiento de datos: conseguir una tercera época de la región de Cetus para cualquier candidato que marquen — dos épocas no fijan una órbita.</li>
-</ul>
-
-<h3 style="margin-top:22px">Plan de las horas que quedan (entrega: dom 15 nov, 23:59 hora local)</h3>
-<ol class="steps">
-<li><strong>Hoy, primera hora:</strong> crear el repo, invitar a todos, subir esta página y activar Pages. La entrega ya existe desde este momento; todo lo demás es mejorarla.</li>
-<li><strong>Hoy:</strong> recorrer los tutoriales de IRSA y descargar un recorte real de una región en dos épocas; si no sale, la demo sigue funcionando con el campo simulado, declarado como tal.</li>
-<li><strong>Mañana por la mañana:</strong> textos de la página del proyecto (resumen, problema, cómo cubre los 6 requisitos, datos y enlaces, citando SPHEREx DR1 en IRSA, 12 nov 2026), capturas de la herramienta y guion de demo.</li>
-<li><strong>Mañana, antes del cierre:</strong> verificar que repo y demo sean públicos y sin contraseña, pegar los enlaces en la pestaña Project de su equipo y enviar. Verifiquen ahí mismo el formato exacto de demo que pide esta edición.</li>
-</ol>
 </section>
 
 <footer class="footer">
-<p><strong>Equipo THE SCARERS</strong> — Proyecto <strong>Planet X and SPHEREx</strong> · NASA Space Apps Challenge 2026. Integrantes: Erick Arith Dominguez Acosta (dueño del equipo), Aaron Zaid Grajeda Diaz, Andrea Martinez Pineda, Gerardo Cruz Ramos, Emir Cruz Ramos (creador del repositorio, GitHub: emirCR-zip) y Fernando Martinez Gonzales. Repositorio: <code>github.com/emirCR-zip/planet-x-spherex</code> · Demo prevista: <code>emircr-zip.github.io/planet-x-spherex</code>.</p>
-<p><strong>Fuentes principales</strong> (consultadas el 14 nov 2026): <a href="https://science.nasa.gov/mission/spherex/">NASA — Misión SPHEREx</a> · <a href="https://irsa.ipac.caltech.edu/Missions/spherex.html">IRSA — Archivo SPHEREx</a> · <a href="https://irsa.ipac.caltech.edu/data/SPHEREx/docs/overview_dr1.html">IRSA — DR1</a> · <a href="https://www.jpl.nasa.gov/images/pia26600-spherexs-first-all-sky-map/">JPL — Primer mapa de todo el cielo</a> · <a href="https://spherex.caltech.edu/page/data-products">Caltech — Productos de datos</a> · <a href="https://arxiv.org/html/2511.02985">Bock et al. 2026, la misión SPHEREx</a> · <a href="https://arxiv.org/pdf/1602.05963">Cowan et al. 2016, emisión térmica (28–53 K, pico 50–100 µm)</a> · <a href="https://arxiv.org/pdf/1604.07424">Fortney et al. 2016, atmósferas y detectabilidad</a> · <a href="https://www.spaceappschallenge.org/2026/challenges/planet-x-and-spherex/">NASA Space Apps — Enunciado del reto</a></p>
-<p>Crédito de datos requerido por IRSA: “This publication makes use of data products from the Spectro-Photometer for the History of the Universe, Epoch of Reionization and Ices Explorer (SPHEREx), which is a joint project of the Jet Propulsion Laboratory and the California Institute of Technology, and is funded by the National Aeronautics and Space Administration.” · Ningún candidato mostrado está confirmado: el Planeta Nueve sigue sin descubrirse y sin descartarse.</p>
+<p><strong>Equipo THE SCARERS</strong> — Proyecto <strong>Planet X and SPHEREx</strong> · NASA Space Apps Challenge 2026. Código abierto bajo licencia MIT · Repositorio: <a href="https://github.com/arith-da/planet-x-spherex" target="_blank" rel="noopener">github.com/arith-da/planet-x-spherex</a></p>
+<p>Imágenes y datos: SPHEREx © NASA/JPL-Caltech vía <a href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener">IRSA</a> · Comparador vía <a href="https://skyview.gsfc.nasa.gov/" target="_blank" rel="noopener">NASA SkyView</a> (DSS/DSS2, 2MASS, WISE) · Visor <a href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noopener">Aladin Lite / CDS</a>. Ningún candidato mostrado está confirmado: el Planeta Nueve sigue sin descubrirse y sin descartarse.</p>
 </footer>
 </div>
 
 <script>
-// ---------- Parpadeo ----------
-var cv=document.getElementById('blinkCanvas'),ctx=cv.getContext('2d');
-var stars=[];var seed=42;function rnd(){seed=(seed*1103515245+12345)%2147483648;return seed/2147483648;}
-for(var i=0;i<210;i++){stars.push({x:rnd()*960,y:rnd()*420,r:rnd()*1.8+0.4,c:rnd()});}
-var epoch=1,blinking=true,diffMode=false,timer=null;
-function starColor(c){return c<0.6?'#e5e7eb':(c<0.85?'#fcd9a0':'#9fd8d2');}
-function draw(){
- ctx.fillStyle='#05080d';ctx.fillRect(0,0,960,420);
- for(var i=0;i<stars.length;i++){var s=stars[i];ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,7);ctx.fillStyle=starColor(s.c);ctx.fill();}
- // galaxia tenue fija
- ctx.beginPath();ctx.ellipse(700,110,26,9,0.5,0,7);ctx.fillStyle='rgba(120,180,200,0.35)';ctx.fill();
- var mx=epoch===1?380:428,my=epoch===1?235:218;
- if(!diffMode){
-   ctx.beginPath();ctx.arc(mx,my,7,0,7);ctx.fillStyle='#ef4444';ctx.fill();
-   ctx.beginPath();ctx.arc(mx,my,13,0,7);ctx.strokeStyle='rgba(239,68,68,0.6)';ctx.lineWidth=2;ctx.stroke();
-   ctx.fillStyle='#fca5a5';ctx.font='600 15px IBM Plex Sans';ctx.fillText(epoch===1?'Época 1':'Época 2',mx+20,my+5);
- } else {
-   ctx.beginPath();ctx.arc(380,235,8,0,7);ctx.strokeStyle='#f59e0b';ctx.lineWidth=2;ctx.stroke();
-   ctx.beginPath();ctx.arc(428,218,8,0,7);ctx.fillStyle='#ef4444';ctx.fill();
-   ctx.strokeStyle='#f59e0b';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(380,235);ctx.lineTo(428,218);ctx.stroke();ctx.setLineDash([]);
-   ctx.fillStyle='#fcd9a0';ctx.font='600 15px IBM Plex Sans';ctx.fillText('desplazamiento ≈ 2.4′ en 6 meses',440,205);
- }
- ctx.fillStyle='rgba(229,231,235,0.75)';ctx.font='13px IBM Plex Mono';ctx.fillText(diffMode?'DIFERENCIA Época2 − Época1 · Cetus · campo simulado':'Cetus, eclíptica sur · RA 02h 30m, Dec −15° · campo simulado 30′ × 13′',14,404);
-}
-function setStatus(){document.getElementById('blinkStatus').innerHTML=diffMode?'Región: <b>Cetus, eclíptica sur — RA 02h 30m, Dec −15°</b> · Modo diferencia: <b>solo queda lo que se movió</b> · Así trabaja la resta de imágenes del Source Discovery Tool de IRSA.':'Región: <b>Cetus, eclíptica sur — RA 02h 30m, Dec −15°</b> · Mostrando: <b>'+(epoch===1?'Época 1 — Survey 1 (2025)':'Época 2 — Survey 2 (2026)')+'</b> · La fuente roja es la única que cambia de posición.';}
-function restartTimer(){if(timer)clearInterval(timer);var sp=+document.getElementById('blinkSpeed').value;timer=setInterval(function(){if(blinking&&!diffMode){epoch=epoch===1?2:1;draw();setStatus();}},sp);}
-document.getElementById('blinkToggle').addEventListener('click',function(){blinking=!blinking;this.textContent=blinking?'⏸ Pausar parpadeo':'▶ Reanudar parpadeo';});
-document.getElementById('diffBtn').addEventListener('click',function(){diffMode=!diffMode;this.textContent=diffMode?'Volver al parpadeo':'Ver diferencia (Época 2 − Época 1)';draw();setStatus();});
-document.getElementById('blinkSpeed').addEventListener('input',restartTimer);
-draw();restartTimer();
+// ---------- Estado global de la región ----------
+var PRESETS={
+ cetus:{name:'Cetus — la zona de búsqueda',ra:37.5,dec:-15,size:2,note:'RA 37.5° · Dec −15° · Campo: 2° × 2° para las imágenes de SkyView (el campo amplio de 20° × 20° de la región se consulta en IRSA con el buscador avanzado, radio 10°).'},
+ orion:{name:'El Cinturón de Orión',ra:85.2,dec:-1.2,size:2,note:'RA 85.2° · Dec −1.2° · Campo: 2° × 2° (SkyView).'},
+ pleyades:{name:'Las Pléyades (Tauro)',ra:56.8,dec:24.1,size:2,note:'RA 56.8° · Dec +24.1° · Campo: 2° × 2° (SkyView).'},
+ centro:{name:'Centro galáctico (Vía Láctea)',ra:266.4,dec:-29.0,size:2,note:'RA 266.4° · Dec −29.0° · Campo: 2° × 2° (SkyView).'},
+ andromeda:{name:'Galaxia de Andrómeda (M31)',ra:10.68,dec:41.27,size:2,note:'RA 10.68° · Dec +41.27° · Campo: 2° × 2° (SkyView).'}
+};
+var current={name:PRESETS.cetus.name,ra:37.5,dec:-15,size:2};
+var EPOCHS={
+ dss:{label:'DSS2 Red — placas fotográficas ~1950s–1990s',survey:'DSS2 Red'},
+ '2mass':{label:'2MASS-J — 1997–2001 · 1.25 µm',survey:'2MASS-J'},
+ wise:{label:'WISE — 2010 · 3.4 µm',survey:'WISE 3.4'}
+};
+var loaded={},activeEpoch='dss',blinking=false,blinkTimer=null,pair=['dss','wise'];
 
-// ---------- Calculadora ----------
+function skyviewUrl(ep){
+ var e=EPOCHS[ep];
+ return 'https://skyview.gsfc.nasa.gov/current/cgi/runquery.pl?Survey='+encodeURIComponent(e.survey)+'&position='+current.ra+','+current.dec+'&size='+current.size+','+current.size+'&rotation=0&Scaling=Log&return=jpg&Pixels=900,900';
+}
+function siaUrl(collection,format){
+ return 'https://irsa.ipac.caltech.edu/SIA?COLLECTION='+collection+'&POS=circle+'+current.ra+'+'+current.dec+'+'+(document.getElementById('sizeInput')?advRadius():0.5)+(format?'&RESPONSEFORMAT='+format:'&RESPONSEFORMAT=HTML');
+}
+function advRadius(){var v=parseFloat(document.getElementById('sizeInput').value);return isNaN(v)?0.5:v;}
+function aladinUrl(){return 'https://aladin.cds.unistra.fr/AladinLite/?target='+encodeURIComponent(current.ra+' '+current.dec)+'&fov='+(current.size*1.4);}
+
+function updateRegionLinks(){
+ document.getElementById('viewerTitle').textContent='Región actual: '+current.name;
+ document.getElementById('viewerCoords').textContent='RA '+current.ra+'° · Dec '+(current.dec>0?'+':'')+current.dec+'° · Campo: '+current.size+'° × '+current.size+'° para las imágenes de SkyView.';
+ document.getElementById('spherexSiaLink').href=siaUrl('spherex_dr1','HTML');
+ document.getElementById('aladinLink').href=aladinUrl();
+}
+
+function setViewerStatus(msg){document.getElementById('viewerStatus').innerHTML=msg;}
+
+function showEpoch(ep){
+ activeEpoch=ep;
+ document.querySelectorAll('[data-epoch]').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-epoch')===ep?'true':'false');});
+ var panel=document.getElementById('spherexPanel');
+ var imgA=document.getElementById('imgA');
+ if(ep==='spherex'){panel.style.display='block';imgA.style.display='none';document.getElementById('imgB').style.display='none';document.getElementById('viewerPlaceholder').style.display='none';setViewerStatus('Época <b>SPHEREx DR1 (2026)</b>: se consulta en IRSA con el botón de arriba — sus archivos son FITS científicos.');return;}
+ panel.style.display='none';
+ stopBlink();
+ if(ep==='dss')pair=['dss','wise'];
+ else if(ep==='2mass')pair=['2mass','wise'];
+ else pair=['dss','wise'];
+ document.getElementById('epochPair').value=pair.join(',');
+ applyPair(false);
+ if(loaded[pair[0]])setViewerStatus('Época destacada: <b>'+EPOCHS[ep].label+'</b> · Usa el control de mezcla o «Parpadear» para compararla con la otra época del par.');
+}
+
+function applyPair(keepBlink){
+ var a=pair[0],b=pair[1];
+ var imgA=document.getElementById('imgA'),imgB=document.getElementById('imgB');
+ var ph=document.getElementById('viewerPlaceholder');
+ if(!loaded[a]||!loaded[b]){ph.style.display='flex';imgA.style.display='none';imgB.style.display='none';setViewerStatus('Pulsa «Cargar imágenes reales» para pedir a NASA SkyView las épocas <b>'+EPOCHS[a].label+'</b> y <b>'+EPOCHS[b].label+'</b> de esta región.');return;}
+ ph.style.display='none';
+ imgA.src=loaded[a];imgA.alt='Imagen real de SkyView: '+EPOCHS[a].label+' en RA '+current.ra+', Dec '+current.dec;imgA.style.display='block';
+ imgB.src=loaded[b];imgB.alt='Imagen real de SkyView: '+EPOCHS[b].label+' en RA '+current.ra+', Dec '+current.dec;imgB.style.display='block';
+ imgB.style.opacity=document.getElementById('mixRange').value/100;
+ setViewerStatus('Comparando <b>'+EPOCHS[a].label+'</b> ↔ <b>'+EPOCHS[b].label+'</b> · Región: <b>'+current.name+'</b> · Imágenes reales de NASA SkyView.');
+ if(!keepBlink)stopBlink();
+}
+
+function loadImages(){
+ var btn=document.getElementById('loadImagesBtn');
+ setViewerStatus('Pidiendo imágenes reales a NASA SkyView para <b>'+current.name+'</b>… pueden tardar unos segundos.');
+ var keys=['dss','2mass','wise'];var done=0,failed=0;
+ keys.forEach(function(k){
+  var im=new Image();im.crossOrigin='anonymous';
+  im.onload=function(){loaded[k]=skyviewUrl(k);done++;if(done+failed===3)finishLoad(failed);};
+  im.onerror=function(){failed++;if(done+failed===3)finishLoad(failed);};
+  im.src=skyviewUrl(k);
+ });
+ function finishLoad(f){
+  if(f===3){setViewerStatus('SkyView no respondió desde esta conexión. Abre la región en <a href="'+aladinUrl()+'" target="_blank" rel="noopener">Aladin Lite</a> o consulta SPHEREx en IRSA: las imágenes siguen siendo reales, solo cambia la puerta.');return;}
+  document.getElementById('viewerPlaceholder').style.display='none';
+  applyPair(false);
+  if(f>0)setViewerStatus('SkyView entregó '+ (3-f) +' de 3 épocas; la que falta no cargó. Aun así puedes parpadear entre las disponibles cambiando el par de épocas.');
+ }
+}
+
+function stopBlink(){blinking=false;if(blinkTimer)clearInterval(blinkTimer);blinkTimer=null;document.getElementById('blinkBtn').textContent='▶ Parpadear entre épocas';}
+document.getElementById('blinkBtn').addEventListener('click',function(){
+ if(blinking){stopBlink();return;}
+ if(!loaded[pair[0]]||!loaded[pair[1]]){loadImages();setViewerStatus('Primero cargamos las imágenes reales; pulsa parpadear de nuevo cuando estén listas.');return;}
+ blinking=true;this.textContent='⏸ Detener parpadeo';
+ var imgB=document.getElementById('imgB');var on=false;
+ blinkTimer=setInterval(function(){on=!on;imgB.style.opacity=on?1:0;document.getElementById('mixRange').value=on?100:0;},900);
+});
+document.getElementById('mixRange').addEventListener('input',function(){stopBlink();document.getElementById('imgB').style.opacity=this.value/100;});
+document.getElementById('epochPair').addEventListener('change',function(){pair=this.value.split(',');applyPair(false);});
+document.querySelectorAll('[data-epoch]').forEach(function(b){b.addEventListener('click',function(){showEpoch(b.getAttribute('data-epoch'));document.getElementById('viewer').scrollIntoView({behavior:'smooth',block:'center'});});});
+document.getElementById('loadImagesBtn').addEventListener('click',loadImages);
+
+function goToRegion(name,ra,dec,size){
+ current={name:name,ra:ra,dec:dec,size:size||2};loaded={};stopBlink();
+ document.getElementById('raInput').value=ra;document.getElementById('decInput').value=dec;
+ updateRegionLinks();buildQuery(false);
+ document.getElementById('viewerPlaceholder').style.display='flex';
+ document.getElementById('imgA').style.display='none';document.getElementById('imgB').style.display='none';
+ document.getElementById('spherexPanel').style.display='none';
+ document.querySelectorAll('[data-epoch]').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-epoch')==='dss'?'true':'false');});
+ activeEpoch='dss';pair=['dss','wise'];document.getElementById('epochPair').value='dss,wise';
+ setViewerStatus('Región cambiada a <b>'+name+'</b>. Pulsa «Cargar imágenes reales» para verla en DSS2, 2MASS y WISE.');
+ document.getElementById('comparador').scrollIntoView({behavior:'smooth'});
+ loadImages();
+}
+document.querySelectorAll('[data-preset]').forEach(function(b){b.addEventListener('click',function(){var p=PRESETS[b.getAttribute('data-preset')];goToRegion(p.name,p.ra,p.dec,p.size);});});
+
+// ---------- Buscador avanzado ----------
+function parseCoord(txt,isRa){
+ var raw=String(txt).trim();
+ if(raw==='')return NaN;
+ if(/^-?\d+(\.\d+)?$/.test(raw))return parseFloat(raw);
+ var isHours=isRa&&/h/i.test(raw);
+ var neg=/^-/.test(raw)||/\bS\b/i.test(raw);
+ var clean=raw.replace(/[hms°′'″":]/gi,' ');
+ var parts=clean.split(/\s+/).map(parseFloat).filter(function(x){return !isNaN(x);});
+ if(!parts.length)return NaN;
+ var v=Math.abs(parts[0])+(parts[1]?parts[1]/60:0)+(parts[2]?parts[2]/3600:0);
+ if(isHours)v=v*15;
+ return neg?-v:v;
+}
+function buildQuery(scroll){
+ var raTxt=document.getElementById('raInput').value,decTxt=document.getElementById('decInput').value;
+ var ra=parseCoord(raTxt,true),dec=parseCoord(decTxt,false);
+ var st=document.getElementById('advStatus');
+ if(isNaN(ra)||isNaN(dec)){st.innerHTML='<b>Revisa las coordenadas:</b> usa grados (ej. 37.5, −15) o formato 02h 30m 00s / −15° 00′ 00″.';return;}
+ ra=((ra%360)+360)%360;
+ current.ra=Math.round(ra*100000)/100000;current.dec=Math.round(dec*100000)/100000;
+ current.name='Coordenadas personalizadas';
+ current.size=parseFloat(document.getElementById('advSizeSelect').value)||2;
+ var col=document.getElementById('collectionSelect').value;
+ var radius=advRadius();
+ var html='https://irsa.ipac.caltech.edu/SIA?COLLECTION='+col+'&POS=circle+'+current.ra+'+'+current.dec+'+'+radius+'&RESPONSEFORMAT=HTML';
+ var vot='https://irsa.ipac.caltech.edu/SIA?COLLECTION='+col+'&POS=circle+'+current.ra+'+'+current.dec+'+'+radius+'&RESPONSEFORMAT=VOTABLE';
+ document.getElementById('siaHtmlUrl').textContent=html;document.getElementById('siaHtmlBtn').href=html;
+ document.getElementById('siaVotUrl').textContent=vot;document.getElementById('siaVotBtn').href=vot;
+ document.getElementById('cutoutUrl').textContent='Sobre cada access_url FITS de la tabla: ?center='+current.ra+','+current.dec+'&size='+(radius*2);
+ document.getElementById('queryResults').style.display='block';
+ st.innerHTML='Consulta construida: <b>RA '+current.ra+'° · Dec '+current.dec+'° · radio '+radius+'° · colección '+col+'</b> — apunta a los servidores reales de IRSA.';
+ loaded={};updateRegionLinks();
+ if(scroll)document.getElementById('queryResults').scrollIntoView({behavior:'smooth',block:'center'});
+}
+document.getElementById('buildQueryBtn').addEventListener('click',function(){buildQuery(true);});
+document.getElementById('sendToViewerBtn').addEventListener('click',function(){goToRegion('Coordenadas personalizadas',current.ra,current.dec,current.size);});
+updateRegionLinks();
+
+// ---------- Calculadora 1/d4 ----------
 function fmt(n){return n.toLocaleString('es-MX',{maximumFractionDigits:0});}
 function calc(){
  var d=+document.getElementById('distRange').value;
@@ -405,25 +510,22 @@ function calc(){
 }
 document.getElementById('distRange').addEventListener('input',calc);calc();
 
-// ---------- Espectro ----------
+// ---------- Bandas ----------
 function wave(){
  var v=+document.getElementById('waveRange').value;var um=v/100;
- var x=40+(um-0.75)/(5-0.75)*640;
- document.getElementById('waveMarker').setAttribute('x1',x);document.getElementById('waveMarker').setAttribute('x2',x);
- document.getElementById('waveDot').setAttribute('cx',x);
- var label,txt;
- if(um<1.5){label=um.toFixed(2)+' µm — infrarrojo cercano corto';txt='A '+um.toFixed(2)+' µm domina la luz solar reflejada, que a 500 UA llega debilitada como 1/d⁴. Un planeta frío aquí sería extremadamente tenue: su ausencia en bandas cortas es parte de la firma que se busca.';}
- else if(um<2.8){label=um.toFixed(2)+' µm — infrarrojo cercano';txt='A '+um.toFixed(2)+' µm un candidato debería seguir siendo débil. Si una fuente brilla igual en todo el espectro, probablemente es una estrella o galaxia de fondo, no un planeta frío.';}
- else if(um<4){label=um.toFixed(2)+' µm — zona tipo WISE W1 (3.4 µm)';txt='A '+um.toFixed(2)+' µm estás en la zona donde los modelos de atmósfera (Fortney et al. 2016) permiten que el planeta brille más que un cuerpo negro simple. Es la banda más prometedora de SPHEREx para esta búsqueda.';}
- else{label=um.toFixed(2)+' µm — borde largo de SPHEREx, tipo WISE W2 (4.6 µm)';txt='A '+um.toFixed(2)+' µm estás en el extremo largo de SPHEREx. Aun así, el pico térmico real del planeta (50–100 µm) queda más de 10 veces más lejos en longitud de onda: por eso hace falta seguimiento en infrarrojo lejano.';}
- document.getElementById('waveLabel').textContent=label;
+ document.getElementById('waveLabel').textContent=um.toFixed(2)+' µm';
+ var txt;
+ if(um<1.5)txt='A '+um.toFixed(2)+' µm domina la luz solar reflejada, debilitada como 1/d⁴ a cientos de UA: un planeta frío aquí sería extremadamente tenue. Que una fuente casi no se vea en bandas cortas es parte de la firma que se busca.';
+ else if(um<2.8)txt='A '+um.toFixed(2)+' µm un candidato debería seguir siendo débil. Si una fuente brilla igual en todo el espectro, probablemente es una estrella o galaxia de fondo.';
+ else if(um<4)txt='A '+um.toFixed(2)+' µm estás en la zona tipo WISE W1 (3.4 µm), la más prometedora de SPHEREx para esta búsqueda según los modelos de atmósferas.';
+ else txt='A '+um.toFixed(2)+' µm estás en el borde largo de SPHEREx (tipo WISE W2, 4.6 µm). El pico térmico real de un planeta a 28–53 K (50–100 µm) queda más de 10 veces más lejos: por eso todo candidato necesita seguimiento en infrarrojo lejano.';
  document.getElementById('waveOut').textContent=txt;
 }
 document.getElementById('waveRange').addEventListener('input',wave);wave();
 
 // ---------- Candidatos ----------
 var candidates=[
- {name:'PHAN-2025 (IRAS F02211-4844 + AKARI J0220440-491247)',type:'Candidato publicado · IRAS+AKARI, no SPHEREx',move:'47.46′ en 23 años (compatible con 500–700 UA)',catalog:'No confirmado · inclinación implícita ~120°, no encaja con el Planeta Nueve de Batygin–Brown (15–20°)',spectrum:'Flujos ~0.24 Jy (60 µm), 0.27 Jy (90 µm), 0.52 Jy (100 µm) — infrarrojo lejano',status:'SIN CONFIRMAR — necesita seguimiento (DECam/Rubin)',ok:false}
+ {name:'PHAN-2025 (IRAS 1983 + AKARI 2006)',type:'Candidato publicado · IRAS+AKARI, no SPHEREx',move:'47.46′ en 23 años',catalog:'No confirmado · inclinación implícita ~120°, no encaja con el Planeta Nueve de Batygin–Brown (15–20°)',spectrum:'Fuentes en infrarrojo lejano (60–100 µm)',status:'SIN CONFIRMAR — necesita seguimiento',ok:false}
 ];
 function renderCands(){
  var box=document.getElementById('candList');box.innerHTML='';
@@ -435,27 +537,25 @@ function renderCands(){
  });
  document.getElementById('candCount').textContent=candidates.length;
 }
-document.getElementById('markBtn').addEventListener('click',function(){
- candidates.push({name:'DEMO-'+(candidates.length)+' · Fuente roja del simulador',type:'Ejemplo del prototipo · campo simulado, NO es un dato real de SPHEREx',move:'≈2.4′ en 6 meses entre Survey 1 y Survey 2 (simulado)',catalog:'Pendiente de cruzar con Gaia y catálogo de asteroides al usar datos reales de IRSA',spectrum:'Pendiente: extraer las 102 bandas con la herramienta de fotometría de IRSA',status:'EJEMPLO — falta tercera época',ok:false});
+document.getElementById('addCandBtn').addEventListener('click',function(){
+ var n=document.getElementById('candName').value.trim()||'Candidato sin nombre';
+ var co=document.getElementById('candCoords').value.trim()||'Coordenadas por anotar';
+ var mv=document.getElementById('candMove').value.trim()||'Por medir entre épocas';
+ candidates.push({name:n+' · '+co,type:'Anotado desde el comparador · pendiente de verificación completa',move:mv,catalog:'Pendiente: cruzar con Gaia y catálogos de objetos conocidos',spectrum:'Pendiente: revisar bandas en IRSA (SPHEREx DR1)',status:'CANDIDATO — falta verificación y más épocas',ok:false});
  renderCands();
- document.getElementById('exportStatus').innerHTML='Agregado a la lista. Candidatos: <b>'+candidates.length+'</b> · Recuerda: es un ejemplo simulado para practicar el flujo.';
- document.getElementById('candList').scrollIntoView({behavior:'smooth',block:'center'});
+ document.getElementById('exportStatus').innerHTML='Candidato agregado. Total: <b>'+candidates.length+'</b> · Exporta la lista para conservarla.';
 });
 function download(name,content,type){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:type}));a.download=name;a.click();setTimeout(function(){URL.revokeObjectURL(a.href);},2000);}
 document.getElementById('exportCsv').addEventListener('click',function(){
  var csv='nombre,tipo,movimiento,catalogos,espectro,estado\n'+candidates.map(function(c){return [c.name,c.type,c.move,c.catalog,c.spectrum,c.status].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
- download('candidatos-planeta-x.csv',csv,'text/csv');document.getElementById('exportStatus').innerHTML='CSV descargado con <b>'+candidates.length+'</b> candidato(s). Compártanlo en el repositorio, carpeta <b>data/</b>.';
+ download('candidatos-planeta-x.csv',csv,'text/csv');document.getElementById('exportStatus').innerHTML='CSV descargado con <b>'+candidates.length+'</b> candidato(s).';
 });
 document.getElementById('exportJson').addEventListener('click',function(){download('candidatos-planeta-x.json',JSON.stringify(candidates,null,2),'application/json');});
 document.getElementById('copyList').addEventListener('click',function(){
  var t=candidates.map(function(c,i){return (i+1)+'. '+c.name+' — '+c.status;}).join('\n');
- if(navigator.clipboard){navigator.clipboard.writeText(t);document.getElementById('exportStatus').textContent='Lista copiada. Pégala en el chat del equipo o en el README.';}
+ if(navigator.clipboard){navigator.clipboard.writeText(t);document.getElementById('exportStatus').textContent='Lista copiada. Pégala donde quieras compartirla.';}
 });
 renderCands();
-
-// ---------- Copiar ----------
-document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){if(navigator.clipboard){navigator.clipboard.writeText(b.getAttribute('data-copy'));b.textContent='¡Copiado!';setTimeout(function(){b.textContent='Copiar estos comandos';},1800);}});});
-document.querySelectorAll('[data-copy-target]').forEach(function(b){b.addEventListener('click',function(){var t=document.getElementById(b.getAttribute('data-copy-target'));if(navigator.clipboard){navigator.clipboard.writeText(t.value);b.textContent='¡Plantilla copiada!';}});});
 </script>
 </body>
 </html>
