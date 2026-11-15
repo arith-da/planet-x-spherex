@@ -1,0 +1,903 @@
+<!-- Planet X and SPHEREx — Sky Search Tool · Team THE SCARERS · NASA Space Apps Challenge 2026
+     Single self-contained page: real sky photos from NASA SkyView, SPHEREx queries via IRSA (SIA2),
+     Aladin Lite viewer (CDS). No build step, no backend. Open index.html or serve it statically. -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Planet X and SPHEREx — Sky Search Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --surface2:#eef1f4; --ink:#101828; --muted:#475467; --faint:#667085;
+  --line:#d9dee6; --accent:#08726d; --accent-ink:#ffffff; --accent-soft:#e0f2f0;
+  --amber:#b54708; --amber-soft:#fef3e2; --danger:#b42318; --ok:#067647;
+  --stage:#05080f; --chip:#101828;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0a0f1c; --surface:#121a2c; --surface2:#182238; --ink:#eef2f7; --muted:#b6c0d1; --faint:#8b96ab;
+    --line:#26324e; --accent:#2ec4b6; --accent-ink:#04211d; --accent-soft:#0d2f2c;
+    --amber:#fdb022; --amber-soft:#33270a; --danger:#f97066; --ok:#32d583;
+    --stage:#02040a; --chip:#eef2f7;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55;font-size:16px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+a{color:var(--accent)}
+button,[role="button"],select,input,textarea{min-height:44px}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+nav.top{position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;gap:6px;align-items:center;overflow-x:auto;padding-top:8px;padding-bottom:8px;scrollbar-width:none}
+nav.top .wrap::-webkit-scrollbar{display:none}
+nav.top a{white-space:nowrap;text-decoration:none;color:var(--ink);font-weight:600;font-size:.92rem;padding:10px 12px;border-radius:10px}
+nav.top a:hover{background:var(--surface2)}
+nav.top .brand{font-weight:800;color:var(--accent)}
+header.hero{padding:38px 0 10px}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:26px;align-items:start}
+@media(max-width:820px){.hero-grid{grid-template-columns:1fr}}
+h1{font-size:2.35rem;line-height:1.12;margin:0 0 12px;font-weight:800;letter-spacing:-.02em}
+@media(max-width:520px){h1{font-size:1.85rem}}
+.lede{font-size:1.08rem;color:var(--muted);margin:0 0 18px;max-width:56ch}
+.teamline{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--accent-soft);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:.9rem;font-weight:600;margin-bottom:16px}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;padding:10px 18px;text-decoration:none;font-size:.98rem}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:6px 12px;font-size:.88rem;min-height:40px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.facts{grid-template-columns:1fr}}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.fact b{display:block;font-size:1.25rem}
+.fact span{color:var(--muted);font-size:.9rem}
+section{padding:34px 0 8px}
+h2{font-size:1.55rem;margin:0 0 8px;letter-spacing:-.01em}
+h3{font-size:1.12rem;margin:0 0 6px}
+.sub{color:var(--muted);max-width:72ch;margin:0 0 18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:820px){.steps{grid-template-columns:1fr}}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.step .n{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:800;align-items:center;justify-content:center;margin-bottom:8px}
+.step p{margin:0;color:var(--muted);font-size:.95rem}
+/* Comparator */
+.stage-wrap{position:relative;background:var(--stage);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+.stage{position:relative;width:min(100%,640px);aspect-ratio:1/1;margin:0 auto}
+.stage img.layer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.stage img.layer.on{display:block}
+.stage img.layer.diff{mix-blend-mode:difference}
+.stage.side{display:grid;grid-template-columns:1fr 1fr;aspect-ratio:auto}
+.stage.side img.layer{position:relative;display:none}
+.stage.side img.layer.on{display:block}
+.badge{position:absolute;top:12px;left:12px;z-index:6;background:rgba(2,6,16,.82);color:#fff;border-radius:10px;padding:8px 14px;font-weight:800;font-size:.95rem;letter-spacing:.02em}
+.badge small{display:block;font-weight:600;font-size:.78rem;opacity:.85}
+.veil{position:absolute;inset:0;z-index:8;background:rgba(2,6,16,.78);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px}
+.veil.hide{display:none}
+.spinner{width:46px;height:46px;border-radius:50%;border:5px solid rgba(255,255,255,.25);border-top-color:#2ec4b6;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.spinner{animation:none} html{scroll-behavior:auto}}
+.markers{position:absolute;inset:0;z-index:5;pointer-events:none;display:none}
+.markers.on{display:block}
+.oval{position:absolute;width:9%;height:9%;border:3px solid #fdb022;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 2px rgba(2,6,16,.45)}
+.oval::after{content:"";position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:#fdb022;box-shadow:0 0 0 2px rgba(2,6,16,.45)}
+.oval span{position:absolute;top:-28px;left:50%;transform:translateX(-50%);background:#fdb022;color:#1a1000;font-size:.72rem;font-weight:800;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.markers svg{position:absolute;inset:0;width:100%;height:100%}
+.comp-controls{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.epoch-btn{display:flex;flex-direction:column;align-items:flex-start;gap:0;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;text-align:left;min-width:150px}
+.epoch-btn b{font-size:.98rem}
+.epoch-btn span{font-size:.8rem;color:var(--muted)}
+.epoch-btn.active{border-color:var(--accent);background:var(--accent-soft)}
+.epoch-btn .st{font-size:.75rem;font-weight:700}
+.slider-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0}
+.slider-row input[type=range]{flex:1;min-width:160px;min-height:44px}
+.note{background:var(--amber-soft);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;color:var(--ink);font-size:.94rem}
+.note b{color:var(--amber)}
+.oknote{background:var(--accent-soft);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;font-size:.94rem}
+.statusline{font-size:.92rem;color:var(--muted);min-height:1.4em}
+/* Search tools */
+.presets{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:900px){.presets{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.presets{grid-template-columns:1fr}}
+.preset{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;color:var(--ink);width:100%}
+.preset:hover{border-color:var(--accent)}
+.preset b{display:block;font-size:1.02rem;margin-bottom:4px}
+.preset p{margin:0 0 8px;color:var(--muted);font-size:.9rem}
+.preset .coords{font-size:.8rem;color:var(--faint)}
+.preset.star{border-color:var(--amber);background:var(--amber-soft)}
+form.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:820px){form.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){form.grid{grid-template-columns:1fr}}
+label.f{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:.92rem}
+label.f input,label.f select{border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:10px 12px;font:inherit;font-weight:400;width:100%}
+label.f small{color:var(--muted);font-weight:400}
+.querybox{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:12px;word-break:break-all;font-size:.82rem}
+table{width:100%;border-collapse:collapse;font-size:.94rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.table-scroll{overflow-x:auto}
+@media(max-width:640px){
+  .stack-table table,.stack-table thead,.stack-table tbody,.stack-table tr,.stack-table td{display:block;width:100%}
+  .stack-table thead{display:none}
+  .stack-table tr{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:6px 4px;background:var(--surface)}
+  .stack-table td{border-bottom:none;padding:6px 12px}
+  .stack-table td::before{content:attr(data-l);display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+}
+#aladin{width:100%;height:480px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);background:#000}
+@media(max-width:560px){#aladin{height:380px}}
+footer{margin-top:44px;border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);font-size:.92rem}
+.resources li{margin-bottom:8px}
+.demo-banner{background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:12px 16px;font-weight:700;display:none;margin-bottom:12px}
+.demo-banner.on{display:block}
+.schema{display:flex;gap:18px;flex-wrap:wrap;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.schema svg{flex:0 0 auto}
+.schema p{margin:0;color:var(--muted);max-width:52ch;font-size:.95rem}
+
+.guide{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:820px){.guide{grid-template-columns:1fr}}
+.guide-box{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.guide-box p,.guide-box li{font-size:.94rem;color:var(--muted)}
+.guide-box ul{margin:6px 0 0;padding-left:18px}
+.pill{display:inline-block;background:var(--accent-soft);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:700}
+.conv{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:640px){.conv{grid-template-columns:1fr 1fr}}
+.conv label{font-size:.85rem;font-weight:600;display:flex;flex-direction:column;gap:4px}
+.conv input,.conv select{border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--surface);color:var(--ink);font:inherit}
+details.adv{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:var(--surface)}
+details.adv summary{font-weight:700;cursor:pointer;min-height:44px;display:flex;align-items:center}
+.cand-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:820px){.cand-steps{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <a class="brand" href="#comparador">Planet X · SPHEREx</a>
+  <a href="#comparador">Comparator</a>
+  <a href="#buscador-simple">Regions</a>
+  <a href="#buscador-avanzado">Advanced search</a>
+  <a href="#visor">Sky viewer</a>
+  <a href="#candidatos">Candidates</a>
+  <a href="#proposito">Purpose</a>
+  <a href="#equipo">Team</a>
+  <a href="#recursos">Resources</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="hero-grid">
+    <div>
+      <span class="teamline">Team THE SCARERS · NASA Space Apps Challenge 2026 · Project: Planet X and SPHEREx</span>
+      <h1>The sky changes. Here you can see it with your own eyes.</h1>
+      <p class="lede">This tool shows <strong>real photographs of the same place in the sky taken in different years</strong> and compares them right in front of you: blink between them, and whatever moved, appeared, or disappeared jumps out. That is how distant planets like the hypothetical Planet X are hunted in data from NASA's SPHEREx mission.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="#comparador">See the comparator</a>
+        <button class="btn" id="ctaBarnard" type="button">▶ Try it with Barnard's Star</button>
+      </div>
+      <p class="statusline">Comparing and exploring works inside this page: the photos come from NASA SkyView and the viewer is Aladin Lite (CDS). For SPHEREx data, the advanced search is now simpler: enter the coordinates using the step-by-step guide, open IRSA's official table in a new tab, and if IRSA returns its temporary "502" error, wait a minute and try again — it is their server, not your connection.</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>Mar 11, 2025</b><span>Launch of SPHEREx, a NASA MIDEX mission.</span></div>
+      <div class="fact"><b>102 bands</b><span>First spectral map of the whole sky in the near infrared: 0.75–5.0 µm.</span></div>
+      <div class="fact"><b>Nov 12, 2026</b><span>Release of the SPHEREx DR1 data at IRSA.</span></div>
+      <div class="fact"><b>Every ~6 months</b><span>SPHEREx photographs the whole sky again: 4 maps in 2 years. A planet moves from one map to the next.</span></div>
+    </div>
+  </div>
+</div></header>
+
+<section id="como"><div class="wrap">
+  <h2>How the comparison works, in 20 seconds</h2>
+  <p class="sub">It is the method Clyde Tombaugh used to discover Pluto in 1930, and it is still the most direct way to hunt for objects that move.</p>
+  <div class="schema">
+    <svg width="300" height="120" viewBox="0 0 300 120" role="img" aria-label="Diagram: a normal star stays in the same place in both photos; the one that moves appears somewhere else and jumps when you blink.">
+      <rect x="4" y="8" width="130" height="104" rx="8" fill="#0b1220"/>
+      <circle cx="40" cy="40" r="3.5" fill="#fff"/><circle cx="95" cy="80" r="3" fill="#fff"/>
+      <circle cx="62" cy="62" r="5" fill="#fdb022"/>
+      <text x="69" y="106" fill="#fff" font-size="11" text-anchor="middle">BEFORE · 1950s</text>
+      <rect x="166" y="8" width="130" height="104" rx="8" fill="#0b1220"/>
+      <circle cx="202" cy="40" r="3.5" fill="#fff"/><circle cx="257" cy="80" r="3" fill="#fff"/>
+      <circle cx="252" cy="38" r="5" fill="#fdb022"/>
+      <text x="231" y="106" fill="#fff" font-size="11" text-anchor="middle">AFTER · 1980s–90s</text>
+      <path d="M140 60 H160" stroke="#08726d" stroke-width="3"/>
+    </svg>
+    <p>Stars are so far away that over decades they move <strong>less than one pixel</strong>: they sit in the same place in both photos. Anything that really does move — an asteroid, a nearby fast star, or a distant planet — shows up in <strong>a different place</strong> in the second photo. When you alternate the photos (blink), that object seems to <strong>jump</strong>. That jump is the signal we are looking for.</p>
+  </div>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><h3>Pick a place in the sky</h3><p>Use a famous region from the simple search, or enter exact coordinates in the advanced search.</p></div>
+    <div class="step"><span class="n">2</span><h3>Look at photos from different epochs</h3><p>The page fetches real photos from the 1950s and the 1980s–90s of the same place, served by NASA SkyView.</p></div>
+    <div class="step"><span class="n">3</span><h3>Blink and look for the jump</h3><p>Press "Blink" or the "Difference" mode. If something jumps, record it as a candidate and verify it.</p></div>
+  </div>
+</div></section>
+
+<section id="comparador"><div class="wrap">
+  <h2>Epoch comparator</h2>
+  <p class="sub">You are viewing: <strong id="regionName">Barnard's Star — the demo where the change IS visible</strong> · <span class="mono" id="regionCoords">RA 269.452° · Dec +4.693° · field 0.5°</span>. All three photos are real and come from NASA SkyView; each one names its archive and its years.</p>
+
+  <div class="demo-banner" id="demoBanner" role="status"></div>
+
+  <div class="comp-controls" role="group" aria-label="Choose an epoch">
+    <button type="button" class="epoch-btn" data-epoch="0"><b>1 · DSS</b><span>Photographic plates · 1950s</span><span class="st" data-st>…</span></button>
+    <button type="button" class="epoch-btn" data-epoch="1"><b>2 · DSS2 Red</b><span>Red light · 1980s–90s</span><span class="st" data-st>…</span></button>
+    <button type="button" class="epoch-btn" data-epoch="2"><b id="ep3Title">3 · DSS2 Blue</b><span id="ep3Sub">Blue light · 1980s–90s</span><span class="st" data-st>…</span></button>
+  </div>
+
+  <div class="stage-wrap">
+    <div class="stage" id="stage">
+      <img class="layer" id="img0" alt="Real photo of the sky, DSS archive, 1950s" />
+      <img class="layer" id="img1" alt="Real photo of the sky, DSS2 Red archive, 1980s to 90s" />
+      <img class="layer" id="img2" alt="Real photo of the sky, DSS2 Blue archive, 1980s to 90s" />
+      <div class="markers" id="markers" aria-hidden="true">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line x1="47.8" y1="78.2" x2="49.5" y2="54.7" stroke="#fdb022" stroke-width="2" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/></svg>
+        <div class="oval" style="left:47.8%;top:78.2%"><span>Barnard · 1950s</span></div>
+        <div class="oval" style="left:49.5%;top:54.7%"><span>Barnard · 1980s–90s</span></div>
+      </div>
+      <div class="badge" id="badge">LOADING<small>Preparing real photos…</small></div>
+      <div class="veil" id="veil">
+        <div class="spinner" aria-hidden="true"></div>
+        <div><strong>Loading real images from NASA SkyView…</strong><br /><span id="veilProgress">0 of 3 epochs ready</span></div>
+        <button class="btn small" id="veilRetry" type="button" style="display:none">Retry the missing ones</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="comp-controls">
+    <button class="btn primary" id="btnBlink" type="button">▶ Blink</button>
+    <button class="btn" id="btnDiff" type="button" aria-pressed="false">Difference</button>
+    <button class="btn" id="btnSide" type="button" aria-pressed="false">Side by side</button>
+    <button class="btn" id="btnMarkers" type="button" aria-pressed="false">Mark Barnard</button>
+    <button class="btn" id="btnDemo" type="button">Guided demo (5 steps)</button>
+  </div>
+  <div class="slider-row">
+    <label for="mixRange" style="font-weight:600">Blend between epochs</label>
+    <input type="range" id="mixRange" min="0" max="100" value="100" />
+    <span class="mono" id="mixVal">100%</span>
+  </div>
+  <p class="statusline" id="compStatus" role="status">Tip: press and hold the image to peek at the other epoch, and release to go back.</p>
+
+  <div class="card" style="margin-top:14px">
+    <h3>What you are looking for (and why almost nothing moves)</h3>
+    <p style="margin:0 0 8px">Most stars are so far away that, between the 1950s and the 1990s, they moved less than one pixel in these photos: that is why, when you blink, <strong>almost everything looks still — and that is normal</strong>. Blinking only betrays what truly changed position or brightness:</p>
+    <ul style="margin:0;padding-left:20px">
+      <li><strong>A nearby, fast star</strong>, like Barnard's: it moves 10.3 arcseconds per year, about 5 arcminutes between these epochs. When you blink, it <em>jumps</em>. Press <strong>"Mark Barnard"</strong> and two rings appear on the photo: the lower ring is exactly where Barnard sits in the 1950s photo and the upper ring where it sits in the 1980s–90s photo (positions measured on these same photos) — blink and watch it jump from ring to ring.</li>
+      <li><strong>An asteroid</strong> that happened to cross the field when one of the photos was taken.</li>
+      <li><strong>Something that appeared or disappeared</strong>: in <em>Difference</em> mode everything identical turns black and only what changed stays lit; a moved star shows up as two dots.</li>
+      <li><strong>A distant planet</strong>: SPHEREx photographs the whole sky every ~6 months, and a planet hundreds of AU away would shift ~1.5–5 arcminutes between maps. This comparator trains your eye on real historical archives.</li>
+    </ul>
+  </div>
+  <p class="note" style="margin-top:12px"><b>Honest notice:</b> the 2MASS (1997–2001) and WISE (2010) epochs are <strong>temporarily down inside SkyView</strong>: its server cannot connect to those remote archives because of a security-certificate problem on NASA's side, and they return an error page instead of a photo. That is why this version compares DSS and DSS2, which do respond today (verified on November 14, 2026). When NASA fixes it, 2MASS and WISE will return as epochs 4 and 5.</p>
+</div></section>
+
+<section id="buscador-simple"><div class="wrap">
+  <h2>Simple search — regions to start with</h2>
+  <p class="sub">No coordinates, no jargon: tap a card and the comparator and the viewer move to that place with its real photos. Start with Barnard's Star if you want to see a real change.</p>
+  <div class="presets" id="presets"></div>
+</div></section>
+
+<section id="buscador-avanzado"><div class="wrap">
+  <h2>Advanced search — search SPHEREx (IRSA) without the headache</h2>
+  <p class="sub">You only need one point in the sky. Below you will find a short guide to entering coordinates, a converter if yours are in hours, and the buttons to view the point in the comparator and to query SPHEREx at IRSA. IRSA's official table opens in a new tab: that is the most reliable route while their server fails from time to time. <strong>Important:</strong> the IRSA table is a list of data files, not pictures — to <em>see</em> images, use the comparator and the sky viewer on this page.</p>
+
+  <div class="guide" style="margin-bottom:14px">
+    <div class="guide-box">
+      <h3>How do you enter coordinates?</h3>
+      <p>A place in the sky is located with two numbers, like latitude and longitude on Earth:</p>
+      <ul>
+        <li><strong>RA (Right Ascension):</strong> from <strong>0 to 360</strong>. It is the left-to-right position. Example: Cetus = <span class="mono">37.5</span></li>
+        <li><strong>Dec (Declination):</strong> from <strong>−90 to +90</strong>. Positive = north, negative = south. Example: Cetus = <span class="mono">−15</span></li>
+        <li><strong>Field:</strong> how much sky you want to see. <span class="mono">0.5</span> = detail, <span class="mono">2</span> = wide area.</li>
+      </ul>
+      <p style="margin-top:8px"><strong>Ready-to-copy examples:</strong></p>
+      <ul>
+        <li>Cetus (the team's region): RA 37.5 · Dec −15</li>
+        <li>Barnard's Star: RA 269.452 · Dec +4.693</li>
+        <li>Pleiades: RA 56.8 · Dec +24.1</li>
+      </ul>
+    </div>
+    <div class="guide-box">
+      <h3>Got them in hours? Convert them here</h3>
+      <p>In many books RA is written like <em>02h 30m 00s</em>. Type it here and press convert: 02h 30m = 37.5°.</p>
+      <div class="conv">
+        <label>Hours (h)<input id="convRAh" type="number" step="any" min="0" max="24" value="2"></label>
+        <label>Minutes (m)<input id="convRAm" type="number" step="any" min="0" max="60" value="30"></label>
+        <label>Seconds (s)<input id="convRAs" type="number" step="any" min="0" max="60" value="0"></label>
+        <label>Dec sign<select id="convDecSign"><option value="1">+ North</option><option value="-1">− South</option></select></label>
+        <label>Dec degrees<input id="convDecD" type="number" step="any" min="0" max="90" value="15"></label>
+        <label>Dec minutes<input id="convDecM" type="number" step="any" min="0" max="60" value="0"></label>
+        <label>Dec seconds<input id="convDecS" type="number" step="any" min="0" max="60" value="0"></label>
+        <label>&nbsp;<button class="btn small primary" id="btnConvert" type="button">Convert and use</button></label>
+      </div>
+      <p class="statusline" id="convStatus" role="status">Formula: RA° = (h + m/60 + s/3600) × 15.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Step 1 · Enter your point in the sky</h3>
+    <form class="grid" id="advForm">
+      <label class="f">RA — Right Ascension (degrees)<input id="inRA" type="number" step="any" min="0" max="360" value="37.5" /><small>Between 0 and 360. Example: 37.5</small></label>
+      <label class="f">Dec — Declination (degrees)<input id="inDec" type="number" step="any" min="-90" max="90" value="-15" /><small>Between −90 and +90. South = negative.</small></label>
+      <label class="f">Field size (degrees)<input id="inFov" type="number" step="any" min="0.1" max="10" value="2" /><small>0.5 detail · 2 explore</small></label>
+      <label class="f">&nbsp;<button class="btn primary" type="submit" style="width:100%">1 · View this point in the comparator</button></label>
+    </form>
+
+    <details class="adv">
+      <summary>SPHEREx options (only if you need them)</summary>
+      <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+        <label class="f">Search radius at IRSA (degrees)<input id="inRad" type="number" step="any" min="0.01" max="5" value="0.05" /><small>Leave it at 0.05. With larger radii IRSA takes minutes or errors out. It is the circle around your point where IRSA looks for files.</small></label>
+        <label class="f">SPHEREx collection
+          <select id="inCol">
+            <option value="spherex_dr1">Wide Survey DR1 (recommended)</option>
+            <option value="spherex_dr1_deep">Deep Survey DR1</option>
+            <option value="spherex_dr1_cube">DR1 All-Sky Cube</option>
+            <option value="spherex_qr3">Wide Survey QR3</option>
+          </select><small>DR1 was released on November 12, 2026.</small></label>
+      </div>
+      <p class="statusline" id="siaRadWarn" role="alert" style="display:none"></p>
+    </details>
+
+    <h3 style="margin-top:22px">Step 2 · Query SPHEREx at IRSA</h3>
+    <p style="color:var(--muted);margin:0 0 8px">This is the exact query (IRSA's SIA2 service) for your point. The simplest and most reliable way is to open it outside this page. Remember: what opens is a <strong>table of files</strong> — each row is one SPHEREx file that covers your point. It will not show you a picture; the pictures are in the comparator and the viewer above.</p>
+    <div class="querybox mono" id="siaUrl" title="Tap to select the whole query"></div>
+    <div class="comp-controls">
+      <a class="btn primary" id="btnOpenSia" href="#" target="_blank" rel="noopener">2 · Open the IRSA table in a new tab</a>
+      <a class="btn" id="btnCsvSia" href="#" target="_blank" rel="noopener">Download table (CSV)</a>
+      <button class="btn" id="btnCopySia" type="button">Copy query</button>
+    </div>
+    <p class="statusline" id="siaStatus" role="status"></p>
+
+    <div class="note">
+      <b>If IRSA shows "502 Proxy Error":</b> it is not your fault and not this page's. Verified on November 15, 2026: IRSA's query server fails intermittently — the error arrives in under 1 second, while a good answer takes about 20 seconds. <strong>What to do:</strong> close that tab, wait 1–2 minutes, and press the button again. Keep the radius at 0.05.
+      <br><br>
+      <b>Alternatives if IRSA keeps failing:</b>
+      1) Keep exploring right here with the <a href="#comparador">comparator</a> and the <a href="#visor">Aladin Lite viewer</a>, which do not depend on that server.
+      2) Go through IRSA's front door: the <a href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener">SPHEREx archive at IRSA</a> and its <a href="https://caltech-ipac.github.io/spherex-archive-documentation/spherex-data-access/" target="_blank" rel="noopener">official data-access guide</a>, which explains other routes (Firefly, TAP, and cloud access).
+      3) Check IRSA's <a href="https://irsa.ipac.caltech.edu/cloud_access/" target="_blank" rel="noopener">cloud access (AWS)</a> from their official site: it is for downloading files by folder, not for searching by coordinates, which is why it is linked out instead of browsed here.
+    </div>
+
+    <div class="oknote" style="margin-top:12px">
+      <strong>What do you get at IRSA?</strong> A table where each row is a SPHEREx file that covers your point. The <span class="mono">access_url</span> column is the link to the FITS file. FITS is not a normal photo: it is the professional format holding the image plus its measurements, and the browser does not display it as a picture — that is why here you <em>see</em> the sky in the comparator with SkyView photos and in the Aladin viewer, and at IRSA you download the scientific data.
+    </div>
+  </div>
+</div></section>
+
+<section id="visor"><div class="wrap">
+  <h2>All-sky viewer — Aladin Lite, inside the page</h2>
+  <p class="sub">This is the other place where you <strong>see</strong> the sky inside this page: an interactive map of the real sky — drag to move around and use the wheel or your fingers to zoom. It is built by the <strong>CDS — Strasbourg Astronomical Data Center (France)</strong>; it is not NASA's, although much of the data it shows does come from NASA missions (DSS, 2MASS, WISE) served from the CDS. Aladin Lite <strong>does not include SPHEREx</strong>: for SPHEREx, use the IRSA query above. The viewer automatically follows the region you pick in the search tools. If the black box below stays empty, the survey buttons under it and the "Retry the viewer" button are how you reload it.</p>
+  <div id="aladin"><div id="aladinPlaceholder" style="color:#fff;padding:20px">Loading the sky viewer…</div></div>
+  <div class="comp-controls">
+    <button class="btn small aladin-survey" data-survey="dss" type="button">DSS2 color</button>
+    <button class="btn small aladin-survey" data-survey="mass" type="button">2MASS</button>
+    <button class="btn small aladin-survey" data-survey="wise" type="button">AllWISE</button>
+    <button class="btn small" id="btnAladinRetry" type="button" style="display:none">Retry the viewer</button>
+  </div>
+  <p class="statusline" id="aladinStatus" role="status"></p>
+  <p class="note"><b>Notice:</b> the CDS in Strasbourg announced a cybersecurity incident on its network (November 2026) and its image servers are down or heavily degraded, so right now no viewer can load photos from there. This viewer loads the <strong>same surveys</strong> (DSS2, 2MASS, AllWISE) from the <strong>official mirror servers that the CDS itself recommends</strong>: STScI/MAST, IRSA, CASDA (Australia), and ESA. When the CDS recovers, the viewer can go back to its original servers.</p>
+</div></section>
+
+<section id="candidatos"><div class="wrap">
+  <h2>Candidates — record what jumps, in 3 steps</h2>
+  <p class="sub">A candidate is simply <strong>something you saw move, appear, or disappear</strong> while blinking. It is not a discovery: it gets verified first. This list lives only in this tab, so export it when you finish.</p>
+  <div class="cand-steps">
+    <div class="step"><span class="n">1</span><h3>Watch the comparator</h3><p>Blink between epochs. If something jumps, stay on that spot.</p></div>
+    <div class="step"><span class="n">2</span><h3>Bring in the coordinates</h3><p>Press the green button below and they fill in automatically with the region you are viewing.</p></div>
+    <div class="step"><span class="n">3</span><h3>Describe and save</h3><p>Write one sentence about what you saw and press "Add". Then export the list for your team.</p></div>
+  </div>
+  <div class="card">
+    <button class="btn primary" id="btnUseCurrent" type="button" style="width:100%;margin-bottom:16px">Use the region I am viewing in the comparator</button>
+    <form class="grid" id="candForm">
+      <label class="f">Short name<input id="cName" required placeholder="E.g. Jumping dot in Barnard" /><small>A nickname so you can recognize it later.</small></label>
+      <label class="f">RA (degrees)<input id="cRA" type="number" step="any" required placeholder="E.g. 269.452" /></label>
+      <label class="f">Dec (degrees)<input id="cDec" type="number" step="any" required placeholder="E.g. 4.693" /></label>
+      <label class="f">What did you see?<input id="cObs" placeholder="E.g. It jumps between DSS and DSS2 Red" /><small>One sentence is enough.</small></label>
+      <label class="f">Status
+        <select id="cState"><option>Unverified</option><option>Checked against catalogs</option><option>Ruled out (known object)</option><option>Candidate — needs follow-up</option></select><small>Always start at "Unverified".</small></label>
+      <label class="f">&nbsp;<button class="btn primary" type="submit" style="width:100%">Add to the list</button></label>
+    </form>
+    <p style="margin:14px 0 6px"><span class="pill">Real example preloaded</span> <span style="color:var(--muted);font-size:.92rem">Phan et al. 2025 — this is how a case from the literature is documented, unconfirmed.</span></p>
+    <div class="table-scroll stack-table">
+      <table><thead><tr><th>Candidate</th><th>Coordinates</th><th>Observation</th><th>Status</th><th></th></tr></thead><tbody id="candBody"></tbody></table>
+    </div>
+    <div class="comp-controls">
+      <button class="btn" id="btnCsv" type="button">Export CSV for the team</button>
+      <button class="btn" id="btnJson" type="button">Export JSON</button>
+    </div>
+    <p class="statusline" id="candStatus" role="status"></p>
+  </div>
+</div></section>
+
+<section id="proposito"><div class="wrap">
+  <h2>Purpose: hunting Planet X with SPHEREx</h2>
+  <div class="card">
+    <h3>The SPHEREx mission</h3>
+    <p>SPHEREx is a NASA MIDEX mission launched on March 11, 2025. It is the first spectral survey of the <strong>whole sky</strong> in the near infrared: it observes in 102 bands between 0.75 and 5.0 µm and will build 4 complete maps of the sky in 2 years, one every ~6 months. Its data are published at IRSA (IPAC, Caltech); the first release, DR1, came out on November 12, 2026. Sources: <a href="https://science.nasa.gov/mission/spherex/" target="_blank" rel="noopener">NASA — SPHEREx mission</a> and the <a href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener">SPHEREx archive at IRSA</a>.</p>
+    <h3>The Planet X (Planet Nine) hypothesis</h3>
+    <p>Batygin and Brown proposed in 2016 that the clustered orbits of distant Kuiper Belt objects are explained by a planet nobody has seen yet: about <strong>4–10 Earth masses</strong>, at <strong>300–800 AU</strong> from the Sun. As of November 2026 it has <strong>not been discovered, not been ruled out, and there is no consensus</strong>. The team chose as its initial search region RA 02h 30m (37.5°), Dec −15°, in Cetus, inside the refined 600–800 square-degree area that comes out of the Cassini data (Holman &amp; Payne) and the Batygin &amp; Brown models — but this tool can look at <strong>any</strong> region of the sky.</p>
+    <h3>The honest caveat</h3>
+    <p>A cold Planet Nine (28–53 K) would emit its thermal peak between 50 and 100 µm, <strong>outside</strong> SPHEREx's range (up to 5.0 µm). SPHEREx helps another way: its repeated coverage of the whole sky. Such a planet would move about <strong>1.5–5 arcminutes between maps taken 6 months apart</strong>, and that is exactly what a blink comparator can betray. That is why every find here is recorded as a <em>candidate that needs follow-up</em>, never as a confirmed detection.</p>
+    <h3>A real candidate from the literature: Phan et al. 2025</h3>
+    <p>Phan and collaborators (2025) found an object that appears in IRAS data (1983) and AKARI data (2006), separated by 47.46 arcminutes in 23 years. It is <strong>unconfirmed</strong>, and its implied orbital inclination (~120°) does not fit Batygin–Brown's Planet Nine (15–20°). We preload it in the candidate list as an example of how a real case is documented.</p>
+  </div>
+  <h2 style="margin-top:28px">The challenge's 6 requirements, and how this tool meets them</h2>
+  <div class="card table-scroll stack-table">
+    <table><thead><tr><th>#</th><th>Challenge requirement</th><th>How it is met here</th></tr></thead><tbody>
+      <tr><td data-l="#">1</td><td data-l="Requirement">Explore all-sky data and find candidates that move</td><td data-l="How">Blink comparator with real multi-epoch photos, Aladin Lite viewer, and SIA2 query to IRSA, all from this page.</td></tr>
+      <tr><td data-l="#">2</td><td data-l="Requirement">Verify candidates against known catalogs</td><td data-l="How">Every candidate carries a verification status; the viewer lets you check the position against the DSS, 2MASS, and AllWISE archives.</td></tr>
+      <tr><td data-l="#">3</td><td data-l="Requirement">Visualize images and spectra across epochs</td><td data-l="How">DSS (1950s) and DSS2 Red/Blue (1980s–90s) epochs with blink, blend, difference, and side-by-side modes — plus DSS2 IR toward the galactic center, where dust blocks blue light —; SPHEREx data are queried via SIA2 at IRSA from the simplified advanced search, which opens the official table in a new tab.</td></tr>
+      <tr><td data-l="#">4</td><td data-l="Requirement">Save, share, and export candidate lists</td><td data-l="How">Candidate list with CSV and JSON export to share with the team.</td></tr>
+      <tr><td data-l="#">5</td><td data-l="Requirement">Clear documentation and tutorials</td><td data-l="How">A 20-second explanation, a 5-step guided demo, an inline glossary (FITS, cutouts, Aladin Lite), and links to IRSA's official SPHEREx tutorials.</td></tr>
+      <tr><td data-l="#">6</td><td data-l="Requirement">Handle a large volume of data efficiently</td><td data-l="How">The page never downloads giant files: SkyView generates 600×600 JPEG cutouts, and SPHEREx is queried via SIA2 at IRSA without downloading the full FITS files from this page.</td></tr>
+    </tbody></table>
+  </div>
+</div></section>
+
+<section id="equipo"><div class="wrap">
+  <h2>Team THE SCARERS</h2>
+  <p class="sub">Project <strong>Planet X and SPHEREx</strong> · Repository: <a href="https://github.com/arith-da/planet-x-spherex" target="_blank" rel="noopener">github.com/arith-da/planet-x-spherex</a> · Team's public page: <a href="https://arith-da.github.io/planet-x-spherex/" target="_blank" rel="noopener">arith-da.github.io/planet-x-spherex</a></p>
+  <div class="card table-scroll stack-table">
+    <table><thead><tr><th>Member</th><th>Role in the project</th></tr></thead><tbody>
+      <tr><td data-l="Member">Erick Arith Dominguez Acosta</td><td data-l="Role">Team owner · General coordinator and presenter</td></tr>
+      <tr><td data-l="Member">Emir Cruz Ramos</td><td data-l="Role">GitHub and publishing</td></tr>
+      <tr><td data-l="Member">Gerardo Cruz Ramos</td><td data-l="Role">Data and verification</td></tr>
+      <tr><td data-l="Member">Andrea Martinez Pineda</td><td data-l="Role">User experience and testing</td></tr>
+      <tr><td data-l="Member">Aaron Zaid Grajeda Diaz</td><td data-l="Role">Documentation</td></tr>
+      <tr><td data-l="Member">Fernando Martinez Gonzales</td><td data-l="Role">Demo video and presentation</td></tr>
+    </tbody></table>
+  </div>
+</div></section>
+
+<section id="recursos"><div class="wrap">
+  <h2>Resources and tools used</h2>
+  <p class="sub">Everything this page uses is public and cited, including the use of AI tools, declared at the end of this list. The images are real, and each one carries the name of its archive and its epoch.</p>
+  <div class="card"><ul class="resources" style="margin:0;padding-left:20px">
+    <li><strong>NASA SkyView</strong> (GSFC) — generates the comparator's real photos (DSS, DSS2 Red, DSS2 Blue, and DSS2 IR for the galactic center). <a href="https://skyview.gsfc.nasa.gov/" target="_blank" rel="noopener">skyview.gsfc.nasa.gov</a></li>
+    <li><strong>IRSA — IPAC / Caltech</strong> — official SPHEREx archive: mission page, SIA2 service, data explorer, and FITS cutout service. <a href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener">SPHEREx archive at IRSA</a> · <a href="https://caltech-ipac.github.io/spherex-archive-documentation/spherex-data-access/" target="_blank" rel="noopener">Data-access documentation</a> · <a href="https://caltech-ipac.github.io/irsa-tutorials/spherex/" target="_blank" rel="noopener">SPHEREx tutorials</a></li>
+    <li><strong>IRSA cloud access (AWS)</strong> — official alternative route when IRSA's search fails; it is used from IRSA's own site, because it serves files by folder rather than searches by coordinates. <a href="https://irsa.ipac.caltech.edu/cloud_access/" target="_blank" rel="noopener">IRSA cloud data access</a></li>
+    <li><strong>Aladin Lite v3</strong> — all-sky viewer from the CDS, Strasbourg Observatory (CNRS / University of Strasbourg, France). <a href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noopener">aladin.cds.unistra.fr</a> · While the CDS recovers from its November 2026 incident, the viewer's surveys are served from the official mirrors the CDS itself recommends: <a href="https://mast.stsci.edu/" target="_blank" rel="noopener">STScI/MAST</a>, <a href="https://irsa.ipac.caltech.edu/" target="_blank" rel="noopener">IRSA</a>, <a href="https://casda.csiro.au/" target="_blank" rel="noopener">CASDA/CSIRO</a>, and <a href="https://www.esa.int/" target="_blank" rel="noopener">ESA</a>.</li>
+    <li><strong>NASA — SPHEREx mission</strong>. <a href="https://science.nasa.gov/mission/spherex/" target="_blank" rel="noopener">science.nasa.gov/mission/spherex</a></li>
+    <li><strong>NASA Space Apps Challenge 2026</strong> — official statement of the Planet X and SPHEREx challenge. <a href="https://www.spaceappschallenge.org/2026/challenges/planet-x-and-spherex/" target="_blank" rel="noopener">spaceappschallenge.org</a></li>
+    <li><strong>Gaia archive</strong> (reference for catalog verification). <a href="https://archive.stsci.edu/missions-and-data/gaia" target="_blank" rel="noopener">archive.stsci.edu — Gaia</a></li>
+    <li><strong>WiseView</strong> — WISE epoch comparator (reference). <a href="http://byw.tools/wiseview" target="_blank" rel="noopener">byw.tools/wiseview</a></li>
+    <li><strong>Claude (Anthropic) — AI tool</strong> — Support used in this project to develop and debug code, test the queries to IRSA and NASA SkyView, diagnose why IRSA's query server was failing, and write and correct texts and documentation. All code and text generated with its help was reviewed by the human team.</li>
+    <li><strong>Muse (Meta's personal AI assistant)</strong> — Support used as the project's mentor and coordinator: it organized the team's tasks, helped build the page and upload it to GitHub (the arith-da/planet-x-spherex repository and GitHub Pages), live-tested the comparator, the viewer, and the data routes, and helped prepare the submission text. Muse and Claude did not invent data: every image and scientific dataset on this page comes from NASA SkyView, IRSA/SPHEREx, and CDS/Aladin Lite, cited above, and no candidate is presented as a confirmed planet.</li>
+  </ul></div>
+</div></section>
+
+<footer><div class="wrap">
+  <p><strong>Open source — MIT license.</strong> This tool is a public project by team THE SCARERS for the NASA Space Apps Challenge 2026. The code lives at <a href="https://github.com/arith-da/planet-x-spherex" target="_blank" rel="noopener">github.com/arith-da/planet-x-spherex</a>: anyone can use it, study it, and improve it, crediting the team. The images belong to their source archives (NASA SkyView / DSS / STScI, CDS) and the SPHEREx data to NASA and the mission team, served by IRSA.</p>
+  <p>Made by students, with real data and the honest caveats science demands: no candidate on this page is a confirmed planet.</p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* ---------- State ---------- */
+var EPOCHS=[
+ {key:"dss", survey:"DSS", label:"DSS", years:"1950s", tag:"BEFORE"},
+ {key:"red", survey:"DSS2 Red", label:"DSS2 Red", years:"1980s–90s", tag:"AFTER"},
+ {key:"blue", survey:"DSS2 Blue", label:"DSS2 Blue", years:"1980s–90s · blue light", tag:"AFTER"}
+];
+var EPOCH3_BLUE={key:"blue", survey:"DSS2 Blue", label:"DSS2 Blue", years:"1980s–90s · blue light", tag:"AFTER"};
+var EPOCH3_IR={key:"ir", survey:"DSS2 IR", label:"DSS2 IR", years:"1980s–90s · infrared light", tag:"AFTER"};
+var state={ra:269.452, dec:4.693, fov:0.5, name:"Barnard's Star — the demo where the change IS visible", barnard:true};
+var loaded=[false,false,false], failed=[false,false,false];
+var current=0, compare=1, blinking=false, blinkTimer=null, diffOn=false, sideOn=false, demoStep=0, demoTimer=null, markersOn=false;
+
+var PRESETS=[
+ {name:"Barnard's Star — the demo", desc:"The fastest-moving star in the whole sky (10.3″ per year). Between the 1950s and the 1980s–90s it shifted ~5 arcminutes: when you blink, it jumps. Start here.", ra:269.452, dec:4.693, fov:0.5, star:true, barnard:true},
+ {name:"Cetus — the team's region", desc:"The team's initial Planet X search region: RA 02h 30m, Dec −15°, inside the area refined by the Cassini data and the Batygin & Brown models.", ra:37.5, dec:-15, fov:2},
+ {name:"Orion's Belt", desc:"The three stars in a row, the most famous sight in the winter sky, right on the celestial equator. A bright field that is easy to recognize.", ra:85.2, dec:-1.2, fov:2},
+ {name:"The Pleiades", desc:"The young star cluster in Taurus that you can see with the naked eye: hundreds of stars born from the same gas about 100 million years ago.", ra:56.8, dec:24.1, fov:2},
+ {name:"Center of the Milky Way", desc:"The most crowded direction in the sky: toward the center of our galaxy, in Sagittarius, where stars pile up by the millions. Note: in blue light this area comes out black — galactic dust blocks it completely — so here the third photo is in infrared light (DSS2 IR), which does get through the dust.", ra:266.4, dec:-29.0, fov:2, alt3:true},
+ {name:"Andromeda Galaxy (M31)", desc:"Our neighboring galaxy, 2.5 million light-years away: the most distant object you can see without a telescope on a dark night.", ra:10.68, dec:41.27, fov:2}
+];
+
+/* ---------- SkyView URLs (no crossOrigin: SkyView sends no CORS header) ---------- */
+function skyUrl(ep){
+  var q="Survey="+encodeURIComponent(EPOCHS[ep].survey)
+    +"&position="+encodeURIComponent(state.ra+","+state.dec)
+    +"&size="+encodeURIComponent(state.fov+","+state.fov)
+    +"&Pixels=600,600&Scaling=Log&return=jpg";
+  return "https://skyview.gsfc.nasa.gov/current/cgi/runquery.pl?"+q;
+}
+function setBadge(){
+  var b=$("badge");
+  if(!loaded[current]){ b.innerHTML="LOADING<small>"+EPOCHS[current].label+" · "+EPOCHS[current].years+" — has not arrived from SkyView yet</small>"; return; }
+  b.innerHTML=EPOCHS[current].tag+" · "+EPOCHS[current].label+"<small>"+EPOCHS[current].years+" · real photo from NASA SkyView</small>";
+}
+function updateVeil(){
+  var n=loaded.filter(Boolean).length;
+  $("veilProgress").textContent=n+" of 3 epochs ready";
+  if(n>=1){ $("veil").classList.add("hide"); }
+  else { $("veil").classList.remove("hide"); }
+  $("veilRetry").style.display=(failed.some(Boolean)&&n<3)?"inline-flex":"none";
+  document.querySelectorAll(".epoch-btn").forEach(function(btn,i){
+    var st=btn.querySelector("[data-st]");
+    if(loaded[i]){ st.textContent="✓ ready"; st.style.color="var(--ok)"; }
+    else if(failed[i]){ st.textContent="✕ did not load · tap to retry"; st.style.color="var(--danger)"; }
+    else { st.textContent="loading…"; st.style.color=""; }
+    btn.classList.toggle("active", i===current && !sideOn);
+  });
+  setBadge();
+}
+function render(){
+  for(var i=0;i<3;i++){
+    var img=$("img"+i);
+    var show=false;
+    if(sideOn){ show=(i===0||i===compare); img.style.opacity="1"; img.classList.toggle("diff",false); }
+    else if(diffOn){ show=(i===0||i===compare); img.style.opacity=(i===compare)?($("mixRange").value/100):"1"; img.classList.toggle("diff", i===compare); }
+    else { show=(i===0||i===current); if(i!==0&&i===current){ img.style.opacity=($("mixRange").value/100); } else { img.style.opacity="1"; } img.classList.toggle("diff",false); }
+    img.classList.toggle("on", show&&loaded[i]);
+  }
+  $("stage").classList.toggle("side", sideOn);
+  $("markers").classList.toggle("on", markersOn && state.barnard && !sideOn);
+  setBadge();
+}
+function loadEpoch(i, force){
+  if(loaded[i]&&!force) return;
+  failed[i]=false; updateVeil();
+  var probe=new Image(); /* deliberately NO crossOrigin */
+  probe.onload=function(){ loaded[i]=true; failed[i]=false; var img=$("img"+i); img.src=skyUrl(i); render(); updateVeil(); maybeAutoBlink(); };
+  probe.onerror=function(){ failed[i]=true; updateVeil();
+    var bad=EPOCHS.filter(function(e,j){return failed[j]&&!loaded[j];}).map(function(e){return e.label;});
+    var good=EPOCHS.filter(function(e,j){return loaded[j];}).map(function(e){return e.label;});
+    if(good.length===0){ $("compStatus").textContent="No epoch has arrived from SkyView yet (failed: "+bad.join(", ")+"). Tap any epoch button or \"Retry the missing ones\" to try again."; }
+    else { $("compStatus").textContent="Did not arrive: "+bad.join(", ")+". Tap its button to retry it. Available: "+good.join(", ")+"."; }
+  };
+  probe.src=skyUrl(i)+(force?"&r="+Date.now():"");
+}
+function loadAll(){ loaded=[false,false,false]; failed=[false,false,false]; $("veil").classList.remove("hide"); updateVeil(); for(var i=0;i<3;i++) loadEpoch(i,false); render(); }
+function readyForBlink(){ return loaded[0] && loaded.some(function(v,i){return i>0&&v;}); }
+var pendingBlink=false;
+function maybeAutoBlink(){ if(pendingBlink&&readyForBlink()){ pendingBlink=false; startBlink(); } }
+function startBlink(){
+  if(!readyForBlink()){ pendingBlink=true; $("compStatus").textContent="Waiting for the old photo and one more to arrive… blinking will start on its own."; return; }
+  if(!loaded[compare]){ compare=loaded[1]?1:2; }
+  blinking=true; $("btnBlink").textContent="⏸ Stop blinking"; $("btnBlink").classList.add("active");
+  var showCompare=false;
+  blinkTimer=setInterval(function(){ showCompare=!showCompare; current=showCompare?compare:0; render(); },900);
+  $("compStatus").textContent="Blinking between "+EPOCHS[0].label+" ("+EPOCHS[0].years+") and "+EPOCHS[compare].label+" ("+EPOCHS[compare].years+"). Look for what jumps.";
+}
+function stopBlink(){ blinking=false; pendingBlink=false; if(blinkTimer)clearInterval(blinkTimer); blinkTimer=null; $("btnBlink").textContent="▶ Blink"; $("btnBlink").classList.remove("active"); }
+
+/* ---------- Region switching ---------- */
+function setRegion(r){
+  stopBlink(); stopDemo();
+  state={ra:r.ra, dec:r.dec, fov:r.fov, name:r.name, barnard:!!r.barnard};
+  current=0; compare=1;
+  /* Epoch 3 is DSS2 Blue, except at the galactic center where dust blocks
+     all blue light (plate verified black) — there it is DSS2 IR. */
+  EPOCHS[2]=r.alt3?EPOCH3_IR:EPOCH3_BLUE;
+  $("ep3Title").textContent="3 · "+EPOCHS[2].label;
+  $("ep3Sub").textContent=(r.alt3?"Infrared light":"Blue light")+" · 1980s–90s";
+  $("img2").alt="Real photo of the sky, "+EPOCHS[2].survey+" archive, 1980s to 90s";
+  /* Barnard markers only exist in the Barnard region. */
+  var bm=$("btnMarkers");
+  bm.style.display=r.barnard?"":"none";
+  if(!r.barnard){ markersOn=false; bm.classList.remove("active"); bm.setAttribute("aria-pressed","false"); }
+  $("regionName").textContent=r.name;
+  $("regionCoords").textContent="RA "+r.ra+"° · Dec "+(r.dec>=0?"+":"")+r.dec+"° · field "+r.fov+"°";
+  $("inRA").value=r.ra; $("inDec").value=r.dec; $("inFov").value=r.fov;
+  buildSia();
+  loadAll();
+  if(window.__aladin){ try{ window.__aladin.gotoRaDec(r.ra, r.dec); }catch(e){} }
+  $("compStatus").textContent="Loading real photos of \""+r.name+"\" from NASA SkyView…"+(r.alt3?" In this region the blue-light photo comes out completely black (galactic dust blocks it), so the third epoch is DSS2 IR, in infrared light.":"");
+}
+
+/* ---------- Presets ---------- */
+var presetsEl=$("presets");
+PRESETS.forEach(function(p){
+  var b=document.createElement("button"); b.type="button"; b.className="preset"+(p.star?" star":"");
+  b.innerHTML="<b>"+p.name+"</b><p>"+p.desc+"</p><span class='coords mono'>RA "+p.ra+"° · Dec "+(p.dec>=0?"+":"")+p.dec+"° · field "+p.fov+"°</span>";
+  b.addEventListener("click",function(){ setRegion(p); document.getElementById("comparador").scrollIntoView({behavior:"smooth"}); });
+  presetsEl.appendChild(b);
+});
+$("ctaBarnard").addEventListener("click",function(){ setRegion(PRESETS[0]); document.getElementById("comparador").scrollIntoView({behavior:"smooth"}); startDemo(); });
+
+/* ---------- Comparator controls ---------- */
+document.querySelectorAll(".epoch-btn").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    var i=parseInt(btn.getAttribute("data-epoch"),10);
+    if(failed[i]&&!loaded[i]){ loadEpoch(i,true); return; }
+    stopBlink(); current=i; if(i>0)compare=i; render();
+  });
+});
+$("btnBlink").addEventListener("click",function(){ blinking?stopBlink():startBlink(); });
+$("btnDiff").addEventListener("click",function(){
+  stopBlink(); diffOn=!diffOn; this.setAttribute("aria-pressed",diffOn); this.classList.toggle("active",diffOn);
+  if(diffOn&&!loaded[compare]){ $("compStatus").textContent="Difference is on, but the comparison epoch has not arrived yet; it will show as soon as it loads."; }
+  else if(diffOn){ $("compStatus").textContent="Difference mode: identical areas turn black; only what changed, moved, or appeared stays lit."; }
+  render();
+});
+$("btnSide").addEventListener("click",function(){
+  stopBlink(); sideOn=!sideOn; this.setAttribute("aria-pressed",sideOn); this.classList.toggle("active",sideOn); render();
+});
+$("btnMarkers").addEventListener("click",function(){
+  if(!state.barnard){ return; } /* button is hidden outside Barnard; belt and braces */
+  markersOn=!markersOn; this.setAttribute("aria-pressed",markersOn); this.classList.toggle("active",markersOn); render();
+  $("compStatus").textContent=markersOn?"Rings on: the LOWER ring marks Barnard in the 1950s photo and the UPPER ring in the 1980s–90s photo — both positions measured on these very SkyView photos (the star sits in the center of each ring). Switch epochs or blink: the star jumps from ring to ring along the dashed line.":"Rings hidden. Blink and look for the star that jumps.";
+});
+$("mixRange").addEventListener("input",function(){ $("mixVal").textContent=this.value+"%"; if(!blinking) render(); });
+$("veilRetry").addEventListener("click",function(){ for(var i=0;i<3;i++) if(!loaded[i]) loadEpoch(i,true); });
+/* press-and-hold peek */
+var stageEl=$("stage"), peekPrev=null;
+function peekStart(e){ if(sideOn||diffOn) return; peekPrev=current; current=(current===0)?compare:0; render(); }
+function peekEnd(){ if(peekPrev!==null){ current=peekPrev; peekPrev=null; render(); } }
+stageEl.addEventListener("pointerdown",peekStart); stageEl.addEventListener("pointerup",peekEnd); stageEl.addEventListener("pointerleave",peekEnd);
+
+/* ---------- Guided demo ---------- */
+var DEMO=[
+ "Step 1 of 5 — This is the OLD photo: DSS, plates from the 1950s. Everything you see is distant stars… and one nearby star: Barnard's.",
+ "Step 2 of 5 — Now the NEW photo: DSS2 Red, from the 1980s–90s. It looks like the same photo, doesn't it? Almost everything is in the same place.",
+ "Step 3 of 5 — Blinking: we alternate the two photos. Look closely: ONE star jumps from side to side. That is Barnard's Star, really moving.",
+ "Step 4 of 5 — Difference mode: whatever did not change turns black. Two lit dots remain: where Barnard was, and where it is now.",
+ "Step 5 of 5 — That is how Planet X is hunted: an object that jumps between epochs. If you find one, record it in the candidate list and verify it. Now try it yourself!"
+];
+function stopDemo(){ if(demoTimer)clearInterval(demoTimer); demoTimer=null; demoStep=0; $("demoBanner").classList.remove("on"); }
+function startDemo(){
+  if(!state.barnard){ setRegion(PRESETS[0]); }
+  stopBlink(); diffOn=false; $("btnDiff").classList.remove("active");
+  var banner=$("demoBanner"); banner.classList.add("on");
+  demoStep=0;
+  function step(){
+    banner.textContent=DEMO[demoStep];
+    if(demoStep===0){ current=0; render(); }
+    if(demoStep===1){ current=1; compare=1; render(); }
+    if(demoStep===2){ startBlink(); }
+    if(demoStep===3){ stopBlink(); diffOn=true; $("btnDiff").classList.add("active"); $("btnDiff").setAttribute("aria-pressed","true"); current=1; render(); }
+    if(demoStep===4){ diffOn=false; $("btnDiff").classList.remove("active"); current=0; render(); }
+    demoStep++;
+    if(demoStep>=DEMO.length){ clearInterval(demoTimer); demoTimer=null; }
+  }
+  step(); demoTimer=setInterval(step,4200);
+}
+$("btnDemo").addEventListener("click",function(){ stopDemo(); startDemo(); document.getElementById("comparador").scrollIntoView({behavior:"smooth"}); });
+
+/* ---------- Advanced search + IRSA SIA2 ---------- */
+function buildSia(){
+  var ra=parseFloat($("inRA").value), dec=parseFloat($("inDec").value), rad=parseFloat($("inRad").value), col=$("inCol").value;
+  if(isNaN(ra)||isNaN(dec)||isNaN(rad)) return "";
+  var url="https://irsa.ipac.caltech.edu/SIA?COLLECTION="+encodeURIComponent(col)
+    +"&POS="+encodeURIComponent("circle "+ra+" "+dec+" "+rad)+"&RESPONSEFORMAT=HTML&MAXREC=500";
+  $("siaUrl").textContent=url;
+  /* Same query as CSV for the download button. Radius stays at 0.05 by
+     default: larger radii make IRSA time out or return a 502. */
+  $("btnOpenSia").href=url;
+  var csvBtn=$("btnCsvSia"); if(csvBtn) csvBtn.href=url.replace("RESPONSEFORMAT=HTML","RESPONSEFORMAT=CSV");
+  var warn=$("siaRadWarn");
+  if(rad>0.05){
+    warn.style.display="block";
+    warn.textContent="Careful: with a radius above 0.05° IRSA takes minutes or returns a \"Proxy Error\". Leave it at 0.05.";
+  } else { warn.style.display="none"; }
+  return url;
+}
+["inRA","inDec","inRad","inCol"].forEach(function(id){ $(id).addEventListener("input",buildSia); $(id).addEventListener("change",buildSia); });
+$("advForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  var ra=parseFloat($("inRA").value), dec=parseFloat($("inDec").value), fov=parseFloat($("inFov").value);
+  if(isNaN(ra)||isNaN(dec)||isNaN(fov)){ $("siaStatus").textContent="Check the coordinates: RA between 0 and 360, Dec between −90 and 90."; return; }
+  setRegion({name:"Custom coordinates", ra:ra, dec:dec, fov:Math.min(Math.max(fov,0.1),10), barnard:false});
+  document.getElementById("comparador").scrollIntoView({behavior:"smooth"});
+});
+/* Copy helper: Clipboard API first, textarea + execCommand fallback. */
+function selectSiaText(){
+  var el=$("siaUrl"); var range=document.createRange(); range.selectNodeContents(el);
+  var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+}
+$("siaUrl").addEventListener("click",selectSiaText);
+function copySiaText(text,done){
+  function classic(){
+    var ta=document.createElement("textarea");
+    ta.value=text; ta.setAttribute("readonly","");
+    ta.style.position="fixed"; ta.style.left="-9999px"; ta.style.top="0"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    var ok=false; try{ ok=document.execCommand("copy"); }catch(e){ ok=false; }
+    ta.remove(); done(ok);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText&&window.isSecureContext){
+    navigator.clipboard.writeText(text).then(function(){ done(true); },classic);
+  } else { classic(); }
+}
+$("btnCopySia").addEventListener("click",function(){
+  var url=buildSia(); if(!url){ $("siaStatus").textContent="Check the coordinates first: the query could not be built."; return; }
+  copySiaText(url,function(ok){
+    if(ok){ $("siaStatus").textContent="✓ Query copied. You can now paste it wherever you need it (in a message, in your browser, or in your notes)."; }
+    else { selectSiaText(); $("siaStatus").textContent="Your browser blocked automatic copying, but the query is now selected in the box above: press Ctrl+C (or Cmd+C on Mac) to copy it."; }
+  });
+});
+/* IRSA links are built by buildSia() and open in a new tab. */
+$("btnOpenSia").addEventListener("click",function(){
+  $("siaStatus").textContent="IRSA's official table opened (or will open) in a new tab. If you see \"502 Proxy Error\", close it, wait 1–2 minutes, and try again: it is IRSA's server, which fails from time to time. A good answer takes about 20 seconds.";
+});
+var csvB=$("btnCsvSia"); if(csvB) csvB.addEventListener("click",function(){
+  $("siaStatus").textContent="The CSV is requested directly from IRSA in a new tab. If \"502 Proxy Error\" appears, close it and retry in 1–2 minutes.";
+});
+/* Coordinate converter: HMS/DMS -> degrees */
+$("btnConvert").addEventListener("click",function(){
+  var h=parseFloat($("convRAh").value)||0, m=parseFloat($("convRAm").value)||0, sec=parseFloat($("convRAs").value)||0;
+  var sign=parseFloat($("convDecSign").value)||1;
+  var dd=parseFloat($("convDecD").value)||0, dm=parseFloat($("convDecM").value)||0, ds=parseFloat($("convDecS").value)||0;
+  var ra=((h+m/60+sec/3600)*15);
+  var dec=sign*(dd+dm/60+ds/3600);
+  ra=Math.round(ra*10000)/10000; dec=Math.round(dec*10000)/10000;
+  $("inRA").value=ra; $("inDec").value=dec; buildSia();
+  $("convStatus").textContent="✓ Converted: RA "+ra+"° · Dec "+(dec>=0?"+":"")+dec+"°. It is now filled in at Step 1: press \"View this point in the comparator\" or \"Open the IRSA table\".";
+});
+
+/* ---------- Candidates (in-memory, exportable) ---------- */
+var candidates=[
+ {name:"Phan et al. 2025 candidate (IRAS 1983 + AKARI 2006)", ra:"—", dec:"—", obs:"Object seen in IRAS (1983) and AKARI (2006), separated by 47.46′ in 23 years. A real example from the literature.", state:"Unverified — not confirmed; inclination ~120°, does not fit Batygin–Brown"}
+];
+function renderCandidates(){
+  var tb=$("candBody"); tb.innerHTML="";
+  candidates.forEach(function(c,i){
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td data-l='Candidate'><strong></strong></td><td data-l='Coordinates' class='mono'></td><td data-l='Observation'></td><td data-l='Status'></td><td><button class='btn small' type='button'>Remove</button></td>";
+    tr.children[0].querySelector("strong").textContent=c.name;
+    tr.children[1].textContent="RA "+c.ra+" · Dec "+c.dec;
+    tr.children[2].textContent=c.obs||"—";
+    tr.children[3].textContent=c.state;
+    tr.querySelector("button").addEventListener("click",function(){ candidates.splice(i,1); renderCandidates(); });
+    tb.appendChild(tr);
+  });
+  $("candStatus").textContent=candidates.length+" candidate(s) in this tab. When you finish, export them as CSV to share with your team.";
+}
+$("candForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  candidates.push({name:$("cName").value.trim(), ra:$("cRA").value, dec:$("cDec").value, obs:$("cObs").value.trim(), state:$("cState").value});
+  this.reset(); renderCandidates();
+});
+$("btnUseCurrent").addEventListener("click",function(){ $("cRA").value=state.ra; $("cDec").value=state.dec; $("cName").value="Candidate in "+state.name; document.getElementById("cName").focus(); });
+function download(name, text, type){
+  var blob=new Blob([text],{type:type}); var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400);
+}
+$("btnCsv").addEventListener("click",function(){
+  var rows=[["name","ra_degrees","dec_degrees","observation","status"]];
+  candidates.forEach(function(c){ rows.push([c.name,c.ra,c.dec,c.obs,c.state]); });
+  var csv=rows.map(function(r){ return r.map(function(v){ return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'; }).join(","); }).join("\n");
+  download("candidates-planet-x.csv", csv, "text/csv");
+});
+$("btnJson").addEventListener("click",function(){ download("candidates-planet-x.json", JSON.stringify(candidates,null,2), "application/json"); });
+
+/* ---------- Aladin Lite viewer ----------
+   Loads only classic (UMD) builds that define the global A — ES-module
+   builds cannot run in a classic <script> tag. Survey images come from
+   the official CDS mirror servers; the viewer pre-flights each mirror's
+   "properties" file and uses the first one that answers. */
+var ALADIN_SOURCES=[
+ "https://aladin.cds.unistra.fr/AladinLite/aladin_3.9.0-beta-idia-1.js",
+ "https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js"
+];
+var SURVEY_MIRRORS={
+ dss:{label:"DSS2 color", urls:[
+   "https://stpubdata.s3.us-east-1.amazonaws.com/mast/skybackgrounds/DSSColor",
+   "https://irsa.ipac.caltech.edu/data/hips/CDS/DSS2/color",
+   "https://casda.csiro.au/hips/DSS2/color",
+   "https://hips.china-vo.org/m/CDS_P_DSS2_color"]},
+ mass:{label:"2MASS", urls:[
+   "https://casda.csiro.au/hips/2MASS/Color",
+   "https://hips.china-vo.org/m/CDS_P_2MASS_color",
+   "https://skies.esac.esa.int/2MASSColor"]},
+ wise:{label:"AllWISE", urls:[
+   "https://hips.china-vo.org/m/CDS_P_allWISE_color",
+   "https://skies.esac.esa.int/AllWISEColor"]}
+};
+var mirrorCache={};
+function fetchWithTimeout(url, ms){
+  return new Promise(function(resolve, reject){
+    var ctrl=("AbortController" in window)?new AbortController():null;
+    var done=false;
+    var t=setTimeout(function(){ if(done)return; done=true; if(ctrl)ctrl.abort(); reject(new Error("timeout")); }, ms);
+    fetch(url, ctrl?{signal:ctrl.signal}:undefined).then(function(r){ if(done)return; done=true; clearTimeout(t); resolve(r); },
+      function(e){ if(done)return; done=true; clearTimeout(t); reject(e); });
+  });
+}
+function pickMirror(key){
+  if(mirrorCache[key]) return Promise.resolve(mirrorCache[key]);
+  var urls=SURVEY_MIRRORS[key].urls.slice();
+  function next(){
+    if(!urls.length) return Promise.reject(new Error("no mirrors available"));
+    var u=urls.shift();
+    return fetchWithTimeout(u+"/properties", 9000).then(function(r){
+      if(!r.ok) throw new Error("http "+r.status);
+      mirrorCache[key]=u; return u;
+    }).catch(next);
+  }
+  return next();
+}
+function loadAladinLib(idx){
+  return new Promise(function(resolve, reject){
+    if(idx>=ALADIN_SOURCES.length){ reject(new Error("no Aladin Lite source loaded")); return; }
+    var settled=false;
+    function next(){ if(settled) return; settled=true; loadAladinLib(idx+1).then(resolve,reject); }
+    var s=document.createElement("script");
+    s.src=ALADIN_SOURCES[idx];
+    /* Timeout per source: a hanging request fires neither onload nor onerror. */
+    var to=setTimeout(next, 20000);
+    s.onload=function(){
+      if(settled) return;
+      if(!(window.A&&A.aladin)){ clearTimeout(to); next(); return; }
+      var ito=setTimeout(function(){ clearTimeout(to); next(); }, 20000);
+      Promise.resolve(A.init).then(function(){ if(settled) return; settled=true; clearTimeout(to); clearTimeout(ito); resolve(); },
+        function(){ clearTimeout(ito); next(); });
+    };
+    s.onerror=function(){ clearTimeout(to); next(); };
+    document.head.appendChild(s);
+  });
+}
+var aladinStarted=false, aladinAttempts=0;
+function aladinFallback(){
+  /* If the library cannot load, show a real SkyView photo instead of a black box. */
+  var q="Survey="+encodeURIComponent("DSS2 Red")
+    +"&position="+encodeURIComponent(state.ra+","+state.dec)
+    +"&size="+encodeURIComponent(state.fov+","+state.fov)
+    +"&Pixels=600,600&Scaling=Log&return=jpg";
+  $("aladin").innerHTML='<div style="position:relative;width:100%;height:100%">'
+    +'<img alt="Real photo of the current region, DSS2 Red, from NASA SkyView" src="https://skyview.gsfc.nasa.gov/current/cgi/runquery.pl?'+q+'" style="width:100%;height:100%;object-fit:contain;display:block;background:#000" />'
+    +'<div style="position:absolute;left:0;right:0;bottom:0;background:rgba(2,6,16,.85);color:#fff;padding:12px 16px;font-size:.92rem">'
+    +'<strong>The interactive viewer could not load in this browser</strong> (the Aladin Lite library did not arrive — the CDS servers are degraded and some networks/browsers block it). This is a real photo of the same region from NASA SkyView instead. Press "Retry the viewer" below, or open '
+    +'<a href="https://aladin.cds.unistra.fr/" target="_blank" rel="noopener" style="color:#7de8dc">Aladin Lite at the CDS</a>.'
+    +'</div></div>';
+  $("aladinStatus").textContent="The interactive viewer did not load, so a real SkyView photo of the region is shown in its place. Press \"Retry the viewer\" to try the interactive viewer again.";
+  $("btnAladinRetry").style.display="inline-flex";
+}
+function initAladin(){
+  if(aladinStarted) return; aladinStarted=true;
+  $("btnAladinRetry").style.display="none";
+  var ph=$("aladinPlaceholder");
+  if(ph) ph.textContent="Loading the sky viewer… step 1 of 2: the Aladin Lite library.";
+  $("aladinStatus").textContent="Loading the sky viewer: first the Aladin Lite library, then the sky images from an official mirror server…";
+  loadAladinLib(0).then(function(){
+    var ph2=$("aladinPlaceholder"); if(ph2) ph2.textContent="Loading the sky viewer… step 2 of 2: sky images from a mirror server.";
+    return pickMirror("dss");
+  }).then(function(url){
+    $("aladin").innerHTML="";
+    window.__aladin=A.aladin("#aladin",{survey:url, fov:state.fov*1.5, target:state.ra+" "+state.dec, showCooGrid:true});
+    var dssBtn=document.querySelector('.aladin-survey[data-survey="dss"]'); if(dssBtn) dssBtn.classList.add("active");
+    $("aladinStatus").textContent="Viewer ready: it shows the same region as the comparator and moves when you pick another one. Images come from an official mirror server while the CDS recovers.";
+  }).catch(function(){
+    aladinStarted=false;
+    aladinAttempts++;
+    if(aladinAttempts<2){
+      /* One automatic retry before falling back. */
+      $("aladinStatus").textContent="The viewer did not answer; retrying automatically in 3 seconds…";
+      setTimeout(initAladin, 3000);
+      return;
+    }
+    aladinFallback();
+  });
+}
+document.querySelectorAll(".aladin-survey").forEach(function(b){
+  b.addEventListener("click",function(){
+    var key=b.getAttribute("data-survey");
+    if(!window.__aladin){ $("aladinStatus").textContent="The viewer is not ready yet: wait for it to load or press \"Retry the viewer\"."; return; }
+    document.querySelectorAll(".aladin-survey").forEach(function(x){ x.classList.toggle("active", x===b); });
+    $("aladinStatus").textContent="Loading "+SURVEY_MIRRORS[key].label+" from a mirror server…";
+    pickMirror(key).then(function(url){
+      try{ window.__aladin.setImageSurvey(url); $("aladinStatus").textContent="Viewer showing "+SURVEY_MIRRORS[key].label+"."; }
+      catch(e){ $("aladinStatus").textContent="The survey could not be changed in the viewer; it is still showing the previous one."; }
+    }).catch(function(){ $("aladinStatus").textContent="No mirror for "+SURVEY_MIRRORS[key].label+" answered right now; try another survey or retry in a moment."; });
+  });
+});
+$("btnAladinRetry").addEventListener("click",function(){
+  aladinAttempts=0;
+  $("aladin").innerHTML='<div id="aladinPlaceholder" style="color:#fff;padding:20px">Loading the sky viewer…</div>';
+  initAladin();
+});
+initAladin();
+
+/* ---------- Init ---------- */
+buildSia(); renderCandidates(); loadAll(); render();
+})();
+</script>
+</body>
+</html>
